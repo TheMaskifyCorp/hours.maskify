@@ -1,29 +1,34 @@
 <?php
 
 require_once 'app/init.php';
+/**
+ * @var object $auth
+ */
 
-?>
+$errors = array();
+$data = array();
 
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Index</title>
-    </head>
-    <body>
-        <form action="signin.php" method="post">
-            <fieldset>
-                <legend>Sign in</legend>
-                <label>
-                    Username
-                    <input type="text" name="username">
-                </label>
-                <label>
-                    Password
-                    <input type="password" name="password">
-                </label>
-            </fieldset>
-            <input type="submit" value="Sign in">
-        </form>
-    </body>
-</html>
+
+if(!empty($_POST['username']) && !empty($_POST['password'])){
+    if ( ! $auth->signin([
+        'username' => $_POST['username'],
+        'password' => $_POST['password']
+    ])) $errors['credentials'] = "Credentials are not correct.";
+} else {
+    if (empty($_POST['username'])) $errors['username'] = "Name is required.";
+    if (empty($_POST['password'])) $errors['password'] = "Password is required.";
+}
+if ( ! empty($errors)) {
+
+    // if there are items in our errors array, return those errors
+    $data['success'] = false;
+    $data['errors'] = $errors;
+} else if($auth->signin([
+        'username' => $_POST['username'],
+        'password' => $_POST['password']
+    ]))
+{
+    $data['success'] = true;
+    $data['message'] = 'Success!';
+}
+echo json_encode($data);
