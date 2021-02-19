@@ -1,6 +1,5 @@
 <?php
-$doc_root = getenv('DOCUMENT_ROOT');
-require_once "$doc_root/app/conf/DBCONF.php";
+
 class Database
 {
     protected $hostname = DBCONF::HOSTNAME;
