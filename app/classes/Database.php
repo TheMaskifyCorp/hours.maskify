@@ -1,6 +1,5 @@
 <?php
-$doc_root = getenv('DOCUMENT_ROOT');
-require_once "$doc_root/app/conf/DBCONF.php";
+
 class Database
 {
     protected $hostname = DBCONF::HOSTNAME;
@@ -83,7 +82,7 @@ class Database
     public function insert(array $data) : bool
     {
         $keys = array_keys($data);
-        $fields = '`' . implode('`, `',$keys) . '`';
+        $fields = '`' . implode('`, `', $keys) . '`';
         $placeholders = ':' . implode(', :', $keys);
 
         $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$placeholders})";
