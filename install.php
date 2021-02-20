@@ -4,13 +4,7 @@ require_once 'app/init.php';
  * @var object $auth
  * @var object $db
  */
-
-/*var_dump(
-    $db->table('users')->selection([
-    "users.username",
-    "roles.description"
-])->innerJoin("roles","users.role = roles.id")->get()
-);*/
-
+$ddl = file_get_contents("app/sql/DDL.sql");
+$dml = file_get_contents("app/sql/DML.sql");
 $install = new Installer($db);
-$install->install();
+$install->install($ddl)->dummydata($dml);

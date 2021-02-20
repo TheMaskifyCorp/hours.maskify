@@ -50,7 +50,7 @@ class Auth
     {
         $_SESSION[$this->session] = $id;
     }
-    public function create($data)
+    public function create(array $data) : bool
     {
         if(isset($data['password']))
         {
