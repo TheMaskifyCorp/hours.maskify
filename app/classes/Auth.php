@@ -24,7 +24,7 @@ class Auth
             password VARCHAR(255) NOT NULL)
         ");
     }
-    public function create($data)
+    public function create(array $data) : bool
     {
         if(isset($data['password']))
         {
