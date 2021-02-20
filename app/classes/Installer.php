@@ -15,16 +15,11 @@ class Installer
     {
         $this->db = $db;
     }
-    public function install($ddl)
+    public function installSQL($file)
     {
-        $this->db->query($ddl);
-        echo "DDL installed...<br>";
-        return $this;
-    }
-    public function dummydata($dml)
-    {
-        $this->db->query($dml);
-        echo "DML installed ...<br>";
+        $sql=file_get_contents($file);
+        $this->db->query($sql);
+        echo "$file installed...<br>";
         return $this;
     }
 
@@ -98,7 +93,6 @@ class Installer
         }
         echo "Added hours for every Employee";
     }
-
 
     public function createEmployees($num = 20)
     {
