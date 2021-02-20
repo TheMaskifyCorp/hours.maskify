@@ -53,6 +53,13 @@ class Database
         $this->selection = $tablerows;
         return $this;
     }
+    public function randomTuple()
+    {
+        $sql = "SELECT * FROM {$this->table} ORDER BY RAND()";
+        $this->stmt = $this->pdo->prepare($sql);
+        $this->stmt->execute();
+        return $this->first();
+    }
 
     /**
      * function to insert data in table. function must be called like so:

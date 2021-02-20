@@ -91,7 +91,28 @@ class Installer
             }
             $i++;
         }
-        echo "Added hours for every Employee";
+        echo "Added hours for every Employee <br>";
+        return $this;
+    }
+    public function insertDuplicateEntries($num = 5)
+    {
+        $i = 0;
+        while($i < $num)
+        {
+            $rand = $this->db->table("EmployeeHours")->randomTuple();
+            $UUID = UUID::createRandomUUID($this->namespace);
+            if (is_null($rand->HoursAccorded)){
+                $rand->HoursAccorded = "NULL";
+                $rand->AccordedByManager = "NULL";
+            }
+            $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `Datum`, `EmployeeHoursQuantity`, `TypeOfHoursID`, `HoursAccorded`)
+                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->Datum', $rand->EmployeeHoursQuantity, $rand->TypeOfHoursID, $rand->HoursAccorded)";
+/*            echo $sql."<br>".var_dump($rand)."<br>";*/
+            $this->db->query($sql);
+            $i++;
+        }
+        echo "Duplicates entered <br>";
+        echo "Example = $UUID <br>";
     }
 
     public function createEmployees($num = 20)
