@@ -26,7 +26,7 @@ INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`C
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (1,LAST_INSERT_ID());
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (2,LAST_INSERT_ID());
 INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Gemma','Neeleman','gemma.neeleman@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
+                VALUES('Gemma','Neeleman','gemma.neeleman@maskify.nl','+31703502591','Strandweg 3 B','Scheveningen','1983-05-28','2586JK','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (5,LAST_INSERT_ID());
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (6,LAST_INSERT_ID());
 INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
