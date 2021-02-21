@@ -75,7 +75,6 @@ class DummyData
         'Squirtle',
         'Moon',
         'Zwaan',
-        'de Jong',
         'Jansen',
         'de Vries',
         'van Dijk',
@@ -164,10 +163,6 @@ class DummyData
         'Verbeek'
     ];
     const streets = [
-        'De Jonkvrouw Geilstraat',
-        'De Crackstraat',
-        'Achter den Engelschen Pispot',
-        'Pisbulten',
         'De Sesamstraat',
         'Oranje Pan',
         'Hoerejacht',
