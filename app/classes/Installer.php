@@ -24,7 +24,7 @@ class Installer
     }
 
     public function insertManagers(){
-        $sven = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
+/*        $sven = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
                 VALUES('Sven','Muste','sven.muste@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (1,LAST_INSERT_ID());
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (2,LAST_INSERT_ID());";
@@ -40,7 +40,7 @@ class Installer
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (4,LAST_INSERT_ID());";
         $managers = $sven.$gemma.$cynthia.$jeroen;
         $this->db->query($managers);
-        echo "Managers added to database...<br>";
+        echo "Managers added to database...<br>";*/
         return $this;
     }
     protected function insertRandomEmployee(){
@@ -65,7 +65,6 @@ class Installer
         $sql = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
                 VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$City','$DateOfBirth','$PostalCode','1','2000','$DocumentNumberID',NULL,'2021-01-01','2022-01-01','0');
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
-        echo $sql;
         $this->db->query($sql);
     }
     public function insertRandomHours(){
