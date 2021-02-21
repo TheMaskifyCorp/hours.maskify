@@ -65,6 +65,7 @@ class Installer
         $sql = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
                 VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$City','$DateOfBirth','$PostalCode','1','2000','$DocumentNumberID',NULL,'2021-01-01','2022-01-01','0');
                 INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
+        echo $sql;
         $this->db->query($sql);
     }
     public function insertRandomHours(){
@@ -85,7 +86,7 @@ class Installer
                 $UUID = UUID::createRandomUUID($this->namespace);
                 $qArray = [180,240,360,480];
                 $q = $qArray[array_rand($qArray)];
-                $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `Datum`, `EmployeeHoursQuantity`, `TypeOfHoursID`, `HoursAccorded`) 
+                $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
                 VALUES ('$UUID', $i, $man,'$date', $q, $type, $acc)";
                 $this->db->query($sql);
             }
@@ -105,8 +106,8 @@ class Installer
                 $rand->HoursAccorded = "NULL";
                 $rand->AccordedByManager = "NULL";
             }
-            $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `Datum`, `EmployeeHoursQuantity`, `TypeOfHoursID`, `HoursAccorded`)
-                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->Datum', $rand->EmployeeHoursQuantity, $rand->TypeOfHoursID, $rand->HoursAccorded)";
+            $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
+                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->TypeOfHoursID, $rand->HoursAccorded)";
 /*            echo $sql."<br>".var_dump($rand)."<br>";*/
             $this->db->query($sql);
             $i++;
