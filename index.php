@@ -15,23 +15,25 @@
 <div class="container">
     <div class="jumbotron">
         <h1 class="display-4">Maskify DB Installer</h1>
-        <p class="lead">On this page, enter database credentials to install the database-content to your database.</p>
+        <p class="lead">On this page you can fill in the credentials for your database. </p>
         <hr class="my-4">
         <p></p>
         <p class="lead">
+        <p>Then, automagically, we'll run the DDL, DML and add random data to the database.<br> Queries are much more fun when there's actual data available, don't you think?</p>
+        <p>
             <a class="btn btn-primary btn-lg" href="https://maskify.nl" role="button">Go to Maskify.nl</a>
         </p>
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-6">
-            <form action="" method="post" autocomplete="off">
+            <form id="theForm" action="" method="post" autocomplete="off">
                 <div class="form-group">
                     <label for="hostname">Hostname:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
                             <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-server"></i></span>
                         </div>
-                        <input name="hostname" id="hostname" class="form-control" placeholder="localhost" required>
+                        <input name="hostname" id="hostname" class="form-control" placeholder="Have you tried localhost?" required>
                     </div>
                 </div>
                 <div class="form-group">
@@ -40,25 +42,25 @@
                         <div class="input-group-prepend w-15">
                             <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
                         </div>
-                        <input name="database" id="database" class="form-control" placeholder="maskify_hours" required>
+                        <input name="database" id="database" class="form-control" placeholder="Can't really help you here..." required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-user"></i></span>
                         </div>
-                        <input name="username" id="username" class="form-control" placeholder="root" required>
+                        <input name="username" id="username" class="form-control" placeholder="Could be root, could be anything" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-key"></i></span>
                         </div>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="rootpassword" required>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!" required>
                     </div>
                 </div>
                 <div class="form-group">

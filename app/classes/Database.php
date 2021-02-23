@@ -24,7 +24,7 @@ class Database
         }
         catch(PDOException $e)
         {
-            die($this->debug ? $e->getMessage() : json_encode(array("Database connection failed" => $e->getMessage())));
+            die($this->debug ? $e->getMessage() : json_encode(array($e->getMessage() => "Warning")));
         }
     }
     public function query($sql)

@@ -20,7 +20,7 @@ class Installer
     {
         $sql=file_get_contents($file);
         $this->db->query($sql);
-        $this->return["Importing SQL-file: $file"] = "Success";
+        $this->return["Imported SQL-file: $file"] = "Success";
         return $this;
     }
 
@@ -72,7 +72,7 @@ class Installer
             }
             $i++;
         }
-        $this->return['Insertion of hours for every Employee'] = "Success";
+        $this->return['Inserted hours for every Employee'] = "Success";
         return $this;
     }
     public function insertDuplicateEntries($num = 5)
@@ -92,7 +92,7 @@ class Installer
             $this->db->query($sql);
             $i++;
         }
-        $this->return['Duplicate hours for testing purposes entered'] = "Success";
+        $this->return['Added duplicate hours for testing purposes'] = "Success";
         return $this;
     }
 
@@ -103,7 +103,7 @@ class Installer
             $this->insertRandomEmployee();
             $i++;
         }
-        $this->return["Adding $num random Employees"] = "Success";
+        $this->return["Added $num random Employees"] = "Success";
         return $this;
     }
     protected function randomLetter()
