@@ -9,7 +9,8 @@ class Installer
     protected $cities = DummyData::cities;
     protected $employees = array();
     protected $dates = array();
-    protected $namespace = DBCONF::NAMESPACE;
+    protected $namespace = "c416205f-49fa-4e90-91f7-e39a1fa0c4c0";
+    protected $return = array();
 
     public function __construct(Database $db)
     {
@@ -19,30 +20,10 @@ class Installer
     {
         $sql=file_get_contents($file);
         $this->db->query($sql);
-        echo "$file installed...<br>";
+        $this->return["Importing SQL-file: $file"] = "Success";
         return $this;
     }
 
-    public function insertManagers(){
-/*        $sven = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Sven','Muste','sven.muste@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (1,LAST_INSERT_ID());
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (2,LAST_INSERT_ID());";
-        $gemma = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Gemma','Neeleman','gemma.neeleman@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (5,LAST_INSERT_ID());
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (6,LAST_INSERT_ID());";
-        $cynthia = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Cythia','van Hoek','cynthia.vanhoek@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (3,LAST_INSERT_ID());";
-        $jeroen = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Jeroen','Rijkse','jeroen.rijkse@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (4,LAST_INSERT_ID());";
-        $managers = $sven.$gemma.$cynthia.$jeroen;
-        $this->db->query($managers);
-        echo "Managers added to database...<br>";*/
-        return $this;
-    }
     protected function insertRandomEmployee(){
         $Email = false;
         while(!$Email){
@@ -79,7 +60,7 @@ class Installer
                 if ($acc=="NULL"){
                     $man="NULL";
                 }else{
-                    $emp = new Employee($i);
+                    $emp = new Employee($i,$this->db);
                     $man = $emp->getManager();
                 }
                 $UUID = UUID::createRandomUUID($this->namespace);
@@ -91,7 +72,7 @@ class Installer
             }
             $i++;
         }
-        echo "Added hours for every Employee <br>";
+        $this->return['Insertion of hours for every Employee'] = "Success";
         return $this;
     }
     public function insertDuplicateEntries($num = 5)
@@ -111,8 +92,8 @@ class Installer
             $this->db->query($sql);
             $i++;
         }
-        echo "Duplicates entered <br>";
-        echo "Example = $UUID <br>";
+        $this->return['Duplicate hours for testing purposes entered'] = "Success";
+        return $this;
     }
 
     public function createEmployees($num = 20)
@@ -122,7 +103,7 @@ class Installer
             $this->insertRandomEmployee();
             $i++;
         }
-        echo "Added $num Employees <br>";
+        $this->return["Adding $num random Employees"] = "Success";
         return $this;
     }
     protected function randomLetter()
@@ -146,5 +127,10 @@ class Installer
             $date = date('Y-m-d',
                 strtotime( $date . " +1 days"));
         }
+    }
+    public function returnStatus(){
+        $status = json_encode($this->return);
+        unset($this->return);
+        return $status;
     }
 }

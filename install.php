@@ -1,10 +1,13 @@
 <?php
 require_once 'app/init.php';
-/**
- * @var object $auth
- * @var object $db
- */
+$hostname = $_POST['hostname'];
+$database = $_POST['database'];
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+$db = new Database($hostname, $database, $username, $password , false);
+/*$db = new Database("localhost","maskify_hours","root","rootpassword");*/
 $ddl = "app/sql/DDL.sql";
 $dml = "app/sql/DML.sql";
 $install = new Installer($db);
-$install->installSQL($ddl)->installSQL($dml)->insertManagers()->createEmployees(50)->insertRandomHours()->insertDuplicateEntries();
+echo $install->installSQL($ddl)->installSQL($dml)->createEmployees(50)->insertRandomHours()->insertDuplicateEntries()->returnStatus();

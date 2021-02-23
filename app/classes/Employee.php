@@ -21,9 +21,9 @@ class Employee
     protected $OutOfContract;
     protected $DepartmentID = array();
 
-    public function __construct($id)
+    public function __construct($id,$db)
     {
-        $this->db = new Database;
+        $this->db = $db;
         $result = $this->db->table('Employees')->where("EmployeeID", "=", "$id")->first();
         $result = (array)$result;
         foreach ($result as $key => $value) {
@@ -40,7 +40,7 @@ class Employee
         $managers = $this->db->table('Employees')->selection(['EmployeeID'])->where("FunctionTypeID","=","3")->get();
         foreach($managers as $man){
             $id = $man->EmployeeID;
-            $manager = new Employee($id);
+            $manager = new Employee($id,$this->db);
             if (in_array($this->DepartmentID[0],$manager->DepartmentID)){
                 return $id;
             }
