@@ -60,7 +60,7 @@
                         <div class="input-group-prepend w-15">
                             <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-key"></i></span>
                         </div>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!" required>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!">
                     </div>
                 </div>
                 <div class="form-group">
