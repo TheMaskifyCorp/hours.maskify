@@ -13,9 +13,7 @@ $(document).ready(function(){
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();
-        console.log(formValues);
         $.post("install.php", formValues, function(data){
-
             //Parse it before displaying
             parseAlert(data);
         });

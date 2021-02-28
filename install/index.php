@@ -9,6 +9,14 @@
     <title>Maskify POC</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <style>
+        .fake-disabled{
+            background-color:#fff!important;
+        }
+        .fake-disabled::placeholder{
+            color: #212529!important;
+        }
+    </style>
 </head>
 
 <body>
@@ -64,9 +72,14 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="input-group">
-                        <input type="checkbox" name="dummydata" id="dummydata" autocomplete="off" checked>
-                        <label class="ml-3" for="dummydata">Install database with Dummydata</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend w-100">
+                            <div class="input-group-text">
+                                <input name="dummydata" type="checkbox" aria-label="Checkbox for following text input" checked>
+                            </div>
+                            <input type="text" class="form-control fake-disabled" aria-label="Text input with checkbox" placeholder="Install using DummyData" disabled>
+
+                        </div>
                     </div>
                 </div>
                 <input type="submit" class="btn btn-primary float-right" value="Install database">
