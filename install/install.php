@@ -11,9 +11,13 @@ if(gethostbyname($hostname.".")==$hostname.".") {
 } else {
     $db = new Database($hostname, $database, $username, $password);
 
-    /*$db = new Database("localhost","maskify_hours","root","rootpassword");*/
     $ddl = "$app/sql/DDL.sql";
     $dml = "$app/sql/DML.sql";
+    $managers = "$app/sql/managers.sql";
     $install = new Installer($db);
-    echo $install->installSQL($ddl)->installSQL($dml)->createEmployees(50)->insertRandomHours()->insertDuplicateEntries()->returnStatus();
+    if (isset($_POST['dummydata'])) {
+        echo $install->installSQL($ddl)->installSQL($dml)->installSQL($managers)->insertRandomHours()->insertDuplicateEntries()->returnStatus();
+    } else {
+        echo $install->installSQL($ddl)->installSQL($dml)->returnStatus();
+    }
 };

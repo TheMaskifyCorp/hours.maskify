@@ -64,8 +64,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-primary float-right" value="Install database">
+                    <div class="input-group">
+                        <input type="checkbox" name="dummydata" id="dummydata" autocomplete="off" checked>
+                        <label class="ml-3" for="dummydata">Install database with Dummydata</label>
+                    </div>
                 </div>
+                <input type="submit" class="btn btn-primary float-right" value="Install database">
             </form>
         </div>
         <div id="callbackTarget" class="col-sm-12 col-md-6">
