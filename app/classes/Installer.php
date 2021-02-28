@@ -31,7 +31,7 @@ class Installer
             $LastName = $this->lastNames[array_rand($this->lastNames)];
             $Email = $FirstName.".".str_replace(' ', '', $LastName)."@maskify.nl";
             $Email = strtolower($Email);
-            if($this->db->table('Employees')->where('Email','=',$Email)->count()) {
+            if($this->db->table('employees')->where('Email','=',$Email)->count()) {
                 $Email = false;
             }
         }
@@ -43,13 +43,13 @@ class Installer
         $DocumentNumberID = rand(10000000,99999999).$this->randomLetter().$this->randomLetter().rand(100,999);
         $DepartmentID = rand(1,6);
 
-        $sql = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
+        $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
                 VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$City','$DateOfBirth','$PostalCode','1','2000','$DocumentNumberID',NULL,'2021-01-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
+                INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
         $this->db->query($sql);
     }
     public function insertRandomHours(){
-        $count = $this->db->table("Employees")->where("EmployeeID",">","0")->count();
+        $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
         $this->createDates();
         $i=1;
         while($i <= $count){
@@ -66,7 +66,7 @@ class Installer
                 $UUID = UUID::createRandomUUID($this->namespace);
                 $qArray = [180,240,360,480];
                 $q = $qArray[array_rand($qArray)];
-                $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
+                $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
                 VALUES ('$UUID', $i, $man,'$date', $q, $type, $acc)";
                 $this->db->query($sql);
             }
@@ -80,13 +80,13 @@ class Installer
         $i = 0;
         while($i < $num)
         {
-            $rand = $this->db->table("EmployeeHours")->randomTuple();
+            $rand = $this->db->table("employeehours")->randomTuple();
             $UUID = UUID::createRandomUUID($this->namespace);
             if (is_null($rand->HoursAccorded)){
                 $rand->HoursAccorded = "NULL";
                 $rand->AccordedByManager = "NULL";
             }
-            $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
+            $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
                 VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->TypeOfHoursID, $rand->HoursAccorded)";
 /*            echo $sql."<br>".var_dump($rand)."<br>";*/
             $this->db->query($sql);

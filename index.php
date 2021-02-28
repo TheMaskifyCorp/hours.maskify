@@ -1,80 +1,98 @@
+<?php
+
+require_once 'app/init.php';
+/**
+ * @var object $auth
+ */
+
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <meta charset="utf-8">
-    <meta name="description" content="Maskify POC">
+    <meta name="description" content="Maskify Hour Registration System">
     <meta name="Maskify" content="GoodShit!">
     <title>Maskify POC</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--    <link rel="stylesheet" href="css/timepicker.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
-</head>
+<!--    <link rel="stylesheet" href="css/styles.css"/>-->
+    </head>
+    <body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">Proof of Concept</h1>
+            <p class="lead">This is a very basic proof of concept for the hour-registration functionality for Maskify.</p>
+            <hr class="my-4">
+            <p>Work in progress</p>
+            <p class="lead">
+                <?php
+                if(!$auth->check()): ?>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signin">
+                    Sign in!
+                </button>
+                <?php else: ?>
+                <a href="signout.php">
+                <button type="button" class="btn btn-primary">
+                    Sign out!
+                </button></a>
+                <?php endif;?>
+            </p>
+            <div class="modal fade" id="signin" tabindex="-1" role="dialog" aria-labelledby="signin" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- OUR FORM -->
+                            <form id="signin" action="signin.php" method="POST">
+                                <!-- NAME -->
+                                <div id="name-group" class="form-group">
+                                    <label for="username">Name</label>
+                                    <input type="text" class="form-control" name="username" placeholder="Gebruiker">
+                                    <!-- errors will go here -->
+                                </div>
 
-<body>
-<div class="container">
-    <div class="jumbotron">
-        <h1 class="display-4">Maskify DB Installer</h1>
-        <p class="lead">On this page you can fill in the credentials for your database. </p>
-        <hr class="my-4">
-        <p></p>
-        <p class="lead">
-        <p>Then, automagically, we'll run the DDL, DML and add random data to the database.<br> Queries are much more fun when there's actual data available, don't you think?</p>
-        <p>
-            <a class="btn btn-primary btn-lg" href="https://maskify.nl" role="button">Go to Maskify.nl</a>
-        </p>
-    </div>
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <form id="theForm" action="" method="post" autocomplete="off">
-                <div class="form-group">
-                    <label for="hostname">Hostname:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-server"></i></span>
+                                <!-- EMAIL -->
+                                <div id="password-group" class="form-group">
+                                    <label for="password">Email</label>
+                                    <input type="password" class="form-control" name="password" placeholder="password">
+                                    <!-- errors will go here -->
+                                </div>
+                                <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button
+                            </form>
+
                         </div>
-                        <input name="hostname" id="hostname" class="form-control" placeholder="Have you tried localhost?" required>
+                        <div class="modal-footer">
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="database">Database name:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
-                        </div>
-                        <input name="database" id="database" class="form-control" placeholder="Can't really help you here..." required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-user"></i></span>
-                        </div>
-                        <input name="username" id="username" class="form-control" placeholder="Could be root, could be anything" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-key"></i></span>
-                        </div>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary float-right" value="Install database">
-                </div>
-            </form>
+            </div>
+
         </div>
-        <div id="callbackTarget" class="col-sm-12 col-md-6">
-            <div class="small text-right text-muted mt-3">Installer messages:</div>
+        <div class="row">
+            <div id="leftColumn" class="col-sm-12 col-md-6">
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <?php
+                if($auth->check()): ?>
+                <div class="alert alert-success" role="alert">User is logged in!</div>
+                <?php else: ?>
+                <div class="alert alert-danger" role="alert">User is not logged in!</div>
+                <?php endif;?>
+            </div>
         </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="app/js/install.js"></script>
-</body>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!--    <script src="js/timepicker.js"></script>-->
+    <script src="app/js/signin.js"></script>
+    </body>
 </html>

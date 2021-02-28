@@ -1,30 +1,30 @@
-DROP TABLE IF EXISTS `EmployeeHours`;
-DROP TABLE IF EXISTS `DepartmentMemberList`;
-DROP TABLE IF EXISTS `LoginCredentials`;
-DROP TABLE IF EXISTS `Employees`;
-DROP TABLE IF EXISTS `EmployeeTypes`;
-DROP TABLE IF EXISTS `DepartmentTypes`;
-DROP TABLE IF EXISTS `TypeOfHours`;
+DROP TABLE IF EXISTS `employeehours`;
+DROP TABLE IF EXISTS `departmentmemberlist`;
+DROP TABLE IF EXISTS `logincredentials`;
+DROP TABLE IF EXISTS `employees`;
+DROP TABLE IF EXISTS `employeetypes`;
+DROP TABLE IF EXISTS `departmenttypes`;
+DROP TABLE IF EXISTS `typeofhourstypes`;
 
-CREATE TABLE EmployeeTypes(
+CREATE TABLE employeetypes(
     FunctionTypeID INT(1) NOT NULL,
     Description VARCHAR(255),
     PRIMARY KEY(FunctionTypeID)
 ) ENGINE = INNODB;
 
-CREATE TABLE DepartmentTypes(
+CREATE TABLE departmenttypes(
     DepartmentID INT(11) NOT NULL,
     Description VARCHAR(255),
     PRIMARY KEY(DepartmentID)
 ) ENGINE = INNODB;
 
-CREATE TABLE TypeOfHours(
+CREATE TABLE typeofhourstypes(
     TypeOfHoursID INT(4),
     Description VARCHAR(255),
     PRIMARY KEY(TypeOfHoursID)
 ) ENGINE = INNODB;
 
-CREATE TABLE `Employees`(
+CREATE TABLE `employees`(
     EmployeeID INT(11) NOT NULL AUTO_INCREMENT,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
@@ -42,25 +42,25 @@ CREATE TABLE `Employees`(
     EndOfContract DATE,
     OutOfContract BOOLEAN,
     PRIMARY KEY(EmployeeID),
-    FOREIGN KEY(FunctionTypeID) REFERENCES EmployeeTypes(FunctionTypeID)
+    FOREIGN KEY(FunctionTypeID) REFERENCES employeetypes(FunctionTypeID)
 ) ENGINE = INNODB;
 
-CREATE TABLE LoginCredentials(
+CREATE TABLE logincredentials(
      EmployeeID INT(11) NOT NULL,
      Password VARCHAR(255) NOT NULL,
      PRIMARY KEY(EmployeeID),
-     FOREIGN KEY(EmployeeID) REFERENCES Employees(EmployeeID)
+     FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID)
 ) ENGINE = INNODB;
 
-CREATE TABLE DepartmentMemberList(
+CREATE TABLE departmentmemberlist(
      EmployeeID INT(11) NOT NULL,
      DepartmentID INT(11) NOT NULL,
      PRIMARY KEY(EmployeeID, DepartmentID),
-     FOREIGN KEY(EmployeeID) REFERENCES Employees(EmployeeID),
-     FOREIGN KEY(DepartmentID) REFERENCES DepartmentTypes(DepartmentID)
+     FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
+     FOREIGN KEY(DepartmentID) REFERENCES departmenttypes(DepartmentID)
 ) ENGINE = INNODB;
 
-CREATE TABLE EmployeeHours(
+CREATE TABLE employeehours(
       EmployeeHoursID VARCHAR(36) NOT NULL,
       EmployeeID INT(11) NOT NULL,
       AccordedByManager INT(11),
@@ -69,6 +69,6 @@ CREATE TABLE EmployeeHours(
       TypeOfHoursID INT(4) NOT NULL,
       HoursAccorded BOOL,
       PRIMARY KEY(EmployeeHoursID),
-      FOREIGN KEY(EmployeeID) REFERENCES Employees(EmployeeID),
-      FOREIGN KEY(TypeOfHoursID) REFERENCES TypeOfHours(TypeOfHoursID)
+      FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
+      FOREIGN KEY(TypeOfHoursID) REFERENCES typeofhourstypes(TypeOfHoursID)
 ) ENGINE = INNODB;

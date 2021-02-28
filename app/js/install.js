@@ -14,7 +14,7 @@ $(document).ready(function(){
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();
         $.post("install.php", formValues, function(data){
-            // Display the returned data in browser
+            //Parse it before displaying
             parseAlert(data);
         });
     });

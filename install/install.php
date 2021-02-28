@@ -1,5 +1,6 @@
 <?php
-require_once 'app/init.php';
+$app = "../app";
+require_once "$app/init.php";
 $hostname = $_POST['hostname'];
 $database = $_POST['database'];
 $username = $_POST['username'];
@@ -11,8 +12,8 @@ if(gethostbyname($hostname.".")==$hostname.".") {
     $db = new Database($hostname, $database, $username, $password);
 
     /*$db = new Database("localhost","maskify_hours","root","rootpassword");*/
-    $ddl = "app/sql/DDL.sql";
-    $dml = "app/sql/DML.sql";
+    $ddl = "$app/sql/DDL.sql";
+    $dml = "$app/sql/DML.sql";
     $install = new Installer($db);
     echo $install->installSQL($ddl)->installSQL($dml)->createEmployees(50)->insertRandomHours()->insertDuplicateEntries()->returnStatus();
 };
