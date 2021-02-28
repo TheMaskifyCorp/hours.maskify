@@ -28,7 +28,7 @@ function parseAlert(data) {
     for (let key in array) {
         if (array.hasOwnProperty(key)) {
             let value = array[key];
-            let message = "<div class='d-flex alert alert-" + value.toLowerCase() + " mb-3'><div class='d-flex flex-column justify-content-center align-items-left m-0 w-100'>" + key + "</div></div>"
+            let message = "<div class='d-flex alert alert-" + value.toLowerCase() + " mb-3 text-break'><div class='d-flex flex-column justify-content-center align-items-left m-0 w-100'>" + key + "</div></div>"
             $("#callbackTarget").append(message);
             if (value.toLowerCase() != "success") {
                 success = false;
@@ -41,6 +41,5 @@ function parseAlert(data) {
         $('input[type=submit]', 'form').attr('value', 'Database installed').removeClass("btn-primary").addClass("btn-success");
     } else {
         $('input[type=submit]', 'form').attr('disabled', false).attr('value', 'Install database');
-
     }
 }
