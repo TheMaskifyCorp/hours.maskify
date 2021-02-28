@@ -2,10 +2,10 @@
 
 class Database
 {
-    protected $host = DBCONF::HOSTNAME;
+/*    protected $host = DBCONF::HOSTNAME;
     protected $db = DBCONF::DBNAME;
     protected $username = DBCONF::USER;
-    protected $password = DBCONF::PASSWORD;
+    protected $password = DBCONF::PASSWORD;*/
     protected $pdo;
     protected $debug = false;
     protected $table;
@@ -13,18 +13,18 @@ class Database
     protected $selection;
     protected $stmt;
 
-    public function __construct($debug = false)
+    public function __construct($hostname, $database, $username, $password, $debug = false)
     {
         $this->debug = $debug;
         try
         {
-            $this->pdo = new PDO("mysql:host={$this->host};dbname={$this->db}",$this->username,$this->password);
+            $this->pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
             if ($this->debug)
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e)
         {
-            die($this->debug ? $e->getMessage() : '');
+            die($this->debug ? $e->getMessage() : json_encode(array($e->getMessage() => "Warning")));
         }
     }
     public function query($sql)
