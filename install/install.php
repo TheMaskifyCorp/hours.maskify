@@ -1,15 +1,20 @@
 <?php
 if(isset($_POST['hostname'])) {
+    $filename = '../app/conf/DBCONF.php';
+    try {
+        $fp = fopen($filename, "w+");
+    } catch (Exception $e) {
+        $exc = array ("Warning" => "Could not open DBCONF.php for writing, please check file permissions");
+        return $exc;
+    }
+    $hostname = $_POST['hostname'];
     if (gethostbyname($hostname . ".") == $hostname . ".") {
         echo json_encode(array("Hostname <strong>$hostname</strong> not resolvable" => "Warning"));
         exit();
     } else {
-        $hostname = $_POST['hostname'];
         $database = $_POST['database'];
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $UUID = UUID::createRandomUUID('c416205f-49fa-4e90-91f7-e39a1fa0c4c0');
-
         $dbconf = "
 <?php
 
@@ -24,10 +29,11 @@ class DBCONF{
     const PASSWORD = '$password';
     // NAMESPACE should be a valid UUID. You can use the default one, or
     // generate one here: https://www.uuidgenerator.net/
-    const NAMESPACE = '$UUID';
+    const NAMESPACE = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0';
 }
 ";
-        file_put_contents('../app/conf/DBCONF.php', $dbconf);
+        file_put_contents($filename, $dbconf);
+        chmod($filename, 01664);
     }
 };
 $app = "../app";
