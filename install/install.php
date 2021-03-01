@@ -33,7 +33,7 @@ class DBCONF{
 }
 ";
         file_put_contents($filename, $dbconf);
-        chmod($filename, 01664);
+        chmod($filename, 00644);
     }
 };
 $app = "../app";
