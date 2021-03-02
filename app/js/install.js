@@ -1,13 +1,5 @@
-/*$(document).ready(function(){
-    $('input#EmployeeHoursQuantity').timepicker({
-        minStep: 5,
-        timeFormat:"%H:%i",
-        scrollDefault:"00:00",
-        selectSize: 5
-    });
-});*/
-
 $(document).ready(function(){
+
     $("form").on("submit", function(event){
         event.preventDefault();
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
