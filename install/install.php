@@ -1,5 +1,6 @@
 <?php
-require_once "../app/classes/Installer.php";
+$app = "../app";
+require_once("$app/classes/Installer.php");
 if(isset($_POST['hostname'])) {
     $filename = '../app/conf/DBCONF.php';
     try {
@@ -13,9 +14,7 @@ if(isset($_POST['hostname'])) {
     $password = $_POST['password'];
     Installer::createDBCONF($hostname, $database, $username, $password);
 }
-$app = "../app";
 require_once "$app/init.php";
-
 $ddl = "$app/sql/DDL.sql";
 $dml = "$app/sql/DML.sql";
 $managers = "$app/sql/managers.sql";
