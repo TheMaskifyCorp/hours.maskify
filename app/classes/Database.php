@@ -51,13 +51,19 @@ class Database
     public function selection(array $tablerows): Database
     {
         $this->selection = $tablerows;
+
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
     public function randomTuple()
     {
         $sql = "SELECT * FROM {$this->table} ORDER BY RAND()";
         $this->stmt = $this->pdo->prepare($sql);
         $this->stmt->execute();
+
         return $this->first();
     }
 

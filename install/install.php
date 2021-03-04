@@ -15,10 +15,24 @@ if(isset($_POST['hostname'])) {
     Installer::createDBCONF($hostname, $database, $username, $password);
 }
 require_once "$app/init.php";
+/**
+ * @var Database $db
+ */
 $ddl = "$app/sql/DDL.sql";
 $dml = "$app/sql/DML.sql";
 $managers = "$app/sql/managers.sql";
 $install = new Installer($db);
-if (isset($_POST['dummydata'])) {
-    echo $install->installSQL($ddl)->installSQL($dml)->installSQL($managers)->createEmployees(50)->insertRandomHours()->insertDuplicateEntries()->returnStatus();
-} else echo $install->installSQL($ddl)->installSQL($dml)->returnStatus();
+if (isset($_POST['dummydata']))
+{
+    echo $install->installSQL($ddl)
+        ->installSQL($dml)
+        ->installSQL($managers)
+        ->createEmployees(50)
+        ->insertRandomHours()
+        ->insertDuplicateEntries()
+        ->returnStatus();
+} else {
+    echo $install->installSQL($ddl)
+    ->installSQL($dml)
+    ->returnStatus();
+}
