@@ -15,7 +15,6 @@ $(document).ready(function(){
 function parseAlert(data) {
     let array = JSON.parse(data);
     let success = true;
-
     for (let key in array) {
         if (array.hasOwnProperty(key)) {
             let value = array[key];
