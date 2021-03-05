@@ -1,19 +1,12 @@
-/*$(document).ready(function(){
-    $('input#EmployeeHoursQuantity').timepicker({
-        minStep: 5,
-        timeFormat:"%H:%i",
-        scrollDefault:"00:00",
-        selectSize: 5
-    });
-});*/
-
 $(document).ready(function(){
+
     $("form").on("submit", function(event){
         event.preventDefault();
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();
         $.post("install.php", formValues, function(data){
+            console.log(data);
             //Parse it before displaying
             parseAlert(data);
         });
@@ -22,7 +15,6 @@ $(document).ready(function(){
 function parseAlert(data) {
     let array = JSON.parse(data);
     let success = true;
-
     for (let key in array) {
         if (array.hasOwnProperty(key)) {
             let value = array[key];

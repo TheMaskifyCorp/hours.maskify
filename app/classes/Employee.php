@@ -21,9 +21,9 @@ class Employee
     protected $OutOfContract;
     protected $DepartmentID = array();
 
-    public function __construct($id,$db)
+    public function __construct($id)
     {
-        $this->db = $db;
+        $this->db = new Database;
         $result = $this->db->table('employees')->where("EmployeeID", "=", "$id")->first();
         $result = (array)$result;
         foreach ($result as $key => $value) {

@@ -128,9 +128,56 @@ class Installer
                 strtotime( $date . " +1 days"));
         }
     }
-    public function returnStatus(){
+    public function returnStatus()
+    {
         $status = json_encode($this->return);
         unset($this->return);
         return $status;
+    }
+
+    /**
+     * @param string $hostname
+     * @param string $database
+     * @param string $username
+     * @param string $password
+     * @param string $namespace
+     * @return string
+     */
+    public static function createDBCONF(string $hostname, string $database, string $username, string $password,string $namespace = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0') : string
+    {
+        if (gethostbyname($hostname . ".") == $hostname . ".") {
+            return json_encode(array("Hostname <strong>$hostname</strong> not resolvable" => "Warning"));
+        }
+        try
+        {
+            $pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        catch(PDOException $e)
+        {
+            die($e->getMessage());
+            return json_encode(array($e->getMessage() => "Warning"));
+        }
+        $filename = '../app/conf/DBCONF.php';
+        $dbconf = "
+<?php
+
+//database config file
+
+//rename this file to DBCONF.php, and enter database credentials
+//IMPORTANT: verify DBCONF.php is in .gitignore
+class DBCONF{
+    const HOSTNAME = '$hostname';
+    const DBNAME = '$database';
+    const USER = '$username';
+    const PASSWORD = '$password';
+    // NAMESPACE should be a valid UUID. You can use the default one, or
+    // generate one here: https://www.uuidgenerator.net/
+    const NAMESPACE = '$namespace';
+}
+";
+        file_put_contents($filename, $dbconf);
+        chmod($filename, 00644);
+        return json_encode(array("DBCONF.php created!" => "Succes"));
     }
 }

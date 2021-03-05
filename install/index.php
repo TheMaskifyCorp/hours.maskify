@@ -30,12 +30,13 @@
         <p>Then, automagically, we'll run the DDL, DML and add random data to the database.<br> Queries are much more fun when there's actual data available, don't you think?</p>
         <p>
             <a class="btn btn-primary btn-lg" href="https://maskify.nl" role="button">Go to Maskify.nl</a>
+            <a class="btn btn-primary btn-lg deleteconf" href="uninstall.php" role="button">Delete existing configuration</a>
         </p>
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-6">
             <form id="theForm" action="" method="post" autocomplete="off">
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <label for="hostname">Hostname:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
@@ -44,7 +45,7 @@
                         <input name="hostname" id="hostname" class="form-control" placeholder="Have you tried localhost?" required>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <label for="database">Database name:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
@@ -53,7 +54,7 @@
                         <input name="database" id="database" class="form-control" placeholder="Can't really help you here..." required>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <label for="username">Username:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
@@ -62,7 +63,7 @@
                         <input name="username" id="username" class="form-control" placeholder="Could be root, could be anything" required>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <label for="password">Password:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
@@ -93,5 +94,24 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="../app/js/install.js"></script>
+<?php
+
+if(file_exists("../app/conf/DBCONF.php")){
+    ?>
+    <script>
+        $(document).ready(function(){
+            $('.dbsettings').remove();
+        })
+    </script>
+    <?php } else { ?>
+    <script>
+        $(document).ready(function(){
+            $('.deleteconf').remove();
+        })
+    </script>
+<?php
+    };
+
+?>
 </body>
 </html>

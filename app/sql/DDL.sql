@@ -70,5 +70,6 @@ CREATE TABLE employeehours(
       HoursAccorded BOOL,
       PRIMARY KEY(EmployeeHoursID),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
+      FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID),
       FOREIGN KEY(TypeOfHoursID) REFERENCES typeofhourstypes(TypeOfHoursID)
 ) ENGINE = INNODB;
