@@ -13,17 +13,7 @@ class Auth
         $this->db = $db;
         $this->hash = $hash;
     }
-    public function build()
-    {
-        return $this->db->query("
-            CREATE TABLE IF NOT EXISTS users
-            (id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            email VARCHAR(200) NOT NULL UNIQUE,
-            username VARCHAR(20) NOT NULL UNIQUE,
-            role VARCHAR(20) NOT NULL,
-            password VARCHAR(255) NOT NULL)
-        ");
-    }
+
     public function create(array $data) : bool
     {
         if(isset($data['password']))
