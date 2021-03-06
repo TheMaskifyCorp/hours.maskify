@@ -165,9 +165,6 @@ class DummyData
     const streets = [
         'De Sesamstraat',
         'Oranje Pan',
-        'Hoerejacht',
-        'Eendekotsweg',
-        'Poepershoek',
         'Kerkstraat',
         'Schoolstraat',
         'Molenstraat',
