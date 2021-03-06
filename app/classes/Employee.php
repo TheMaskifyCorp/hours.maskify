@@ -24,12 +24,12 @@ class Employee
     public function __construct($id)
     {
         $this->db = new Database;
-        $result = $this->db->table('Employees')->where("EmployeeID", "=", "$id")->first();
+        $result = $this->db->table('employees')->where("EmployeeID", "=", "$id")->first();
         $result = (array)$result;
         foreach ($result as $key => $value) {
             $this->$key = $result[$key];
         }
-        $result = $this->db->table('DepartmentMemberList')->selection(['DepartmentID'])->where("EmployeeID", "=", "$id")->get();
+        $result = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where("EmployeeID", "=", "$id")->get();
         foreach ($result as $key => $value){
             $dep = $result[$key]->DepartmentID;
             $this->DepartmentID[] = $dep;
@@ -37,10 +37,10 @@ class Employee
     }
     public function getManager()
     {
-        $managers = $this->db->table('Employees')->selection(['EmployeeID'])->where("FunctionTypeID","=","3")->get();
+        $managers = $this->db->table('employees')->selection(['EmployeeID'])->where("FunctionTypeID","=","3")->get();
         foreach($managers as $man){
             $id = $man->EmployeeID;
-            $manager = new Employee($id);
+            $manager = new Employee($id,$this->db);
             if (in_array($this->DepartmentID[0],$manager->DepartmentID)){
                 return $id;
             }

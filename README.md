@@ -3,8 +3,7 @@
 ##How to
 
 place all files in a web-accessible folder\
-enter database-information in app/conf/DBCONF.php
+visit the folder `/install/` in a browser\
+enter database-information in form, and click install
 
-go to install.php
-
-Succes!
+Check for any error messages;

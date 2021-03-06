@@ -9,7 +9,8 @@ class Installer
     protected $cities = DummyData::cities;
     protected $employees = array();
     protected $dates = array();
-    protected $namespace = DBCONF::NAMESPACE;
+    protected $namespace = "c416205f-49fa-4e90-91f7-e39a1fa0c4c0";
+    protected $return = array();
 
     public function __construct(Database $db)
     {
@@ -19,30 +20,10 @@ class Installer
     {
         $sql=file_get_contents($file);
         $this->db->query($sql);
-        echo "$file installed...<br>";
+        $this->return["Imported SQL-file: $file"] = "Success";
         return $this;
     }
 
-    public function insertManagers(){
-/*        $sven = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Sven','Muste','sven.muste@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (1,LAST_INSERT_ID());
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (2,LAST_INSERT_ID());";
-        $gemma = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Gemma','Neeleman','gemma.neeleman@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (5,LAST_INSERT_ID());
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (6,LAST_INSERT_ID());";
-        $cynthia = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Cythia','van Hoek','cynthia.vanhoek@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (3,LAST_INSERT_ID());";
-        $jeroen = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('Jeroen','Rijkse','jeroen.rijkse@maskify.nl','+31612345678','lagelandenlaan 4','Groningen','1985-1-1','1234AB','3','3600','31827070UB215',NULL,'2020-10-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES (4,LAST_INSERT_ID());";
-        $managers = $sven.$gemma.$cynthia.$jeroen;
-        $this->db->query($managers);
-        echo "Managers added to database...<br>";*/
-        return $this;
-    }
     protected function insertRandomEmployee(){
         $Email = false;
         while(!$Email){
@@ -50,7 +31,7 @@ class Installer
             $LastName = $this->lastNames[array_rand($this->lastNames)];
             $Email = $FirstName.".".str_replace(' ', '', $LastName)."@maskify.nl";
             $Email = strtolower($Email);
-            if($this->db->table('Employees')->where('Email','=',$Email)->count()) {
+            if($this->db->table('employees')->where('Email','=',$Email)->count()) {
                 $Email = false;
             }
         }
@@ -62,13 +43,13 @@ class Installer
         $DocumentNumberID = rand(10000000,99999999).$this->randomLetter().$this->randomLetter().rand(100,999);
         $DepartmentID = rand(1,6);
 
-        $sql = "INSERT INTO `Employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
+        $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
                 VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$City','$DateOfBirth','$PostalCode','1','2000','$DocumentNumberID',NULL,'2021-01-01','2022-01-01','0');
-                INSERT INTO `DepartmentMemberList`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
+                INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
         $this->db->query($sql);
     }
     public function insertRandomHours(){
-        $count = $this->db->table("Employees")->where("EmployeeID",">","0")->count();
+        $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
         $this->createDates();
         $i=1;
         while($i <= $count){
@@ -79,19 +60,19 @@ class Installer
                 if ($acc=="NULL"){
                     $man="NULL";
                 }else{
-                    $emp = new Employee($i);
+                    $emp = new Employee($i,$this->db);
                     $man = $emp->getManager();
                 }
                 $UUID = UUID::createRandomUUID($this->namespace);
                 $qArray = [180,240,360,480];
                 $q = $qArray[array_rand($qArray)];
-                $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
+                $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
                 VALUES ('$UUID', $i, $man,'$date', $q, $type, $acc)";
                 $this->db->query($sql);
             }
             $i++;
         }
-        echo "Added hours for every Employee <br>";
+        $this->return['Inserted hours for every Employee'] = "Success";
         return $this;
     }
     public function insertDuplicateEntries($num = 5)
@@ -99,20 +80,20 @@ class Installer
         $i = 0;
         while($i < $num)
         {
-            $rand = $this->db->table("EmployeeHours")->randomTuple();
+            $rand = $this->db->table("employeehours")->randomTuple();
             $UUID = UUID::createRandomUUID($this->namespace);
             if (is_null($rand->HoursAccorded)){
                 $rand->HoursAccorded = "NULL";
                 $rand->AccordedByManager = "NULL";
             }
-            $sql= "INSERT INTO `EmployeeHours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
+            $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
                 VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->TypeOfHoursID, $rand->HoursAccorded)";
 /*            echo $sql."<br>".var_dump($rand)."<br>";*/
             $this->db->query($sql);
             $i++;
         }
-        echo "Duplicates entered <br>";
-        echo "Example = $UUID <br>";
+        $this->return['Added duplicate hours for testing purposes'] = "Success";
+        return $this;
     }
 
     public function createEmployees($num = 20)
@@ -122,7 +103,7 @@ class Installer
             $this->insertRandomEmployee();
             $i++;
         }
-        echo "Added $num Employees <br>";
+        $this->return["Added $num random Employees"] = "Success";
         return $this;
     }
     protected function randomLetter()
@@ -146,5 +127,57 @@ class Installer
             $date = date('Y-m-d',
                 strtotime( $date . " +1 days"));
         }
+    }
+    public function returnStatus()
+    {
+        $status = json_encode($this->return);
+        unset($this->return);
+        return $status;
+    }
+
+    /**
+     * @param string $hostname
+     * @param string $database
+     * @param string $username
+     * @param string $password
+     * @param string $namespace
+     * @return string
+     */
+    public static function createDBCONF(string $hostname, string $database, string $username, string $password,string $namespace = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0') : string
+    {
+        if (gethostbyname($hostname . ".") == $hostname . ".") {
+            return json_encode(array("Hostname <strong>$hostname</strong> not resolvable" => "Warning"));
+        }
+        try
+        {
+            $pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        catch(PDOException $e)
+        {
+            die($e->getMessage());
+            return json_encode(array($e->getMessage() => "Warning"));
+        }
+        $filename = '../app/conf/DBCONF.php';
+        $dbconf = "
+<?php
+
+//database config file
+
+//rename this file to DBCONF.php, and enter database credentials
+//IMPORTANT: verify DBCONF.php is in .gitignore
+class DBCONF{
+    const HOSTNAME = '$hostname';
+    const DBNAME = '$database';
+    const USER = '$username';
+    const PASSWORD = '$password';
+    // NAMESPACE should be a valid UUID. You can use the default one, or
+    // generate one here: https://www.uuidgenerator.net/
+    const NAMESPACE = '$namespace';
+}
+";
+        file_put_contents($filename, $dbconf);
+        chmod($filename, 00644);
+        return json_encode(array("DBCONF.php created!" => "Succes"));
     }
 }

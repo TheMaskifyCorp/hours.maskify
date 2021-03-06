@@ -2,8 +2,8 @@
 
 class Database
 {
-    protected $host = DBCONF::HOSTNAME;
-    protected $db = DBCONF::DBNAME;
+    protected $hostname = DBCONF::HOSTNAME;
+    protected $database = DBCONF::DBNAME;
     protected $username = DBCONF::USER;
     protected $password = DBCONF::PASSWORD;
     protected $pdo;
@@ -18,13 +18,13 @@ class Database
         $this->debug = $debug;
         try
         {
-            $this->pdo = new PDO("mysql:host={$this->host};dbname={$this->db}",$this->username,$this->password);
+            $this->pdo = new PDO("mysql:host={$this->hostname};dbname={$this->database}",$this->username,$this->password);
             if ($this->debug)
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e)
         {
-            die($this->debug ? $e->getMessage() : '');
+            die($this->debug ? $e->getMessage() : json_encode(array($e->getMessage() => "Warning")));
         }
     }
     public function query($sql)
@@ -51,13 +51,19 @@ class Database
     public function selection(array $tablerows): Database
     {
         $this->selection = $tablerows;
+
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
     public function randomTuple()
     {
         $sql = "SELECT * FROM {$this->table} ORDER BY RAND()";
         $this->stmt = $this->pdo->prepare($sql);
         $this->stmt->execute();
+
         return $this->first();
     }
 
