@@ -18,12 +18,6 @@ CREATE TABLE departmenttypes(
     PRIMARY KEY(DepartmentID)
 ) ENGINE = INNODB;
 
-CREATE TABLE typeofhourstypes(
-    TypeOfHoursID INT(4),
-    Description VARCHAR(255),
-    PRIMARY KEY(TypeOfHoursID)
-) ENGINE = INNODB;
-
 CREATE TABLE `employees`(
     EmployeeID INT(11) NOT NULL AUTO_INCREMENT,
     FirstName VARCHAR(50) NOT NULL,
@@ -31,18 +25,24 @@ CREATE TABLE `employees`(
     Email VARCHAR(50) NOT NULL UNIQUE ,
     PhoneNumber VARCHAR(20) NOT NULL,
     Street VARCHAR(100) NOT NULL,
+    HouseNumber INT(10) NOT NULL,
     City VARCHAR(100) NOT NULL,
     DateOfBirth DATE NOT NULL,
     PostalCode VARCHAR(6) NOT NULL,
     FunctionTypeID INT(1) NOT NULL,
-    PayRate int(5),
     DocumentNumberID VARCHAR(22),
-    IDfile MEDIUMBLOB,
-    StartOfContract DATE,
-    EndOfContract DATE,
-    OutOfContract BOOLEAN,
     PRIMARY KEY(EmployeeID),
     FOREIGN KEY(FunctionTypeID) REFERENCES employeetypes(FunctionTypeID)
+) ENGINE = INNODB;
+
+CREATE TABLE contract(
+     EmployeeID INT(11) NOT NULL,
+     ContractStartDate DATE NOT NULL,
+     ContractEndDate DATE NOT NULL,
+     WeeklyHours INT(4) NOT NULL,
+     PayRate int(5),
+     PRIMARY KEY(EmployeeID, ContractStartDate),
+     FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID)
 ) ENGINE = INNODB;
 
 CREATE TABLE logincredentials(
@@ -66,10 +66,31 @@ CREATE TABLE employeehours(
       AccordedByManager INT(11),
       DeclaratedDate DATE NOT NULL ,
       EmployeeHoursQuantityInMinutes INT(4) NOT NULL,
-      TypeOfHoursID INT(4) NOT NULL,
       HoursAccorded BOOL,
       PRIMARY KEY(EmployeeHoursID),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
-      FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID),
-      FOREIGN KEY(TypeOfHoursID) REFERENCES typeofhourstypes(TypeOfHoursID)
+      FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID)
+) ENGINE = INNODB;
+
+CREATE TABLE sickleave(
+     EmployeeID INT(11) NOT NULL,
+     FirstSickDay DATE NOT NULL,
+     LastSickDay DATE NOT NULL,
+     AccordedByManager INT(11) NOT NULL,
+     Description TEXT NOT NULL,
+     PRIMARY KEY(EmployeeID, FirstSickDay),
+     FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
+     FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID)
+) ENGINE = INNODB;
+
+CREATE TABLE holidays(
+      EmployeeID INT(11) NOT NULL,
+      HolidayStartDate DATE NOT NULL,
+      HolidayEndDate DATE NOT NULL,
+      TotalHoursInMinutes INT(4) NOT NULL,
+      Accorded BOOL,
+      AccordedByManager INT(11),
+      PRIMARY KEY(EmployeeID, HolidayStartDate),
+      FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
+      FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID)
 ) ENGINE = INNODB;
