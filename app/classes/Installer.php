@@ -7,7 +7,9 @@ class Installer
     protected $lastNames = DummyData::lastNames;
     protected $streets = DummyData::streets;
     protected $cities = DummyData::cities;
-    protected $employees = array();
+    protected $payrate = DummyData::payrate;
+    protected $contracthours = DummyData::contracthours;
+
     protected $dates = array();
     protected $namespace = "c416205f-49fa-4e90-91f7-e39a1fa0c4c0";
     protected $return = array();
@@ -16,7 +18,7 @@ class Installer
     {
         $this->db = $db;
     }
-    public function installSQL($file)
+    public function installSQL($file) : Installer
     {
         $sql=file_get_contents($file);
         $this->db->query($sql);
@@ -36,46 +38,54 @@ class Installer
             }
         }
         $PhoneNumber = "+316".rand(10000000,99999999);
-        $Street = $this->streets[array_rand($this->streets)]." ".rand(1,200);
+        $Street = $this->streets[array_rand($this->streets)];
+        $HouseNumber = rand(1,200);
         $City = $this->cities[array_rand($this->cities)];
         $DateOfBirth = date("Y-m-d",rand(315532800,915148800));
         $PostalCode = rand(1000,9999).$this->randomLetter().$this->randomLetter();
         $DocumentNumberID = rand(10000000,99999999).$this->randomLetter().$this->randomLetter().rand(100,999);
         $DepartmentID = rand(1,6);
-
-        $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`PayRate`,`DocumentNumberID`,`IDfile`,`StartOfContract`,`EndOfContract`,`OutOfContract`)
-                VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$City','$DateOfBirth','$PostalCode','1','2000','$DocumentNumberID',NULL,'2021-01-01','2022-01-01','0');
-                INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());";
+        $PayRate = $this->payrate[array_rand($this->payrate)];
+        $ContractHours = $this->contracthours[array_rand($this->contracthours)];
+        $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`HouseNumber`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`DocumentNumberID`)
+                VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$HouseNumber','$City','$DateOfBirth','$PostalCode','1','$DocumentNumberID');
+                INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());
+                INSERT INTO `contracts`(EmployeeID, ContractStartDate, ContractEndDate, WeeklyHours, PayRate) VALUES (LAST_INSERT_ID(),'2020-09-01','2021-09-01',$ContractHours,$PayRate);
+                INSERT INTO `logincredentials`(EmployeeID, Password) VALUES (LAST_INSERT_ID(),1234);
+                ";
         $this->db->query($sql);
     }
-    public function insertRandomHours(){
+    public function insertRandomHours() : Installer
+    {
         $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
         $this->createDates();
         $i=1;
         while($i <= $count){
             foreach($this->dates as $date){
-                $type=rand(1,3);
-                $accArray = ["NULL","0","1"];
-                $acc = $accArray[array_rand($accArray)];
-                if ($acc=="NULL"){
-                    $man="NULL";
-                }else{
-                    $emp = new Employee($i,$this->db);
-                    $man = $emp->getManager();
+                $chance = rand(1,10);
+                if ($chance == 1){
+                    $accArray = ["NULL","0","1"];
+                    $acc = $accArray[array_rand($accArray)];
+                    if ($acc=="NULL"){
+                        $man="NULL";
+                    }else{
+                        $emp = new Employee($i);
+                        $man = $emp->getManager();
+                    }
+                    $UUID = UUID::createRandomUUID($this->namespace);
+                    $qArray = [60,90,120,180];
+                    $q = $qArray[array_rand($qArray)];
+                    $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `HoursAccorded`) 
+                    VALUES ('$UUID', $i, $man,'$date', $q, $acc)";
+                    $this->db->query($sql);
                 }
-                $UUID = UUID::createRandomUUID($this->namespace);
-                $qArray = [180,240,360,480];
-                $q = $qArray[array_rand($qArray)];
-                $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`) 
-                VALUES ('$UUID', $i, $man,'$date', $q, $type, $acc)";
-                $this->db->query($sql);
             }
             $i++;
         }
         $this->return['Inserted hours for every Employee'] = "Success";
         return $this;
     }
-    public function insertDuplicateEntries($num = 5)
+    public function insertDuplicateEntries($num = 5) : Installer
     {
         $i = 0;
         while($i < $num)
@@ -86,8 +96,8 @@ class Installer
                 $rand->HoursAccorded = "NULL";
                 $rand->AccordedByManager = "NULL";
             }
-            $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `TypeOfHoursID`, `HoursAccorded`)
-                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->TypeOfHoursID, $rand->HoursAccorded)";
+            $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `HoursAccorded`)
+                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->HoursAccorded)";
 /*            echo $sql."<br>".var_dump($rand)."<br>";*/
             $this->db->query($sql);
             $i++;
@@ -96,7 +106,7 @@ class Installer
         return $this;
     }
 
-    public function createEmployees($num = 20)
+    public function createEmployees($num = 20) : Installer
     {
         $i = 1;
         while ($i <= $num) {
@@ -106,12 +116,11 @@ class Installer
         $this->return["Added $num random Employees"] = "Success";
         return $this;
     }
-    protected function randomLetter()
+    protected function randomLetter() : string
     {
         $int = rand(0,25);
         $a_z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $rand_letter = $a_z[$int];
-        return $rand_letter;
+        return $a_z[$int];
     }
     protected function createDates()
     {
@@ -155,8 +164,7 @@ class Installer
         }
         catch(PDOException $e)
         {
-            die($e->getMessage());
-            return json_encode(array($e->getMessage() => "Warning"));
+            die(json_encode(array($e->getMessage() => "Warning")));
         }
         $filename = '../app/conf/DBCONF.php';
         $dbconf = "

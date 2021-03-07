@@ -1,19 +1,21 @@
 DROP TABLE IF EXISTS `employeehours`;
 DROP TABLE IF EXISTS `departmentmemberlist`;
+DROP TABLE IF EXISTS `contracts`;
 DROP TABLE IF EXISTS `logincredentials`;
+DROP TABLE IF EXISTS `sickleave`;
+DROP TABLE IF EXISTS `holidays`;
 DROP TABLE IF EXISTS `employees`;
 DROP TABLE IF EXISTS `employeetypes`;
 DROP TABLE IF EXISTS `departmenttypes`;
-DROP TABLE IF EXISTS `typeofhourstypes`;
 
 CREATE TABLE employeetypes(
-    FunctionTypeID INT(1) NOT NULL,
+    FunctionTypeID INT(3) NOT NULL,
     Description VARCHAR(255),
     PRIMARY KEY(FunctionTypeID)
 ) ENGINE = INNODB;
 
 CREATE TABLE departmenttypes(
-    DepartmentID INT(11) NOT NULL,
+    DepartmentID INT(3) NOT NULL,
     Description VARCHAR(255),
     PRIMARY KEY(DepartmentID)
 ) ENGINE = INNODB;
@@ -25,20 +27,20 @@ CREATE TABLE `employees`(
     Email VARCHAR(50) NOT NULL UNIQUE ,
     PhoneNumber VARCHAR(20) NOT NULL,
     Street VARCHAR(100) NOT NULL,
-    HouseNumber INT(10) NOT NULL,
+    HouseNumber VARCHAR(10) NOT NULL,
     City VARCHAR(100) NOT NULL,
-    DateOfBirth DATE NOT NULL,
     PostalCode VARCHAR(6) NOT NULL,
+    DateOfBirth DATE NOT NULL,
     FunctionTypeID INT(1) NOT NULL,
     DocumentNumberID VARCHAR(22),
     PRIMARY KEY(EmployeeID),
     FOREIGN KEY(FunctionTypeID) REFERENCES employeetypes(FunctionTypeID)
 ) ENGINE = INNODB;
 
-CREATE TABLE contract(
+CREATE TABLE contracts(
      EmployeeID INT(11) NOT NULL,
      ContractStartDate DATE NOT NULL,
-     ContractEndDate DATE NOT NULL,
+     ContractEndDate DATE,
      WeeklyHours INT(4) NOT NULL,
      PayRate int(5),
      PRIMARY KEY(EmployeeID, ContractStartDate),
@@ -66,7 +68,7 @@ CREATE TABLE employeehours(
       AccordedByManager INT(11),
       DeclaratedDate DATE NOT NULL ,
       EmployeeHoursQuantityInMinutes INT(4) NOT NULL,
-      HoursAccorded BOOL,
+      HoursAccorded BOOLEAN,
       PRIMARY KEY(EmployeeHoursID),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
       FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID)
@@ -88,7 +90,7 @@ CREATE TABLE holidays(
       HolidayStartDate DATE NOT NULL,
       HolidayEndDate DATE NOT NULL,
       TotalHoursInMinutes INT(4) NOT NULL,
-      Accorded BOOL,
+      Accorded BOOLEAN,
       AccordedByManager INT(11),
       PRIMARY KEY(EmployeeID, HolidayStartDate),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),

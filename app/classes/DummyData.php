@@ -218,4 +218,7 @@ class DummyData
         'Delft',
         'Venlo',
         'Deventer'];
+
+    const payrate = [1600,1800,2200,2600];
+    const contracthours = [20,24,32,40];
 }

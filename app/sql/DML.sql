@@ -15,8 +15,3 @@ VALUES ("1", "Verkoop"),
        ("4", "Financieën "),
        ("5", "Inkoop"),
        ("6", "Design");
--- create TypeOfHoursTypes
-INSERT INTO `typeofhourstypes` (`TypeOfHoursID`, `Description`)
-VALUES ("1", "Worked hours"),
-       ("2", "Holidays"),
-       ("3", "Sick Leave");
