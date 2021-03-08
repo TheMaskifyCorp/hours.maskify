@@ -47,21 +47,15 @@ if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            <!-- OUR FORM -->
+                        <div class="Sign In">
                             <form id="signin" action="signin.php" method="POST">
-                                <!-- NAME -->
                                 <div id="name-group" class="form-group">
                                     <label for="username">Name</label>
                                     <input type="text" class="form-control" name="username" placeholder="Gebruiker">
-                                    <!-- errors will go here -->
                                 </div>
-
-                                <!-- EMAIL -->
                                 <div id="password-group" class="form-group">
                                     <label for="password">Email</label>
                                     <input type="password" class="form-control" name="password" placeholder="password">
-                                    <!-- errors will go here -->
                                 </div>
                                 <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button
                             </form>
