@@ -47,4 +47,9 @@ class Employee
         }
         return false;
     }
+    public function getPassword()
+    {
+        $credentials = $this->db->table('logincredentials')->where('EmployeeID','=',$this->EmployeeID)->first();
+        return $credentials->Password;
+    }
 }

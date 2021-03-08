@@ -3,6 +3,7 @@
 class Installer
 {
     protected $db;
+    protected $hashedPassword = '$2y$10$.ucVmlERZRShNPvIoPP3..1ydWWHMn.kjg1KDJbr/1g8xU.Ke1I.K';
     protected $firstNames = DummyData::firstNames;
     protected $lastNames = DummyData::lastNames;
     protected $streets = DummyData::streets;
@@ -47,11 +48,12 @@ class Installer
         $DepartmentID = rand(1,6);
         $PayRate = $this->payrate[array_rand($this->payrate)];
         $ContractHours = $this->contracthours[array_rand($this->contracthours)];
+        $password = $this->hashedPassword;
         $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`HouseNumber`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`DocumentNumberID`)
                 VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$HouseNumber','$City','$DateOfBirth','$PostalCode','1','$DocumentNumberID');
                 INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());
                 INSERT INTO `contracts`(EmployeeID, ContractStartDate, ContractEndDate, WeeklyHours, PayRate) VALUES (LAST_INSERT_ID(),'2020-09-01','2021-09-01',$ContractHours,$PayRate);
-                INSERT INTO `logincredentials`(EmployeeID, Password) VALUES (LAST_INSERT_ID(),1234);
+                INSERT INTO `logincredentials`(EmployeeID, Password) VALUES (LAST_INSERT_ID(),'$password');
                 ";
         $this->db->query($sql);
     }

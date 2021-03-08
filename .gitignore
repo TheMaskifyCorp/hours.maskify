@@ -1,3 +1,4 @@
 .idea/
 app/conf/DBCONF.php
 app/js/jquery.js
+test.php
