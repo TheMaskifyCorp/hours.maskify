@@ -3,6 +3,7 @@
 class Installer
 {
     protected $db;
+    protected $numEmp;
     protected $hashedPassword = '$2y$10$.ucVmlERZRShNPvIoPP3..1ydWWHMn.kjg1KDJbr/1g8xU.Ke1I.K';
     protected $firstNames = DummyData::firstNames;
     protected $lastNames = DummyData::lastNames;
@@ -61,6 +62,7 @@ class Installer
 
     public function createEmployees($num = 20) : Installer
     {
+        $this->numEmp = $num;
         $i = 1;
         while ($i <= $num) {
             $this->insertRandomEmployee();
@@ -126,7 +128,11 @@ class Installer
         {
            $this->createDates();
         }
-        $numEmp = $this->db->table('employees')->where('EmployeeID','>',0)->count();
+        if (empty($this->numEmp)){
+            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+        } else {
+            $numEmp = $this->numEmp;
+        };
         $i = 0;
         while($i<$amount) {
             $desc = $this->sickleave[array_rand($this->sickleave)];
@@ -148,16 +154,47 @@ class Installer
         return $this;
     }
 
+    public function createRandomHolidays() : Installer
+    {
+        if (empty($this->numEmp)){
+            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+        } else {
+            $numEmp = $this->numEmp;
+        };
+        $this->createDates("2021-05-01","2021-09-30");
+
+        $i = 0;
+        while ($i < $numEmp){
+            $i++;
+            unset($data);
+            $duration = rand(1, 21);
+            $data['EmployeeID'] = $i;
+            $data['HolidayStartDate'] = $this->dates[array_rand($this->dates)];
+            $data['HolidayEndDate'] = date('Y-m-d',
+                strtotime($data['HolidayStartDate'] . " +$duration days"));
+            $data['TotalHoursInMinutes'] = $duration * 8 * 60;
+            $accorded = rand(1,10);
+            if($accorded > 3){
+                $emp = new Employee($numEmp);
+                $manager = $emp->getManager();
+                $data['Accorded'] = 1;
+                $data['AccordedByManager'] = $manager;
+            }
+            $this->db->table('holidays')->insert($data);
+        }
+        $this->return['Added random holidays for all employee\'s'] = "Success";
+
+        return $this;
+    }
+
     protected function randomLetter() : string
     {
         $int = rand(0,25);
         $a_z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return $a_z[$int];
     }
-    protected function createDates()
+    protected function createDates($startDate = "2020-09-01",$endDate = "2021-02-28")
     {
-        $startDate = "2020-09-01";
-        $endDate = "2021-02-28";
         $date = $startDate;
         while(strtotime($date) <= strtotime($endDate))
         {
