@@ -3,22 +3,18 @@
 class Employee
 {
     protected $db;
-    protected $EmployeeID;
+    public    $EmployeeID;
     protected $FirstName;
     protected $LastName;
     protected $Email;
     protected $PhoneNumber;
     protected $Street;
+    protected $HouseNumber;
     protected $City;
     protected $DateOfBirth;
     protected $PostalCode;
     protected $FunctionTypeID;
-    protected $PayRate;
     protected $DocumentNumberID;
-    protected $IDfile = NULL;
-    protected $StartOfContract;
-    protected $EndOfContract;
-    protected $OutOfContract;
     protected $DepartmentID = array();
 
     public function __construct($id)
@@ -35,13 +31,19 @@ class Employee
             $this->DepartmentID[] = $dep;
         }
     }
+    public function getDepartment(){
+        $id = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where('EmployeeID','=',$this->EmployeeID)->first();
+        return $id->DepartmentID;
+    }
+
     public function getManager()
     {
-        $managers = $this->db->table('employees')->selection(['EmployeeID'])->where("FunctionTypeID","=","3")->get();
+        $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','departmentmemberlist.EmployeeID = employees.EmployeeID')->where("FunctionTypeID","=","3")->get();
+        $department = $this->getDepartment();
         foreach($managers as $man){
             $id = $man->EmployeeID;
-            $manager = new Employee($id,$this->db);
-            if (in_array($this->DepartmentID[0],$manager->DepartmentID)){
+            $manager = new Employee($id);
+            if (in_array($department,$manager->DepartmentID)){
                 return $id;
             }
         }
