@@ -10,6 +10,7 @@ class Installer
     protected $cities = DummyData::cities;
     protected $payrate = DummyData::payrate;
     protected $contracthours = DummyData::contracthours;
+    protected $sickleave = DummyData::sickLeaveReason;
 
     protected $dates = array();
     protected $namespace = "c416205f-49fa-4e90-91f7-e39a1fa0c4c0";
@@ -57,6 +58,18 @@ class Installer
                 ";
         $this->db->query($sql);
     }
+
+    public function createEmployees($num = 20) : Installer
+    {
+        $i = 1;
+        while ($i <= $num) {
+            $this->insertRandomEmployee();
+            $i++;
+        }
+        $this->return["Added $num random Employees"] = "Success";
+        return $this;
+    }
+
     public function insertRandomHours() : Installer
     {
         $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
@@ -107,17 +120,34 @@ class Installer
         $this->return['Added duplicate hours for testing purposes'] = "Success";
         return $this;
     }
-
-    public function createEmployees($num = 20) : Installer
+    public function createRandomSickLeave($amount = 20) : Installer
     {
-        $i = 1;
-        while ($i <= $num) {
-            $this->insertRandomEmployee();
+        if(empty($this->dates))
+        {
+           $this->createDates();
+        }
+        $numEmp = $this->db->table('employees')->where('EmployeeID','>',0)->count();
+        $i = 0;
+        while($i<$amount) {
+            $desc = $this->sickleave[array_rand($this->sickleave)];
+            $duration = rand(0, 5);
+            $startDate = $this->dates[array_rand($this->dates)];
+            $endDate = date('Y-m-d',
+                strtotime($startDate . " +$duration days"));
+            $emp = new Employee(rand(1, $numEmp));
+            $manager = $emp->getManager();
+
+            $this->db->table('sickleave')->insert(['EmployeeID' => $emp->EmployeeID,
+                'FirstSickDay' => $startDate,
+                'LastSickDay' => $endDate,
+                'AccordedByManager' => $manager,
+                'Description' => $desc]);
             $i++;
         }
-        $this->return["Added $num random Employees"] = "Success";
+        $this->return['Added random sickness for random employee\'s'] = "Success";
         return $this;
     }
+
     protected function randomLetter() : string
     {
         $int = rand(0,25);
@@ -126,7 +156,7 @@ class Installer
     }
     protected function createDates()
     {
-        $startDate = "2021-01-01";
+        $startDate = "2020-09-01";
         $endDate = "2021-02-28";
         $date = $startDate;
         while(strtotime($date) <= strtotime($endDate))

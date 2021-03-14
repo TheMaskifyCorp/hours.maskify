@@ -30,6 +30,7 @@ if (isset($_POST['dummydata']))
         ->createEmployees(50)
         ->insertRandomHours()
         ->insertDuplicateEntries()
+        ->createRandomSickLeave()
         ->returnStatus();
 } else {
     echo $install->installSQL($ddl)
