@@ -77,7 +77,7 @@ CREATE TABLE employeehours(
 CREATE TABLE sickleave(
      EmployeeID INT(11) NOT NULL,
      FirstSickDay DATE NOT NULL,
-     LastSickDay DATE NOT NULL,
+     LastSickDay DATE,
      AccordedByManager INT(11) NOT NULL,
      Description TEXT NOT NULL,
      PRIMARY KEY(EmployeeID, FirstSickDay),
