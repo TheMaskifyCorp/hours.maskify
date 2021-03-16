@@ -164,4 +164,8 @@ class Database
     {
         return $this->get()[0];
     }
+    public function lastID()
+    {
+        return $this->pdo->lastInsertId();
+    }
 }
