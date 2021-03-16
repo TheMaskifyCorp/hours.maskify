@@ -1,6 +1,11 @@
 <?php
 
 require_once 'app/init.php';
+/**
+ * @var Auth $auth
+ * @var Database $db
+ */
+
 if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
 ?>
 
