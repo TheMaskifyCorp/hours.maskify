@@ -90,7 +90,7 @@ CREATE TABLE holidays(
       HolidayStartDate DATE NOT NULL,
       HolidayEndDate DATE NOT NULL,
       TotalHoursInMinutes INT(4) NOT NULL,
-      Accorded BOOLEAN,
+      HolidaysAccorded BOOLEAN,
       AccordedByManager INT(11),
       PRIMARY KEY(EmployeeID, HolidayStartDate),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),

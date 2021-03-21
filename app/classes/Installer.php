@@ -183,7 +183,7 @@ class Installer
             if($accorded > 3){
                 $emp = new Employee($numEmp);
                 $manager = $emp->getManager();
-                $data['Accorded'] = 1;
+                $data['HolidaysAccorded'] = 1;
                 $data['AccordedByManager'] = $manager;
             }
             $this->db->table('holidays')->insert($data);
