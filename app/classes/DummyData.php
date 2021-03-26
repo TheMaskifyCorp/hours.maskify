@@ -221,4 +221,16 @@ class DummyData
 
     const payrate = [1600,1800,2200,2600];
     const contracthours = [20,24,32,40];
+
+    const sickLeaveReason = [
+        'Sir, I am not well today. I am Sick :(',
+        'I have an dentist appointment',
+        'Family member is not well',
+        'Parent’s doctor appointment ',
+        'Deceased relative',
+        'Trouble with residence',
+        'Daycare issue',
+        'Family member contracted COVID, in quarantine',
+        'Influenze'
+    ];
 }

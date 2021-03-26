@@ -77,7 +77,7 @@ CREATE TABLE employeehours(
 CREATE TABLE sickleave(
      EmployeeID INT(11) NOT NULL,
      FirstSickDay DATE NOT NULL,
-     LastSickDay DATE NOT NULL,
+     LastSickDay DATE,
      AccordedByManager INT(11) NOT NULL,
      Description TEXT NOT NULL,
      PRIMARY KEY(EmployeeID, FirstSickDay),
@@ -90,7 +90,7 @@ CREATE TABLE holidays(
       HolidayStartDate DATE NOT NULL,
       HolidayEndDate DATE NOT NULL,
       TotalHoursInMinutes INT(4) NOT NULL,
-      Accorded BOOLEAN,
+      HolidaysAccorded BOOLEAN,
       AccordedByManager INT(11),
       PRIMARY KEY(EmployeeID, HolidayStartDate),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),

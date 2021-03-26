@@ -11,6 +11,7 @@ class Database
     protected $table;
     protected $row;
     protected $selection;
+    protected $innerJoin;
     protected $stmt;
 
     public function __construct($debug = false)
@@ -39,6 +40,7 @@ class Database
     public function table($table): Database
     {
         unset($this->selection);
+        unset($this->innerJoin);
         $this->table = $table;
         return $this;
     }
@@ -51,7 +53,6 @@ class Database
     public function selection(array $tablerows): Database
     {
         $this->selection = $tablerows;
-
         return $this;
     }
 
@@ -60,10 +61,9 @@ class Database
      */
     public function randomTuple()
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY RAND()";
+        $sql = "SELECT * FROM $this->table ORDER BY RAND()";
         $this->stmt = $this->pdo->prepare($sql);
         $this->stmt->execute();
-
         return $this->first();
     }
 
@@ -82,10 +82,10 @@ class Database
     public function insert(array $data) : bool
     {
         $keys = array_keys($data);
-        $fields = '`' . implode('`, `',$keys) . '`';
+        $fields = '`' . implode('`, `', $keys) . '`';
         $placeholders = ':' . implode(', :', $keys);
 
-        $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$placeholders})";
+        $sql = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
         $this->stmt = $this->pdo->prepare($sql);
         return $this->stmt->execute($data);
     }
@@ -102,13 +102,13 @@ class Database
      */
     public function innerJoin(string $table, string $on)
     {
-        $selection = implode(', ',$this->selection);
-        $sql = "SELECT {$selection}
-                FROM {$this->table}
-                INNER JOIN {$table}
-                ON {$on}";
-        $this->stmt = $this->pdo->prepare($sql);
-        $this->stmt->execute();
+        if(!empty($this->innerJoin)){
+            $this->innerJoin .= " INNER JOIN $table
+                ON $on";
+        } else {
+            $this->innerJoin = "INNER JOIN $table
+                ON $on";
+        }
         return $this;
     }
 
@@ -125,7 +125,12 @@ class Database
         } else {
             $selection = implode(', ',$this->selection);
         }
-        $this->stmt = $this->pdo->prepare("SELECT {$selection} FROM {$this->table} WHERE {$field} {$operator} :value");
+        if(!isset($this->innerJoin)) {
+            $innerJoin="";
+        } else {
+            $innerJoin = $this->innerJoin;
+        }
+        $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $field $operator :value");
         $this->stmt->execute(['value' => $value]);
         return $this;
     }
@@ -151,15 +156,16 @@ class Database
     {
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
+    public function returnstmt()
+    {
+        return $this->stmt;
+    }
     public function first()
     {
         return $this->get()[0];
     }
-    public function clear(){
-        unset($this->table);
-        unset($this->row);
-        unset($this->selection);
-        unset($this->stmt);
-        return $this;
+    public function lastID()
+    {
+        return $this->pdo->lastInsertId();
     }
 }

@@ -3,12 +3,15 @@
 class Installer
 {
     protected $db;
+    protected $numEmp;
+    protected $hashedPassword = '$2y$10$.ucVmlERZRShNPvIoPP3..1ydWWHMn.kjg1KDJbr/1g8xU.Ke1I.K';
     protected $firstNames = DummyData::firstNames;
     protected $lastNames = DummyData::lastNames;
     protected $streets = DummyData::streets;
     protected $cities = DummyData::cities;
     protected $payrate = DummyData::payrate;
     protected $contracthours = DummyData::contracthours;
+    protected $sickleave = DummyData::sickLeaveReason;
 
     protected $dates = array();
     protected $namespace = "c416205f-49fa-4e90-91f7-e39a1fa0c4c0";
@@ -35,26 +38,48 @@ class Installer
             $Email = strtolower($Email);
             if($this->db->table('employees')->where('Email','=',$Email)->count()) {
                 $Email = false;
+            } else {
+                $employee['Firstname'] = $FirstName;
+                $employee['LastName'] = $LastName;
+                $employee['Email']  = $Email;
             }
         }
-        $PhoneNumber = "+316".rand(10000000,99999999);
-        $Street = $this->streets[array_rand($this->streets)];
-        $HouseNumber = rand(1,200);
-        $City = $this->cities[array_rand($this->cities)];
-        $DateOfBirth = date("Y-m-d",rand(315532800,915148800));
-        $PostalCode = rand(1000,9999).$this->randomLetter().$this->randomLetter();
-        $DocumentNumberID = rand(10000000,99999999).$this->randomLetter().$this->randomLetter().rand(100,999);
-        $DepartmentID = rand(1,6);
-        $PayRate = $this->payrate[array_rand($this->payrate)];
-        $ContractHours = $this->contracthours[array_rand($this->contracthours)];
-        $sql = "INSERT INTO `employees`(`FirstName`,`LastName`,`Email`,`PhoneNumber`,`Street`,`HouseNumber`,`City`,`DateOfBirth`,`PostalCode`,`FunctionTypeID`,`DocumentNumberID`)
-                VALUES('$FirstName','$LastName','$Email','$PhoneNumber','$Street','$HouseNumber','$City','$DateOfBirth','$PostalCode','1','$DocumentNumberID');
-                INSERT INTO `departmentmemberlist`(`DepartmentID`,`EmployeeID`) VALUES ($DepartmentID,LAST_INSERT_ID());
-                INSERT INTO `contracts`(EmployeeID, ContractStartDate, ContractEndDate, WeeklyHours, PayRate) VALUES (LAST_INSERT_ID(),'2020-09-01','2021-09-01',$ContractHours,$PayRate);
-                INSERT INTO `logincredentials`(EmployeeID, Password) VALUES (LAST_INSERT_ID(),1234);
-                ";
-        $this->db->query($sql);
+        $employee['PhoneNumber'] = "+316".rand(10000000,99999999);
+        $employee['Street'] = $this->streets[array_rand($this->streets)];
+        $employee['HouseNumber'] = rand(1,200);
+        $employee['City'] = $this->cities[array_rand($this->cities)];
+        $employee['DateOfBirth'] = date("Y-m-d",rand(315532800,915148800));
+        $employee['PostalCode'] = rand(1000,9999).$this->randomLetter().$this->randomLetter();
+        $employee['DocumentNumberID'] = rand(10000000,99999999).$this->randomLetter().$this->randomLetter().rand(100,999);
+        $employee['FunctionTypeID'] = 1;
+        $department['DepartmentID'] = rand(1,6);
+        $contract['PayRate'] = $this->payrate[array_rand($this->payrate)];
+        $contract['WeeklyHours'] = $this->contracthours[array_rand($this->contracthours)];
+        $contract['ContractStartDate'] = '2020-09-01';
+        $contract['ContractEndDate'] = '2021-09-01';
+        $login['Password']= $this->hashedPassword;
+        $this->db->table('employees')->insert($employee);
+        $lastID = $this->db->lastID();
+        $department['EmployeeID'] = $lastID;
+        $contract['EmployeeID'] = $lastID;
+        $login['EmployeeID'] = $lastID;
+        $this->db->table('departmentmemberlist')->insert($department);
+        $this->db->table('contracts')->insert($contract);
+        $this->db->table('logincredentials')->insert($login);
     }
+
+    public function createEmployees($num = 20) : Installer
+    {
+        $this->numEmp = $num;
+        $i = 1;
+        while ($i <= $num) {
+            $this->insertRandomEmployee();
+            $i++;
+        }
+        $this->return["Added $num random Employees"] = "Success";
+        return $this;
+    }
+
     public function insertRandomHours() : Installer
     {
         $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
@@ -64,20 +89,20 @@ class Installer
             foreach($this->dates as $date){
                 $chance = rand(1,10);
                 if ($chance == 1){
-                    $accArray = ["NULL","0","1"];
-                    $acc = $accArray[array_rand($accArray)];
-                    if ($acc=="NULL"){
-                        $man="NULL";
+                    $data['DeclaratedDate'] = $date;
+                    $accArray = [NULL,"0","1"];
+                    $data['HoursAccorded'] = $accArray[array_rand($accArray)];
+                    if ($data['HoursAccorded']=== NULL){
+                        $data['AccordedByManager']= NULL ;
                     }else{
                         $emp = new Employee($i);
-                        $man = $emp->getManager();
+                        $data['AccordedByManager'] = $emp->getManager();
                     }
-                    $UUID = UUID::createRandomUUID($this->namespace);
+                    $data['EmployeeHoursID'] = UUID::createRandomUUID($this->namespace);
+                    $data['EmployeeID'] = $i;
                     $qArray = [60,90,120,180];
-                    $q = $qArray[array_rand($qArray)];
-                    $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `HoursAccorded`) 
-                    VALUES ('$UUID', $i, $man,'$date', $q, $acc)";
-                    $this->db->query($sql);
+                    $data['EmployeeHoursQuantityInMinutes'] = $qArray[array_rand($qArray)];
+                    $this->db->table('employeehours')->insert($data);
                 }
             }
             $i++;
@@ -90,42 +115,92 @@ class Installer
         $i = 0;
         while($i < $num)
         {
-            $rand = $this->db->table("employeehours")->randomTuple();
+            $data = $this->db->table("employeehours")->randomTuple();
             $UUID = UUID::createRandomUUID($this->namespace);
-            if (is_null($rand->HoursAccorded)){
-                $rand->HoursAccorded = "NULL";
-                $rand->AccordedByManager = "NULL";
+            $data->EmployeeHoursID = $UUID;
+            if (is_null($data->HoursAccorded)){
+                $data->HoursAccorded = "NULL";
+                $data->AccordedByManager = "NULL";
             }
-            $sql= "INSERT INTO `employeehours`(`EmployeeHoursID`, `EmployeeID`, `AccordedByManager`, `DeclaratedDate`, `EmployeeHoursQuantityInMinutes`, `HoursAccorded`)
-                VALUES ('$UUID', $rand->EmployeeID, $rand->AccordedByManager,'$rand->DeclaratedDate', $rand->EmployeeHoursQuantityInMinutes, $rand->HoursAccorded)";
-/*            echo $sql."<br>".var_dump($rand)."<br>";*/
-            $this->db->query($sql);
+            $this->db->table('employeehours')->insert((array) $data);
             $i++;
         }
         $this->return['Added duplicate hours for testing purposes'] = "Success";
         return $this;
     }
-
-    public function createEmployees($num = 20) : Installer
+    public function createRandomSickLeave($amount = 20) : Installer
     {
-        $i = 1;
-        while ($i <= $num) {
-            $this->insertRandomEmployee();
+        if(empty($this->dates))
+        {
+           $this->createDates();
+        }
+        if (empty($this->numEmp)){
+            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+        } else {
+            $numEmp = $this->numEmp;
+        };
+        $i = 0;
+        while($i<$amount) {
+            $desc = $this->sickleave[array_rand($this->sickleave)];
+            $duration = rand(0, 5);
+            $startDate = $this->dates[array_rand($this->dates)];
+            $endDate = date('Y-m-d',
+                strtotime($startDate . " +$duration days"));
+            $emp = new Employee(rand(1, $numEmp));
+            $manager = $emp->getManager();
+
+            $this->db->table('sickleave')->insert(['EmployeeID' => $emp->EmployeeID,
+                'FirstSickDay' => $startDate,
+                'LastSickDay' => $endDate,
+                'AccordedByManager' => $manager,
+                'Description' => $desc]);
             $i++;
         }
-        $this->return["Added $num random Employees"] = "Success";
+        $this->return['Added random sickness for random employee\'s'] = "Success";
         return $this;
     }
+
+    public function createRandomHolidays() : Installer
+    {
+        if (empty($this->numEmp)){
+            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+        } else {
+            $numEmp = $this->numEmp;
+        };
+        $this->createDates("2021-05-01","2021-09-30");
+
+        $i = 0;
+        while ($i < $numEmp){
+            $i++;
+            unset($data);
+            $duration = rand(1, 21);
+            $data['EmployeeID'] = $i;
+            $data['HolidayStartDate'] = $this->dates[array_rand($this->dates)];
+            $data['HolidayEndDate'] = date('Y-m-d',
+                strtotime($data['HolidayStartDate'] . " +$duration days"));
+            $data['TotalHoursInMinutes'] = $duration * 8 * 60;
+            $accorded = rand(1,10);
+            if($accorded > 3){
+                $emp = new Employee($numEmp);
+                $manager = $emp->getManager();
+                $data['HolidaysAccorded'] = 1;
+                $data['AccordedByManager'] = $manager;
+            }
+            $this->db->table('holidays')->insert($data);
+        }
+        $this->return['Added random holidays for all employee\'s'] = "Success";
+
+        return $this;
+    }
+
     protected function randomLetter() : string
     {
         $int = rand(0,25);
         $a_z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return $a_z[$int];
     }
-    protected function createDates()
+    protected function createDates($startDate = "2020-09-01",$endDate = "2021-02-28")
     {
-        $startDate = "2021-01-01";
-        $endDate = "2021-02-28";
         $date = $startDate;
         while(strtotime($date) <= strtotime($endDate))
         {
