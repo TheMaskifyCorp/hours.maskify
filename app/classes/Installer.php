@@ -229,9 +229,10 @@ class Installer
      */
     public static function createDBCONF(string $hostname, string $database, string $username, string $password,string $namespace = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0') : string
     {
-        if (gethostbyname($hostname . ".") == $hostname . ".") {
+        //commented hostname check, because it failes on IPv6-only hostnames.
+/*        if (gethostbyname($hostname . ".") == $hostname . ".") {
             return json_encode(array("Hostname <strong>$hostname</strong> not resolvable" => "Warning"));
-        }
+        }*/
         try
         {
             $pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
