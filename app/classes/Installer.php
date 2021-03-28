@@ -119,8 +119,8 @@ class Installer
             $UUID = UUID::createRandomUUID($this->namespace);
             $data->EmployeeHoursID = $UUID;
             if (is_null($data->HoursAccorded)){
-                $data->HoursAccorded = "NULL";
-                $data->AccordedByManager = "NULL";
+                $data->HoursAccorded = NULL;
+                $data->AccordedByManager = NULL;
             }
             $this->db->table('employeehours')->insert((array) $data);
             $i++;
