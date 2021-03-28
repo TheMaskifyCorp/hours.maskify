@@ -100,8 +100,7 @@ CREATE TABLE holidays(
 /*STORED PROCEDURES*/
 
 /*CREATE PROCEDURE FOR LOGIN*/
-DELIMITER $$
-DROP PROCEDURE IF EXISTS MatchEmployeeIDToFirstNameLastName$$
+DROP PROCEDURE IF EXISTS MatchEmployeeIDToFirstNameLastName;
 CREATE PROCEDURE MatchEmployeeIDToFirstNameLastName(
     IN Fname varchar(10),
     IN Lname varchar(10),
@@ -115,11 +114,11 @@ BEGIN
     FROM employees
 
     WHERE Fname=firstname AND Lname=lastname;
-END $$
+END;
 
 /*CREATE PROCEDURE VERLONING*/
 
-DROP PROCEDURE IF EXISTS verloning$$
+DROP PROCEDURE IF EXISTS verloning;
 CREATE PROCEDURE verloning(
     IN Fname varchar(50),
     IN Lname varchar(50),
@@ -151,11 +150,11 @@ BEGIN
       AND employees.EmployeeID = contracts.EmployeeID
       AND employeehours.DeclaratedDate BETWEEN startd AND endd
     GROUP BY employeehours.DeclaratedDate WITH ROLLUP;
-END $$
+END;
 
 /*CREATE PROCEDURE TO MATCH EMAIL AND PASSWORD*/
 
-DROP PROCEDURE IF EXISTS MatchEmailToID$$
+DROP PROCEDURE IF EXISTS MatchEmailToID;
 CREATE PROCEDURE MatchEmailToID(
     IN Email varchar(50),
     IN Paswinp varchar(255),
@@ -170,11 +169,11 @@ BEGIN
     FROM employees
              LEFT JOIN logincredentials ON employees.EmployeeID = logincredentials.EmployeeID
     WHERE employees.Email = Email AND Paswinp = logincredentials.Password;
-END $$
+END;
 
 /*CREATE PROCEDURE FOR ALL ACCORDED HOURS*/
 
-DROP PROCEDURE IF EXISTS AccordedHoursBetween$$
+DROP PROCEDURE IF EXISTS AccordedHoursBetween;
 CREATE PROCEDURE AccordedHoursBetween(
     IN ID INT(3),
     IN startdate DATE,
@@ -191,13 +190,11 @@ BEGIN
     WHERE employeehours.EmployeeID = ID
       AND employeehours.HoursAccorded = 1
       AND employeehours.DeclaratedDate BETWEEN startdate AND enddate;
-END $$
-DELIMITER ;
-
+END;
 
 /*VIEWS*/
 
-DROP VIEW managers;
+DROP VIEW IF EXISTS managers;
 CREATE VIEW managers AS
 SELECT departmenttypes.Description as Department, departmentmemberlist.DepartmentID, CONCAT(FirstName, ' ',LastName) as Name, employees.EmployeeID
 FROM employees
