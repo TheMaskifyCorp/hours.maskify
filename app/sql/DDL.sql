@@ -90,9 +90,119 @@ CREATE TABLE holidays(
       HolidayStartDate DATE NOT NULL,
       HolidayEndDate DATE NOT NULL,
       TotalHoursInMinutes INT(4) NOT NULL,
-      HolidaysAccorded BOOLEAN,
+      Accorded BOOLEAN,
       AccordedByManager INT(11),
       PRIMARY KEY(EmployeeID, HolidayStartDate),
       FOREIGN KEY(EmployeeID) REFERENCES employees(EmployeeID),
       FOREIGN KEY(AccordedByManager) REFERENCES employees(EmployeeID)
 ) ENGINE = INNODB;
+
+/*STORED PROCEDURES*/
+
+/*CREATE PROCEDURE FOR LOGIN*/
+DELIMITER $$
+DROP PROCEDURE IF EXISTS MatchEmployeeIDToFirstNameLastName$$
+CREATE PROCEDURE MatchEmployeeIDToFirstNameLastName(
+    IN Fname varchar(10),
+    IN Lname varchar(10),
+    OUT ID INT(1)
+)
+BEGIN
+    SELECT
+        employees.FirstName AS firstname,
+        employees.LastName AS lastname,
+        employees.EmployeeID AS ID
+    FROM employees
+
+    WHERE Fname=firstname AND Lname=lastname;
+END $$
+
+/*CREATE PROCEDURE VERLONING*/
+
+DROP PROCEDURE IF EXISTS verloning$$
+CREATE PROCEDURE verloning(
+    IN Fname varchar(50),
+    IN Lname varchar(50),
+    IN startd DATE,
+    IN endd DATE,
+    OUT Month_name varchar(50),
+    OUT ID INT(3)
+)
+BEGIN
+    SELECT DISTINCT
+        employees.FirstName AS firstname,
+        employees.LastName AS lastname,
+        employees.EmployeeID AS ID,
+        contracts.PayRate,
+        employeehours.EmployeeHoursQuantityInMinutes,
+        (employeehours.EmployeeHoursQuantityInMinutes)/60 AS declaratedhours,
+        SUM(employeehours.EmployeeHoursQuantityInMinutes)/60 Totalhours,
+        startd AS Startdate,
+        endd AS Enddate,
+        employeehours.DeclaratedDate,
+        MONTHNAME(employeehours.DeclaratedDate) AS Month_name
+    FROM
+        employees, employeehours, contracts
+    WHERE Fname = firstname
+      AND Lname = lastname
+      AND employeehours.HoursAccorded = 1
+      AND contracts.EmployeeID = employeehours.EmployeeID
+      AND employees.EmployeeID = employeehours.EmployeeID
+      AND employees.EmployeeID = contracts.EmployeeID
+      AND employeehours.DeclaratedDate BETWEEN startd AND endd
+    GROUP BY employeehours.DeclaratedDate WITH ROLLUP;
+END $$
+
+/*CREATE PROCEDURE TO MATCH EMAIL AND PASSWORD*/
+
+DROP PROCEDURE IF EXISTS MatchEmailToID$$
+CREATE PROCEDURE MatchEmailToID(
+    IN Email varchar(50),
+    IN Paswinp varchar(255),
+    OUT EmployeeID INT(3)
+)
+BEGIN
+    SELECT
+        employees.Email AS Emailemp,
+        employees.EmployeeID AS EmployeeID,
+        logincredentials.EmployeeID AS ID,
+        logincredentials.Password AS Pasw
+    FROM employees
+             LEFT JOIN logincredentials ON employees.EmployeeID = logincredentials.EmployeeID
+    WHERE employees.Email = Email AND Paswinp = logincredentials.Password;
+END $$
+
+/*CREATE PROCEDURE FOR ALL ACCORDED HOURS*/
+
+DROP PROCEDURE IF EXISTS AccordedHoursBetween$$
+CREATE PROCEDURE AccordedHoursBetween(
+    IN ID INT(3),
+    IN startdate DATE,
+    IN enddate DATE,
+    OUT Monthname varchar(50)
+)
+BEGIN
+    SELECT
+        employeehours.EmployeeID,
+        employeehours.DeclaratedDate,
+        SUM(employeehours.EmployeeHoursQuantityInMinutes)/60 TotalWorkedHours,
+        MONTHNAME(employeehours.DeclaratedDate) AS Monthname
+    FROM employeehours
+    WHERE employeehours.EmployeeID = ID
+      AND employeehours.HoursAccorded = 1
+      AND employeehours.DeclaratedDate BETWEEN startdate AND enddate;
+END $$
+DELIMITER ;
+
+
+/*VIEWS*/
+
+DROP VIEW managers;
+CREATE VIEW managers AS
+SELECT departmenttypes.Description as Department, departmentmemberlist.DepartmentID, CONCAT(FirstName, ' ',LastName) as Name, employees.EmployeeID
+FROM employees
+         INNER JOIN departmentmemberlist
+                    ON employees.EmployeeID = departmentmemberlist.EmployeeID
+         INNER JOIN departmenttypes
+                    ON departmentmemberlist.DepartmentID = departmenttypes.DepartmentID
+WHERE employees.FunctionTypeID > 1;

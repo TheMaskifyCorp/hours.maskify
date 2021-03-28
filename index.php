@@ -55,11 +55,11 @@ if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
                         <div class="Sign In">
                             <form id="signin" action="signin.php" method="POST">
                                 <div id="name-group" class="form-group">
-                                    <label for="username">Name</label>
+                                    <label for="username">Email</label>
                                     <input type="text" class="form-control" name="username" placeholder="Gebruiker">
                                 </div>
                                 <div id="password-group" class="form-group">
-                                    <label for="password">Email</label>
+                                    <label for="password">Password</label>
                                     <input type="password" class="form-control" name="password" placeholder="password">
                                 </div>
                                 <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button
