@@ -1,4 +1,5 @@
 .idea/
 app/conf/DBCONF.php
 app/js/jquery.js
-test.php
+api/v1/hours/index.php
+/vendor/

@@ -90,6 +90,7 @@ class Database
         return $this->stmt->execute($data);
     }
 
+
     /**
      * @param string $table
      * @param string $on
@@ -102,12 +103,12 @@ class Database
      */
     public function innerJoin(string $table, string $on)
     {
+        $on = $this->table.".".$on." = ".$table.".".$on;
+
         if(!empty($this->innerJoin)){
-            $this->innerJoin .= " INNER JOIN $table
-                ON $on";
+            $this->innerJoin .= " INNER JOIN $table ON $on";
         } else {
-            $this->innerJoin = "INNER JOIN $table
-                ON $on";
+            $this->innerJoin = "INNER JOIN $table ON $on";
         }
         return $this;
     }
@@ -129,6 +130,15 @@ class Database
             $innerJoin="";
         } else {
             $innerJoin = $this->innerJoin;
+        }
+        if (strtolower($value) == "null"){
+            $value = NULL;
+        }
+        if ($operator == '=' && $value == NULL){
+            $operator = "IS";
+        }
+        if ($operator == '<>' && $value == NULL){
+            $operator = "IS NOT";
         }
         $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $field $operator :value");
         $this->stmt->execute(['value' => $value]);

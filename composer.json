@@ -1,0 +1,9 @@
+{
+    "name": "maskify/hours",
+    "type": "project",
+    "license": "GNU",
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "^5.2"
+	}
+}
