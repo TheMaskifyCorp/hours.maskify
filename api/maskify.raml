@@ -1,0 +1,94 @@
+#%RAML 1.0
+---
+title: Maskify Hours API
+baseUri: https://hours.maskify.nl/{version}
+version: v1
+
+/employees
+    description: endpoint for all employees
+    :get
+    :put
+    :post
+    /{department}
+        :get
+    /{nocontract}
+        :get
+/contracts
+    :get
+    :post
+    :delete
+    /{employee}
+        :get
+        :post
+        :delete
+/departments
+    :get
+    :put
+    :post
+    :delete
+/hours
+    :get
+    :post
+    :delete
+    /{employee}
+        :get
+        :post
+        :delete
+    /new
+        :get
+        :post
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+    /accorded
+        :get
+        :post
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+    /unaccorded
+        :get
+        :post
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+/holidays
+    :get
+    :post
+    :delete
+    /{employee}
+        :get
+        :post
+        :delete
+    /new
+        :get
+        :post
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+    /accorded
+        :get
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+    /unaccorded
+        :get
+        :delete
+        /{employee}
+            :get
+            :post
+            :delete
+/sickleave
+    /{employee}
+/FAQ
+    :get
