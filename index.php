@@ -6,7 +6,7 @@ require_once 'app/init.php';
  * @var Database $db
  */
 
-if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
+if (!file_exists(".env")) header("Location: install/index.php");
 ?>
 
 <!doctype html>
@@ -64,7 +64,6 @@ if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
                                 </div>
                                 <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button
                             </form>
-
                         </div>
                         <div class="modal-footer">
                         </div>

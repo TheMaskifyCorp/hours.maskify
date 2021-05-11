@@ -1,8 +1,9 @@
 <?php
+require_once "../vendor/autoload.php";
 $app = "../app";
 require_once("$app/classes/Installer.php");
 if(isset($_POST['hostname'])) {
-    $filename = '../app/conf/DBCONF.php';
+    $filename = '../.env';
     try {
         $fp = fopen($filename, "w+");
     } catch (Exception $e) {
@@ -12,7 +13,7 @@ if(isset($_POST['hostname'])) {
     $database = $_POST['database'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-    Installer::createDBCONF($hostname, $database, $username, $password);
+    Installer::createENV($hostname, $database, $username, $password);
 }
 require_once "$app/init.php";
 /**

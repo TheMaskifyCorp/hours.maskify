@@ -98,7 +98,7 @@ class Installer
                         $emp = new Employee($i);
                         $data['AccordedByManager'] = $emp->getManager();
                     }
-                    $data['EmployeeHoursID'] = UUID::createRandomUUID($this->namespace);
+                    $data['EmployeeHoursID'] = UUID::createRandomUUID();
                     $data['EmployeeID'] = $i;
                     $qArray = [60,90,120,180];
                     $data['EmployeeHoursQuantityInMinutes'] = $qArray[array_rand($qArray)];
@@ -116,7 +116,7 @@ class Installer
         while($i < $num)
         {
             $data = $this->db->table("employeehours")->randomTuple();
-            $UUID = UUID::createRandomUUID($this->namespace);
+            $UUID = UUID::createRandomUUID();
             $data->EmployeeHoursID = $UUID;
             if (is_null($data->HoursAccorded)){
                 $data->HoursAccorded = NULL;
@@ -227,12 +227,8 @@ class Installer
      * @param string $namespace
      * @return string
      */
-    public static function createDBCONF(string $hostname, string $database, string $username, string $password,string $namespace = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0') : string
+    public static function createENV(string $hostname, string $database, string $username, string $password,string $namespace = 'c416205f-49fa-4e90-91f7-e39a1fa0c4c0') : string
     {
-        //commented hostname check, because it failes on IPv6-only hostnames.
-/*        if (gethostbyname($hostname . ".") == $hostname . ".") {
-            return json_encode(array("Hostname <strong>$hostname</strong> not resolvable" => "Warning"));
-        }*/
         try
         {
             $pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
@@ -242,26 +238,16 @@ class Installer
         {
             die(json_encode(array($e->getMessage() => "Warning")));
         }
-        $filename = '../app/conf/DBCONF.php';
-        $dbconf = "
-<?php
-
-//database config file
-
-//rename this file to DBCONF.php, and enter database credentials
-//IMPORTANT: verify DBCONF.php is in .gitignore
-class DBCONF{
-    const HOSTNAME = '$hostname';
-    const DBNAME = '$database';
-    const USER = '$username';
-    const PASSWORD = '$password';
-    // NAMESPACE should be a valid UUID. You can use the default one, or
-    // generate one here: https://www.uuidgenerator.net/
-    const NAMESPACE = '$namespace';
-}
-";
-        file_put_contents($filename, $dbconf);
+        $filename = '../.env';
+        $env = '
+HOSTNAME="localhost"
+DATABASE="maskify_hours"
+USERNAME="root"
+PASSWORD="rootpassword"
+NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"'
+;
+        file_put_contents($filename, $env);
         chmod($filename, 00644);
-        return json_encode(array("DBCONF.php created!" => "Succes"));
+        return json_encode(array(".env created!" => "Succes"));
     }
 }
