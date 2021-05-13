@@ -1,3 +1,4 @@
+#API RESPONSE SOURCE: https://www.softwaretestinghelp.com/rest-api-response-codes/
 #%RAML 1.0
 ---
 title: Maskify Hours API
@@ -5,14 +6,130 @@ baseUri: https://hours.maskify.nl/{version}
 version: v1
 
 /employees
+  collection
+  get:
     description: endpoint for all employees
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "response":
+                  {
+                    {
+                    "id": 1,
+                    "data":
+                      {
+                      "firstname": "Jeroen",
+                      "lastname": "Rijkse",
+                      ...: ...
+                      }
+                    },{
+                    "id": 2,
+                    "data":
+                      {
+                      "firstname": "Neorej",
+                      "lastname": "Eskjir",
+                      ...: ...
+                      },
+                    }
+                  }
+                  "success": true,
+                  "status": 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                "data":{
+                  "message": "Bad Request"
+                  },
+                  "success": false,
+                  "status" :
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                "data":{
+                  "message": "Unauthorised"
+                  },
+                "success": false,
+                "status" :
+                }
+  post:
+    description: "create a new employee"
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "response":
+                  {
+                    {
+                    "id": 1,
+                    "data":
+                      {
+                      "firstname": "Jeroen",
+                      "lastname": "Rijkse",
+                      ...: ...
+                      }
+                    }
+                  }
+                  "success": true,
+                  "status": 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  "response":
+                  {
+                  "firstname": "firstname is required",
+                  "lastname": "lastname is required",
+                  "housenumber": "housenumber is a string, expected an integer",
+                  ...: ...
+                  }
+                  "success": false,
+                  "status": 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                  "response":
+                  {
+                  "authorisation": "not authorized for creating a new employee"
+                  }
+                  "success": false,
+                  "status": 401
+                }
+  put:
+    description: "I'm a teapot"
+      responses:
+        418:
+          body:
+            {
+              "response":{
+                "imateapot": "Individual employees can only be altered at individual endpoints"
+              }
+              "success": false,
+              "status": 418
+            }
+  /{employee}
+    type: collection-item
     :get
     :put
-    :post
-    /{department}
-        :get
-    /{nocontract}
-        :get
+  /{department}
+    :get
+  /{nocontract}
+    :get
 /contracts
     :get
     :post
@@ -89,6 +206,13 @@ version: v1
             :post
             :delete
 /sickleave
+    :get
+    :post
+    :put
+    :delete
     /{employee}
+        :get
+    /{deparment}
+        :get
 /FAQ
     :get
