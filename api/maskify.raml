@@ -622,44 +622,33 @@ version: v1
       get:
       put:
       delete:
-/holidays
-    :get
-    :post
-    :delete
-    /{employee}
-        :get
-        :post
-        :delete
-    /new
-        :get
-        :post
-        :delete
-        /{employee}
-            :get
-            :post
-            :delete
-    /accorded
-        :get
-        :delete
-        /{employee}
-            :get
-            :post
-            :delete
-    /unaccorded
-        :get
-        :delete
-        /{employee}
-            :get
-            :post
-            :delete
-/sickleave
-    :get
-    :post
-    :put
-    :delete
-    /{employee}
-        :get
-    /{deparment}
-        :get
-/FAQ
-    :get
+/holidays:
+  get:
+  post:
+  put:
+  delete:
+  /{employee}:
+    get:
+  /new:
+    get:
+    /{employee}:
+      get:
+  /accorded:
+    get:
+    /{employee}:
+      get:
+  /unaccorded:
+    get:
+    /{employee}:
+      get:
+/sickleave:
+    get:
+    post:
+    put:
+    delete:
+    /{employee}:
+       get:
+    /{deparment}:
+       get:
+/FAQ:
+    get:
