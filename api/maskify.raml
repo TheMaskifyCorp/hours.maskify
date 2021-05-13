@@ -9,6 +9,127 @@ version: v1
   type: collection
   get:
     description: Endpoint for all employees
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  {
+                  1:
+                    {
+                    firstname: Jeroen,
+                    lastname: Rijkse,
+                    ...: ...
+                    },
+                  2:
+                    {
+                    firstname: Neorej,
+                    lastname: Eskjir,
+                    ...: ...
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+  post:
+    description: Create a new employee
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  id: 1,
+                  data:
+                  {
+                    firstname: Jeroen,
+                    lastname: Rijkse,
+                    ...: ...
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  firstname: Firstname is required,
+                  lastname: Lastname is required,
+                  housenumber: House number is a string, expected an integer,
+                ...: ...
+                },
+                success: false,
+                status: 400
+              }
+      401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                  },
+                  success: false,
+                  status: 401
+                }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+          body:
+            {
+              response:
+                {
+                message: Invalid request,
+                error: Employees can only be altered at individual endpoints
+                },
+              success: false,
+              status: 418
+            }
+  /{employee}:
+    type: collection-item
+    get:
+      description: GET endpoint for single employee
+      queryParameters:
+        EmployeeID:
+          type: integer
+          description: Use EmployeeID to identify the employee
+          required: true
       responses:
         200:
           body:
@@ -25,14 +146,6 @@ version: v1
                       lastname: Rijkse,
                       ...: ...
                       }
-                    },{
-                    id: 2,
-                    data:
-                      {
-                      firstname: Neorej,
-                      lastname: Eskjir,
-                      ...: ...
-                      },
                     }
                   },
                   success: true,
@@ -56,13 +169,18 @@ version: v1
                 {
                 response:{
                   message: Unauthorised,
-                  error: This request can only be performed by a manager
+                  error: This request can only be performed by a manager, or the employee involved
                   },
                 success: false,
                 status : 401
                 }
-  post:
-    description: Create a new employee
+    put:
+      description: PUT endpoint for single employee
+      queryParameters:
+        EmployeeID:
+          type: integer
+          description: Use EmployeeID to identify the employee
+          required: true
       responses:
         200:
           body:
@@ -71,12 +189,14 @@ version: v1
                 {
                   response:
                   {
+                    {
                     id: 1,
                     data:
-                    {
+                      {
                       firstname: Jeroen,
                       lastname: Rijkse,
                       ...: ...
+                      }
                     }
                   },
                   success: true,
@@ -87,158 +207,35 @@ version: v1
             application/json:
               example:
                 {
-                  response:
+                response:
                   {
-                    firstname: Firstname is required,
-                    lastname: Lastname is required,
-                    housenumber: House number is a string, expected an integer,
-                  ...: ...
+                  message: Bad Request,
+                  error:
+                    {
+                    firstname: Firstname must be a string,
+                    housenumber: House number must be an integer,
+                    ...: ...
+                    }
                   },
-                  success: false,
-                  status: 400
+                success: false,
+                status : 400
                 }
         401:
           body:
             application/json:
               example:
                 {
-                  response:
-                  {
-                    message: Unauthorised,
-                    error: This request can only be performed by a manager
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
                   },
-                  success: false,
-                  status: 401
+                success: false,
+                status : 401
                 }
-  put:
-    description: I'm a teapot
-      responses:
-        418:
-          body:
-            {
-              response:
-                {
-                message: Invalid request,
-                error: Employees can only be altered at individual endpoints
-                },
-              success: false,
-              status: 418
-            }
-  /{employee}:
-    type: collection-item
-      get:
-        description: GET endpoint for single employee
-        queryParameters:
-          EmployeeID:
-            type: integer
-            description: Use EmployeeID to identify the employee
-            required: true
-        responses:
-          200:
-            body:
-              application/json:
-                example:
-                  {
-                    response:
-                    {
-                      {
-                      id: 1,
-                      data:
-                        {
-                        firstname: Jeroen,
-                        lastname: Rijkse,
-                        ...: ...
-                        }
-                      }
-                    },
-                    success: true,
-                    status: 200
-                  }
-          400:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Bad Request
-                    },
-                  success: false,
-                  status : 400
-                  }
-          401:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Unauthorised,
-                    error: This request can only be performed by a manager, or the employee involved
-                    },
-                  success: false,
-                  status : 401
-                  }
-      put:
-        description: PUT endpoint for single employee
-        queryParameters:
-          EmployeeID:
-            type: integer
-            description: Use EmployeeID to identify the employee
-            required: true
-        responses:
-          200:
-            body:
-              application/json:
-                example:
-                  {
-                    response:
-                    {
-                      {
-                      id: 1,
-                      data:
-                        {
-                        firstname: Jeroen,
-                        lastname: Rijkse,
-                        ...: ...
-                        }
-                      }
-                    },
-                    success: true,
-                    status: 200
-                  }
-          400:
-            body:
-              application/json:
-                example:
-                  {
-                  response:
-                    {
-                    message: Bad Request
-                    error:
-                      {
-                      firstname: Firstname must be a string,
-                      housenumber: House number must be an integer,
-                      ...: ...
-                      }
-                    },
-                  success: false,
-                  status : 400
-                  }
-          401:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Unauthorised,
-                    error: This request can only be performed by a manager
-                    },
-                  success: false,
-                  status : 401
-                  }
-      post:
+    post:
         description: I'm a teapot
-          responses:
-            418:
+        responses:
+          418:
               body:
                 {
                   response:
@@ -311,43 +308,43 @@ version: v1
     type: collection
     get:
       description: GET endpoint for all employees that have no current contract
-        responses:
-          200:
-            body:
-              application/json:
-                example:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
                   {
-                    response:
                     {
+                    id: 1,
+                    data:
                       {
-                      id: 1,
-                      data:
-                        {
-                        firstname: Jeroen,
-                        lastname: Rijkse,
-                        ...: ...
-                        },{
-                        firstname: Neorej,
-                        lastname: Eskjir,
-                        ...: ...
-                        }
+                      firstname: Jeroen,
+                      lastname: Rijkse,
+                      ...: ...
+                      },{
+                      firstname: Neorej,
+                      lastname: Eskjir,
+                      ...: ...
                       }
-                    },
-                    success: true,
-                    status: 200
-                  }
-          400:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Bad Request
-                    },
-                  success: false,
-                  status : 400
-                  }
-          401:
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request
+                  },
+                success: false,
+                status : 400
+                }
+        401:
             body:
               application/json:
                 example:
@@ -363,6 +360,7 @@ version: v1
   type: collection
   get:
     description: Endpoint for all contracts
+    queryParameters:
       OnlyCurrent:
         type: boolean
         description: return only the current contracts
@@ -373,47 +371,49 @@ version: v1
           body:
             application/json:
               example:
-              {
-              response:
                 {
+                  response:
                   {
-                    employeeid: 1,
-                    startdate: 01-01-2000,
-                    enddate: 31-12-2000,
-                    ...: ...
-                  },{
-                    employeeid: 2,
-                    startdate: 01-01-2000,
-                    enddate: 31-12-2000,
-                    ...: ...
-                  }
-                },
-              success: true,
-              status: 200
-              }
+                    1:{
+                      employeeid: 1,
+                      startdate: 01-01-2000,
+                      enddate: 31-12-2000,
+                      ...: ...
+                      },
+                    2:{
+                      employeeid: 1,
+                      startdate: 01-01-2001,
+                      enddate: 31-12-2001,
+                      ...: ...
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
         400:
           body:
             application/json:
               example:
-              {
-              response:{
-                message: Bad Request
-                },
-              success: false,
-              status : 400
-              }
+                {
+                response:{
+                  message: Bad Request
+                  },
+                success: false,
+                status : 400
+                }
         401:
           body:
             application/json:
               example:
-              {
-              response:{
-                message: Unauthorised,
-                error: This request can only be performed by a manager
-                },
-              success: false,
-              status : 401
-              }
+                {
+                  response:
+                    {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                    },
+                  success: false,
+                  status : 401
+                }
   post:
     description: Create a new contract
     queryParameters:
@@ -438,45 +438,45 @@ version: v1
           body:
             application/json:
               example:
-              {
-              response:
                 {
-                  employeeid: 1,
-                  startdate: 1-1-2021,
-                  enddate: 31-12-2021,
-                  weeklyhours: 40,
-                  payrate: 2000
-                },
-              success: true,
-              status: 200
-              }
+                response:
+                  {
+                    employeeid: 1,
+                    startdate: 1-1-2021,
+                    enddate: 31-12-2021,
+                    weeklyhours: 40,
+                    payrate: 2000
+                  },
+                success: true,
+                status: 200
+                }
         400:
           body:
             application/json:
               example:
-              {
-                response:
                 {
-                  EmployeeID: Firstname is required,
-                  ContractStartDate: Provided date is not valid,
-                  error: End-date cannot be earlier than start-date,
-                  ...: ...
-                },
-                success: false,
-                status: 400
-              }
+                  response:
+                  {
+                    EmployeeID: Firstname is required,
+                    ContractStartDate: Provided date is not valid,
+                    error: End-date cannot be earlier than start-date,
+                    ...: ...
+                  },
+                  success: false,
+                  status: 400
+                }
         401:
           body:
             application/json:
               example:
-              {
-              response:{
-                message: Unauthorised,
-                error: This request can only be performed by a manager
-                },
-              success: false,
-              status : 401
-              }
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
   delete:
     queryParameters:
       EmployeeID:
@@ -491,43 +491,43 @@ version: v1
         body:
           application/json:
             example:
-            {
-            response:
               {
-                employeeid: 1,
-                startdate: 1-1-2021,
-                enddate: 31-12-2021,
-                weeklyhours: 40,
-                payrate: 2000
-              },
-            success: true,
-            status: 200
-            }
+              response:
+                {
+                  employeeid: 1,
+                  startdate: 1-1-2021,
+                  enddate: 31-12-2021,
+                  weeklyhours: 40,
+                  payrate: 2000
+                },
+              success: true,
+              status: 200
+              }
       400:
         body:
           application/json:
             example:
-            {
-              response:
               {
-                EmployeeID: EmployeeID is required,
-                ContractStartDate: Start-date is required
-              },
-              success: false,
-              status: 400
-            }
+                response:
+                {
+                  EmployeeID: EmployeeID is required,
+                  ContractStartDate: Start-date is required
+                },
+                success: false,
+                status: 400
+              }
       401:
         body:
           application/json:
             example:
-            {
-            response:{
-              message: Unauthorised,
-              error: This request can only be performed by a manager
-              },
-            success: false,
-            status : 401
-            }
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
   /{employee}:
     type: collection
     get:
@@ -547,52 +547,167 @@ version: v1
             body:
               application/json:
                 example:
-                {
-                response:
                   {
+                  response:
                     {
-                      employeeid: 1,
-                      startdate: 01-01-2000,
-                      enddate: 31-12-2000,
-                      ...: ...
-                    },{
-                      employeeid: 1,
-                      startdate: 01-01-2001,
-                      enddate: 31-12-2001,
-                      ...: ...
-                    }
-                  },
-                success: true,
-                status: 200
-                }
+                      1:{
+                        employeeid: 1,
+                        startdate: 01-01-2000,
+                        enddate: 31-12-2000,
+                        ...: ...
+                      },
+                      2:{
+                        employeeid: 1,
+                        startdate: 01-01-2001,
+                        enddate: 31-12-2001,
+                        ...: ...
+                      }
+                    },
+                  success: true,
+                  status: 200
+                  }
           400:
             body:
               application/json:
                 example:
-                {
-                response:{
-                  message: Bad Request
-                  },
-                success: false,
-                status : 400
-                }
+                  {
+                  response:{
+                    message: Bad Request
+                    },
+                  success: false,
+                  status : 400
+                  }
           401:
             body:
               application/json:
                 example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager or the target-employee
-                  },
-                success: false,
-                status : 401
-                }
+                  {
+                  response:{
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager or the target-employee
+                    },
+                  success: false,
+                  status : 401
+                  }
 /departments:
+  type: collection
   get:
+    description: GET endpoint for all departments
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  1:
+                    {
+                    Department: Finance
+                    },
+                  2:
+                    {
+                    Department: Design
+                    },
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
   put:
-  post:
-  delete:
+    description: PUT endpoint for editing any department
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: ID of the object-department
+        required: true
+      DepartmentName:
+        type: string
+        description: New name of the department
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  id: 1,
+                  data:
+                  {
+                    Department: Finance
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                    },
+                  success: false,
+                  status : 401
+                  }
+    post:
+      description: POST endpoint for creating a new departmant
+      queryParameters:
+        DepartmentName:
+          type: string
+          description: New name of the department
+          required: true
+      responses:
+        200:
+        400:
+        401:
+    delete:
+      description: DELETE endpoint for deleting an existing department
+      queryParameters:
+        DepartmentID:
+          type: integer
+          description: DepartmentID for the object-department
+          required: true
+      responses:
+        200:
+        400:
+        401:
 /hours:
   get:
   /{employee}:

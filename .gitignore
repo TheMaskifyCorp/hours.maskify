@@ -3,3 +3,4 @@ app/conf/DBCONF.php
 app/js/jquery.js
 api/v1/hours/index.php
 /vendor/
+api/example.raml

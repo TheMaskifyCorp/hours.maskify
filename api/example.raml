@@ -1,0 +1,27 @@
+post:
+  description: Create a new contract
+  queryParameters:
+    EmployeeID:
+      type: integer
+      description: Use EmployeeID to identify the employee
+      required: true
+    ContractStartDate:
+      type: date
+      required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              response:
+                {
+                  employeeid: 1,
+                  startdate: 1-1-2021,
+                  enddate: 31-12-2021,
+                  weeklyhours: 40,
+                  payrate: 2000
+                },
+              success: true,
+              status: 200
+              }
