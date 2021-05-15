@@ -749,6 +749,10 @@ version: v1
   get:
     description: GET endpoints for all hours
     queryParameters:
+      EmployeeHoursID:
+        type: string
+        description: The unique ID for a single entry
+        required: false
       StartDateRange:
         type: date
         description: start of the daterange for querying
@@ -830,7 +834,7 @@ version: v1
             response:
               {
               message: Invalid request,
-              error: Hours can only be altered at individual endpoints
+              error: Hours can not be altered, only created and deleted.
               },
             success: false,
             status: 418
@@ -849,16 +853,331 @@ version: v1
             success: false,
             status: 418
           }
+  delete:
+    description: DELETE endpoint for all hours
+    queryParameters:
+      EmployeeHoursID:
+        type: string
+        description: The unique ID for a single entry
+        required: true
+      response:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              response:
+                {
+                  EmployeeHoursID: b8a582db-adeb-4c63-b9e4-a7cc07e76ed7
+                },
+              success: true,
+              status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  message: Bad request,
+                  error: EmployeeHoursID is required
+                },
+                success: false,
+                status: 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager or the object employee / accorded hours can only be deleted by a manager
+                },
+              success: false,
+              status : 401
+              }
   /{employee}:
+    type:collection
     get:
+      description: GET endpoints for individual hours
+      queryParameters:
+        EmployeeHoursID:
+                  type: string
+                  description: The unique ID for a single entry
+                  required: false
+        StartDateRange:
+          type: date
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: 1,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: true
+                            }
+                          },
+                        2:{
+                          id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: NULL,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: NULL
+                            }
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: must be of one true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object-employee
+                  },
+                success: false,
+                status : 401
+                }
     post:
-    delete:
+      description: POST endpoint to create hours for employee
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: null,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: null
+                            }
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  EmployeeHoursID: Must be a valid UUID,
+                  DeclaratedDate: Dateformat must be of type DD-MM-YYYY,
+                  EmployeeHoursQuantityInMinutes: Must be an integer
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object-employee
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: I'm a teapot
+      responses:
+        418:
+          body:
+            {
+              response:
+                {
+                message: Invalid request,
+                error: Hours can not be altered, only created and deleted.
+                },
+              success: false,
+              status: 418
+            }
+      delete:
+        description: DELETE endpoint to delete hours for employee
+        QueryParameters:
+          EmployeeHoursID:
+            type: string
+            description: ID for the hours to be deleted
+            required: true
+        responses:
+          200:
+            body:
+              application/json:
+                example:
+                  {
+                    response:
+                      {
+                        {
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3
+                        }
+                      },
+                    success: true,
+                    status: 200
+                  }
+          400:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Bad Request,
+                    EmployeeHoursID: Must be a valid UUID
+                    },
+                  success: false,
+                  status : 400
+                  }
+          401:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager or the object-employee / accorded-hours can only be deleted by a manager
+                    },
+                  success: false,
+                  status : 401
+                  }
   /{department}:
     get:
+      description: GET endpoints for all hours within the department
+      queryParameters:
+        EmployeeHoursID:
+                  type: string
+                  description: The unique ID for a single entry
+                  required: false
+        StartDateRange:
+          type: date
+          description: start of the daterange for query
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for query
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: 1,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: true
+                            }
+                          },
+                        2:{
+                          id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: NULL,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: NULL
+                            }
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: must be of one true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
 /holidays:
   type: collection
   get:
-    description: GET endpoints for all hours
+    description: GET endpoints for all holidays
     queryParameters:
       StartDateRange:
         type: date
@@ -935,7 +1254,7 @@ version: v1
             response:
               {
               message: Invalid request,
-              error: Holidays can only be altered at individual endpoints
+              error: Holidays can not be altered. You should DELETE and recreate with altered content.
               },
             success: false,
             status: 418
