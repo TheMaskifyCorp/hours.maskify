@@ -31,6 +31,16 @@ class Employee
             $this->DepartmentID[] = $dep;
         }
     }
+    /*TODO function is not working*/
+    public static function createNewEmployee(array $values){
+        $db = new Database;
+        try {
+            $stmt = $db->table('employees')->insert($values);
+        } catch(PDOException $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function getDepartment(){
         $id = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where('EmployeeID','=',$this->EmployeeID)->first();
         return $id->DepartmentID;

@@ -33,6 +33,8 @@ class Database
         $this->pdo->query($sql);
     }
 
+
+
     /**
      * @param $table
      * @return $this
