@@ -738,8 +738,40 @@ version: v1
         required: true
     responses:
       200:
+        body:
+          application/json:
+            example:
+              {
+                response:{
+                  message: Finance department deleted
+                },
+                success: true,
+                status: 200
+              }
       400:
+        body:
+          application/json:
+            example:
+              {
+                response:{
+                  message: Bad request
+                  error: Department has active employees
+                },
+                success: false,
+                status: 400
+              }
       401:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  message: Unauthorized,
+                  error: Can only be performed by manager
+                },
+                succes: false,
+                status: 401
+              }
 /hours:
   get:
     description: GET endpoints for all hours
