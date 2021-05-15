@@ -1,4 +1,3 @@
-#API RESPONSE SOURCE: https://www.softwaretestinghelp.com/rest-api-response-codes/
 #%RAML 1.0
 ---
 title: Maskify Hours API
@@ -828,9 +827,17 @@ version: v1
   put:
     description: I'm a teapot
     responses:
-      200:
-      400:
-      401:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Hours can only be updated at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
   post:
     description: I'm a teapot
     responses:
@@ -1026,20 +1033,62 @@ version: v1
                 status : 401
                 }
     put:
-      description: I'm a teapot
+      description: PUT endpoint to update hours for employee
+      QueryParameters:
+        EmployeeHoursID:
+          type: string
+          description: The UUID identifying the object hoursentry
+          required: true
       responses:
-        418:
+        200:
           body:
-            {
-              response:
+            application/json:
+              example:
                 {
-                message: Invalid request,
-                error: Hours can not be altered, only created and deleted.
-                },
-              success: false,
-              status: 418
-            }
-      delete:
+                  response:
+                    {
+                      {
+                        1:{
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: 1,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: true
+                            }
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  EmployeeHoursID: Must be a valid UUID
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    delete:
         description: DELETE endpoint to delete hours for employee
         QueryParameters:
           EmployeeHoursID:
@@ -1617,9 +1666,259 @@ version: v1
           }
   /{employee}:
     get:
+      description: GET endpoints for individual sickleave
+      queryParameters:
+        StartDateRange:
+          type: date
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      1:{
+                        EmployeeID: 1,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: 17-1-2021,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      },{
+                      2:{
+                        EmployeeID: 1,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: NULL,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  EndDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: Status must be one of true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoints for individual sickleave
+      queryParameters:
+        FirstSickDay:
+          type: date
+          description: FirstSickDay of object entry to be edited
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: 17-1-2021,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  FirstSickDay: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
     post:
-    delete:
+      description: POST endpoints for individual sickleave
+      queryParameters:
+        FirstSickDay:
+          type: date
+          description: FirstSickDay of object entry to be edited
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      Description: COVID-19
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  FirstSickDay: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
   /{department}:
     get:
+      description: GET endpoints for employee sickleave within a department
+      queryParameters:
+        StartDateRange:
+          type: date
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      1:{
+                        EmployeeID: 1,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: 17-1-2021,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      },{
+                      2:{
+                        EmployeeID: 2,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: NULL,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  EndDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: Status must be one of true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
 /FAQ:
-    get:
+  get:
+    description: GET endpoints for all FAQ-articles
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    1:{
+                      Title: Hoe kan ik mijn uren invullen,
+                      content: <blockqoute>Allereerst moet je inloggen ...
+                    },{
+                    2:{
+                      Title: Hoe kan ik mijn vakantie invullen,
+                      content: <blockqoute>Allereerst moet je inloggen ...
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
