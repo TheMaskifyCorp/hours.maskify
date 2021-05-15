@@ -6,7 +6,12 @@ version: v1
 
 /employees:
   get:
-    description: Endpoint for all employees
+    description: Endpoint for all employees currently employed
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: Use DepartmentID to identify get all employees in a department
+        required: true
     responses:
       200:
         body:
@@ -58,6 +63,14 @@ version: v1
                 }
   post:
     description: Create a new employee
+    body:
+      application/json:
+        example:
+          {
+            firstname: Jeroen,
+            lastname: Rijkse,
+            ...: ...
+          }
     responses:
       200:
         body:
@@ -124,11 +137,6 @@ version: v1
   /{employee}:
     get:
       description: GET endpoint for single employee
-      queryParameters:
-        EmployeeID:
-          type: integer
-          description: Use EmployeeID to identify the employee
-          required: true
       responses:
         200:
           body:
@@ -175,11 +183,15 @@ version: v1
                 }
     put:
       description: PUT endpoint for single employee
-      queryParameters:
-        EmployeeID:
-          type: integer
-          description: Use EmployeeID to identify the employee
-          required: true
+      body:
+        application/json:
+          example:
+          {
+            EmployeeID: 4
+            FirstName: Jeroen,
+            LastName: Rijkse,
+            ...: ...
+          }
       responses:
         200:
           body:
@@ -247,14 +259,9 @@ version: v1
                     success: false,
                     status: 418
                   }
-  /{department}:
+  /nocontract:
     get:
-      description: GET endpoint for all employees in a specific department
-      queryParameters:
-        DepartmentID:
-          type: integer
-          description: Use DepartmentID to identify the department
-          required: true
+      description: GET endpoint for all employees that have no active contract
       responses:
         200:
           body:
@@ -279,69 +286,6 @@ version: v1
                   },
                   success: true,
                   status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request,
-                  error : DepartmentID is required
-                  },
-                success: false,
-                status : 400
-                }
-        401:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Unauthorised,
-                    error: This request can only be performed by a manager
-                    },
-                  success: false,
-                  status : 401
-                  }
-  /{nocontract}:
-    get:
-      description: GET endpoint for all employees that have no current contract
-      responses:
-        200:
-          body:
-            application/json:
-              example:
-                {
-                  response:
-                  {
-                    {
-                    id: 1,
-                    data:
-                      {
-                      firstname: Jeroen,
-                      lastname: Rijkse,
-                      ...: ...
-                      },{
-                      firstname: Neorej,
-                      lastname: Eskjir,
-                      ...: ...
-                      }
-                    }
-                  },
-                  success: true,
-                  status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request
-                  },
-                success: false,
-                status : 400
                 }
         401:
             body:
@@ -364,6 +308,14 @@ version: v1
         description: return only the current contracts
         required: false
         default: true
+      Department:
+        type: integer
+        description: return only contracts from specified DepartmentID
+        required: false
+      EmployeeID:
+        type: Integer
+        description: Show only contracts for object-employee
+        required: false
     responses:
       200:
         body:
@@ -394,7 +346,8 @@ version: v1
             example:
               {
               response:{
-                message: Bad Request
+                message: Bad Request,
+                OnlyCurrent: must be one of true/false
                 },
               success: false,
               status : 400
@@ -414,23 +367,16 @@ version: v1
                 }
   post:
     description: Create a new contract
-    queryParameters:
-      EmployeeID:
-        type: integer
-        description: Use EmployeeID to identify the employee
-        required: true
-      ContractStartDate:
-        type: string
-        required: true
-      ContractEndDate:
-        type: string
-        required: false
-      WeeklyHours:
-        type: integer
-        required: true
-      PayRate:
-        type: integer
-        required: true
+    body:
+      application/json:
+        example:
+          {
+            EmployeeID: 46,
+            ContractStartDate: 01-12-2021,
+            ContractEndDate: 01-12-2022,
+            WeeklyHours: 40,
+            PayRate: 2400
+          }
     responses:
       200:
         body:
@@ -439,11 +385,11 @@ version: v1
               {
               response:
                 {
-                  employeeid: 1,
-                  startdate: 1-1-2021,
-                  enddate: 31-12-2021,
-                  weeklyhours: 40,
-                  payrate: 2000
+                  EmployeeID: 46,
+                  ContractStartDate: 01-12-2021,
+                  ContractEndDate: 01-12-2022,
+                  WeeklyHours: 40,
+                  PayRate: 2400
                 },
               success: true,
               status: 200
@@ -455,7 +401,8 @@ version: v1
               {
                 response:
                 {
-                  EmployeeID: Firstname is required,
+                  message: Bad request,
+                  Firstname: Firstname is required,
                   ContractStartDate: Provided date is not valid,
                   error: End-date cannot be earlier than start-date,
                   ...: ...
@@ -464,17 +411,17 @@ version: v1
                 status: 400
               }
       401:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager
-                  },
-                success: false,
-                status : 401
-                }
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
   delete:
     description: DELETE endpoint to delete a specific contract
     queryParameters:
@@ -509,6 +456,7 @@ version: v1
               {
                 response:
                 {
+                  message: Bad Request,
                   EmployeeID: EmployeeID is required,
                   ContractStartDate: Start-date is required
                 },
@@ -527,66 +475,6 @@ version: v1
               success: false,
               status : 401
               }
-  /{employee}:
-    get:
-      description: GET endpoint for contracts for single employee
-      queryParameters:
-        EmployeeID:
-          type: integer
-          description: Use EmployeeID to identify the employee
-          required: true
-        OnlyCurrent:
-          type: boolean
-          description: return only the current contract
-          required: false
-          default: true
-      responses:
-        200:
-          body:
-            application/json:
-              example:
-                {
-                response:
-                  {
-                    1:{
-                      employeeid: 1,
-                      startdate: 01-01-2000,
-                      enddate: 31-12-2000,
-                      ...: ...
-                    },
-                    2:{
-                      employeeid: 1,
-                      startdate: 01-01-2001,
-                      enddate: 31-12-2001,
-                      ...: ...
-                    }
-                  },
-                success: true,
-                status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request
-                  },
-                success: false,
-                status : 400
-                }
-        401:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager or the target-employee
-                  },
-                success: false,
-                status : 401
-                }
 /departments:
   get:
     description: GET endpoint for all departments
@@ -610,17 +498,6 @@ version: v1
                 success: true,
                 status: 200
               }
-      400:
-        body:
-          application/json:
-            example:
-              {
-              response:{
-                message: Bad Request
-                },
-              success: false,
-              status : 400
-              }
       401:
         body:
           application/json:
@@ -635,15 +512,12 @@ version: v1
               }
   put:
     description: PUT endpoint for editing any department
-    queryParameters:
-      DepartmentID:
-        type: integer
-        description: ID of the object-department
-        required: true
-      DepartmentName:
-        type: string
-        description: New name of the department
-        required: true
+    body:
+      example:
+        {
+          DepartmentID: 1,
+          Description: Finance
+        }
     responses:
       200:
         body:
@@ -654,7 +528,7 @@ version: v1
                   id: 1,
                   data:
                   {
-                    Department: Finance
+                    Description: Finance
                   }
                 },
                 success: true,
@@ -666,7 +540,9 @@ version: v1
             example:
               {
               response:{
-                message: Bad Request
+                message: Bad Request,
+                DepartmentID: DepartmentID must be of type integer and cannot be null,
+                Description: Description must be of type string and cannot be null
                 },
               success: false,
               status : 400
@@ -685,11 +561,12 @@ version: v1
               }
   post:
     description: POST endpoint for creating a new departmant
-    queryParameters:
-      DepartmentName:
-        type: string
-        description: New name of the department
-        required: true
+      body:
+        application/json:
+          example:
+            {
+              Description: Research and Development
+            }
     responses:
       200:
         body:
@@ -700,7 +577,7 @@ version: v1
                   id: 6,
                   data:
                   {
-                    Department: NewDepartmentName
+                    Department: Research and Development
                   }
                 },
                 success: true,
@@ -712,7 +589,8 @@ version: v1
             example:
               {
               response:{
-                message: Bad Request
+                message: Bad Request,
+                Description: Description must be of type string and cannot be null
                 },
               success: false,
               status : 400
@@ -779,6 +657,10 @@ version: v1
       EmployeeHoursID:
         type: string
         description: The unique ID for a single entry
+        required: false
+      DepartmentID:
+        type: integer
+        description: The object DepartmentID
         required: false
       StartDateRange:
         type: string
@@ -934,9 +816,9 @@ version: v1
       description: GET endpoints for individual hours
       queryParameters:
         EmployeeHoursID:
-                  type: string
-                  description: The unique ID for a single entry
-                  required: false
+          type: string
+          description: The unique ID for a single entry
+          required: false
         StartDateRange:
           type: string
           description: start of the daterange for querying
@@ -1012,6 +894,15 @@ version: v1
                 }
     post:
       description: POST endpoint to create hours for employee
+        body:
+          application/json:
+            example:
+              {
+                EmployeeHoursID: 15e0c358-8e91-4ed9-a385-6f240827964b
+                EmployeeID: 1,
+                DeclaratedDate: 15-1-2021,
+                EmployeeHoursQuantityInMinutes: 60
+              }
       responses:
         200:
           body:
@@ -1021,17 +912,12 @@ version: v1
                   response:
                     {
                       {
-                        1:{
-                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
-                          data:
-                            {
-                              EmployeeID: 1,
-                              AccordedByManager: null,
-                              DeclaratedDate: 15-1-2021,
-                              EmployeeHoursQuantityInMinutes: 60,
-                              HoursAccorded: null
-                            }
-                          }
+                        EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                        EmployeeID: 1,
+                        AccordedByManager: null,
+                        DeclaratedDate: 15-1-2021,
+                        EmployeeHoursQuantityInMinutes: 60,
+                        HoursAccorded: null
                         }
                       },
                   success: true,
@@ -1065,11 +951,14 @@ version: v1
                 }
     put:
       description: PUT endpoint to update hours for employee
-      queryParameters:
-        EmployeeHoursID:
-          type: string
-          description: The UUID identifying the object hoursentry
-          required: true
+        body:
+          application/json:
+            example:
+              {
+                EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3
+                HoursAccorded: true
+                AccordedByManager: 1,
+              }
       responses:
         200:
           body:
@@ -1078,20 +967,13 @@ version: v1
                 {
                   response:
                     {
-                      {
-                        1:{
-                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
-                          data:
-                            {
-                              EmployeeID: 1,
-                              AccordedByManager: 1,
-                              DeclaratedDate: 15-1-2021,
-                              EmployeeHoursQuantityInMinutes: 60,
-                              HoursAccorded: true
-                            }
-                          }
-                        }
-                      },
+                      EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                      EmployeeID: 1,
+                      DeclaratedDate: 15-1-2021,
+                      EmployeeHoursQuantityInMinutes: 60,
+                      HoursAccorded: true,
+                      AccordedByManager: 1
+                    },
                   success: true,
                   status: 200
                 }
@@ -1165,91 +1047,14 @@ version: v1
                   success: false,
                   status : 401
                   }
-  /{department}:
-    get:
-      description: GET endpoints for all hours within the department
-      queryParameters:
-        EmployeeHoursID:
-                  type: string
-                  description: The unique ID for a single entry
-                  required: false
-        StartDateRange:
-          type: string
-          description: start of the daterange for query
-          required: false
-        EndDateRange:
-          type: string
-          description: end of the daterange for query
-          required: false
-        Status:
-          type: string
-          description: status of the hours. Can be true/false/null
-          required: false
-      responses:
-        200:
-          body:
-            application/json:
-              example:
-                {
-                  response:
-                    {
-                      {
-                        1:{
-                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
-                          data:
-                            {
-                              EmployeeID: 1,
-                              AccordedByManager: 1,
-                              DeclaratedDate: 15-1-2021,
-                              EmployeeHoursQuantityInMinutes: 60,
-                              HoursAccorded: true
-                            }
-                          },
-                        2:{
-                          id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
-                          data:
-                            {
-                              EmployeeID: 1,
-                              AccordedByManager: NULL,
-                              DeclaratedDate: 15-1-2021,
-                              EmployeeHoursQuantityInMinutes: 60,
-                              HoursAccorded: NULL
-                            }
-                          }
-                        }
-                      },
-                  success: true,
-                  status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request,
-                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
-                  Status: must be of one true/false/null
-                  },
-                success: false,
-                status : 400
-                }
-        401:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager
-                  },
-                success: false,
-                status : 401
-                }
 /holidays:
   get:
     description: GET endpoints for all holidays
     queryParameters:
+      DepartmentID:
+        type: integer
+        description: The object DepartmentID
+        required: false
       StartDateRange:
         type: string
         description: start of the daterange for querying
@@ -1420,11 +1225,15 @@ version: v1
                 }
     put:
       description: PUT endpoint for individual employees holidays
-      queryParameters:
-        HolidayStartDate:
-          type: string
-          description: Startdate of the object-holiday
-          required: true
+        body:
+          application/json:
+            example:
+              {
+                EmployeeID: 1,
+                HolidayStartDate: 15-1-2021,
+                HolidaysAccorded: true,
+                AccordedByManager: 1
+              }
       responses:
         200:
           body:
@@ -1469,6 +1278,15 @@ version: v1
                 }
     post:
       description: POST endpoint for creating holiday's for individual users
+        body:
+          application/json:
+            example:
+              {
+                EmployeeID: 1,
+                HolidayStartDate: 15-1-2021,
+                HolidayEndDate: 18-1-2021,
+                TotalHoursInMinutes: 60
+              }
       responses:
         200:
           body:
@@ -1528,7 +1346,8 @@ version: v1
                 {
                 response:
                   {
-                    HolidayStartDate: 21-1-2021
+                    HolidayStartDate: 21-01-2021,
+                    HolidayEndDate: 25-01-2021
                   },
                 success: true,
                 status: 200
@@ -1558,82 +1377,14 @@ version: v1
                 success: false,
                 status : 401
                 }
-  /{department}:
-    get:
-      description: GET endpoints for employee holidays in a single department
-      queryParameters:
-        StartDateRange:
-          type: string
-          description: start of the daterange for querying
-          required: false
-        EndDateRange:
-          type: string
-          description: end of the daterange for querying
-          required: false
-        Status:
-          type: string
-          description: status of the hours. Can be true/false/null
-          required: false
-      responses:
-        200:
-          body:
-            application/json:
-              example:
-                {
-                  response:
-                    {
-                      {
-                        1:{
-                          EmployeeID: 1,
-                          HolidayStartDate: 15-1-2021,
-                          HolidayEndDate: 18-1-2021,
-                          TotalHoursInMinutes: 60,
-                          HolidaysAccorded: true,
-                          AccordedByManager: 1
-                        },
-                        2:{
-                          EmployeeID: 2,
-                          HolidayStartDate: 15-2-2021,
-                          HolidayEndDate: 18-2-2021,
-                          TotalHoursInMinutes: 60,
-                          HolidaysAccorded: NULL,
-                          AccordedByManager: NULL
-                          }
-                        }
-                      },
-                  success: true,
-                  status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request,
-                  StartDateRange: Dateformat must be DD-MM-YYYY,
-                  EndDateRange: Dateformat must be DD-MM-YYYY,
-                  Status: Must be one of true/false/null
-                  },
-                success: false,
-                status : 400
-                }
-        401:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager
-                  },
-                success: false,
-                status : 401
-                }
 /sickleave:
   get:
     description: GET endpoints for all hours
     queryParameters:
+      DepartmentID:
+        type: string
+        description: Only show sickleave within object department
+        required: false
       StartDateRange:
         type: string
         description: start of the daterange for querying
@@ -1800,11 +1551,14 @@ version: v1
                 }
     put:
       description: PUT endpoints for individual sickleave
-      queryParameters:
-        FirstSickDay:
-          type: string
-          description: FirstSickDay of object entry to be edited
-          required: true
+      body:
+        application/json:
+          example:
+            {
+              FirstSickDay: 15-1-2021,
+              LastSickDay: 17-1-2021,
+              AccordedByManager: 1,
+            }
       responses:
         200:
           body:
@@ -1848,11 +1602,13 @@ version: v1
                 }
     post:
       description: POST endpoints for individual sickleave
-      queryParameters:
-        FirstSickDay:
-          type: string
-          description: FirstSickDay of object entry to be edited
-          required: true
+      body:
+        application/json:
+          example:
+            {
+            FirstSickDay: 15-1-2021,
+            Description: COVID-19
+            }
       responses:
         200:
           body:
@@ -1876,75 +1632,6 @@ version: v1
                 response:{
                   message: Bad Request,
                   FirstSickDay: Dateformat must be of type DD-MM-YYYY
-                  },
-                success: false,
-                status : 400
-                }
-        401:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Unauthorised,
-                  error: This request can only be performed by a manager
-                  },
-                success: false,
-                status : 401
-                }
-  /{department}:
-    get:
-      description: GET endpoints for employee sickleave within a department
-      queryParameters:
-        StartDateRange:
-          type: string
-          description: start of the daterange for querying
-          required: false
-        EndDateRange:
-          type: string
-          description: end of the daterange for querying
-          required: false
-        Status:
-          type: string
-          description: status of the hours. Can be true/false/null
-          required: false
-      responses:
-        200:
-          body:
-            application/json:
-              example:
-                {
-                  response:
-                    {
-                      1:{
-                        EmployeeID: 1,
-                        FirstSickDay: 15-1-2021,
-                        LastSickDay: 17-1-2021,
-                        AccordedByManager: 1,
-                        Description: COVID-19
-                      },{
-                      2:{
-                        EmployeeID: 2,
-                        FirstSickDay: 15-1-2021,
-                        LastSickDay: NULL,
-                        AccordedByManager: 1,
-                        Description: COVID-19
-                      }
-                    }
-                  },
-                  success: true,
-                  status: 200
-                }
-        400:
-          body:
-            application/json:
-              example:
-                {
-                response:{
-                  message: Bad Request,
-                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
-                  EndDateRange: Dateformat must be of type DD-MM-YYYY,
-                  Status: Status must be one of true/false/null
                   },
                 success: false,
                 status : 400
