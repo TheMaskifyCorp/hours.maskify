@@ -828,17 +828,9 @@ version: v1
   put:
     description: I'm a teapot
     responses:
-      418:
-        body:
-          {
-            response:
-              {
-              message: Invalid request,
-              error: Hours can not be altered, only created and deleted.
-              },
-            success: false,
-            status: 418
-          }
+      200:
+      400:
+      401:
   post:
     description: I'm a teapot
     responses:
@@ -899,7 +891,7 @@ version: v1
               status : 401
               }
   /{employee}:
-    type:collection
+    type: collection
     get:
       description: GET endpoints for individual hours
       queryParameters:
@@ -1254,7 +1246,7 @@ version: v1
             response:
               {
               message: Invalid request,
-              error: Holidays can not be altered. You should DELETE and recreate with altered content.
+              error: Holidays can only be altered at individual endpoints
               },
             success: false,
             status: 418
@@ -1275,10 +1267,258 @@ version: v1
           }
   /{employee}:
     get:
+      description: GET endpoints for single employee holidays
+      queryParameters:
+        StartDateRange:
+          type: date
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          EmployeeID: 1,
+                          HolidayStartDate: 15-1-2021,
+                          HolidayEndDate: 18-1-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: true,
+                          AccordedByManager: 1
+                        },
+                        2:{
+                          EmployeeID: 1,
+                          HolidayStartDate: 15-2-2021,
+                          HolidayEndDate: 18-2-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: NULL,
+                          AccordedByManager: NULL
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  error: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object employee
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoint for individual employees holidays
+      QueryParameters:
+        HolidayStartDate:
+          type: date
+          description: Startdate of the object-holiday
+          required: true
+      responses:
+        200:
+        400:
+        401:
+          body:
+            {
+              response:
+                {
+                message: Unauthorised,
+                error: Holidays can only be altered by a manager / only HolidaysAccorded and AccordedByManager can be altered
+                },
+              success: false,
+              status: 401
+            }
     post:
+      description: POST endpoint for creating holiday's for individual users
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      HolidayStartDate: 15-1-2021,
+                      HolidayEndDate: 18-1-2021,
+                      TotalHoursInMinutes: 60
+                    },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      message: Bad request,
+                      HolidayStartDate: HolidayStartDate is required / must be of format MM-DD-YYYY,
+                      HolidayEndDate: HolidayStartDate is required / must be of format MM-DD-YYYY,
+                      TotalHoursInMinutes: TotalHoursInMinutes is required / must be of type integer
+                    },
+                  success: false,
+                  status: 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager or the object-employee
+                    },
+                  success: false,
+                  status: 401
+                }
     delete:
+      description: DELETE endpoint for all holidays for this employee
+      queryParameters:
+        HolidayStartDate:
+          type: date
+            description: Startdate of the object-holiday
+            required: true
+        response:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                response:
+                  {
+                    HolidayStartDate: 21-1-2021
+                  },
+                success: true,
+                status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    message: Bad request,
+                    HolidayStartDate: HolidayStartDate is required / must be of type MM-DD-YYYY
+                  },
+                  success: false,
+                  status: 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object employee / accorded holidays can only be deleted by a manager
+                  },
+                success: false,
+                status : 401
+                }
   /{department}:
     get:
+      description: GET endpoints for employee holidays in a single department
+      queryParameters:
+        StartDateRange:
+          type: date
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          EmployeeID: 1,
+                          HolidayStartDate: 15-1-2021,
+                          HolidayEndDate: 18-1-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: true,
+                          AccordedByManager: 1
+                        },
+                        2:{
+                          EmployeeID: 2,
+                          HolidayStartDate: 15-2-2021,
+                          HolidayEndDate: 18-2-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: NULL,
+                          AccordedByManager: NULL
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be DD-MM-YYYY,
+                  EndDateRange: Dateformat must be DD-MM-YYYY,
+                  Status: Must be one of true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
 /sickleave:
   type: collection
   get:
