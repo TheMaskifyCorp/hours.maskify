@@ -675,17 +675,17 @@ version: v1
               status : 400
               }
       401:
-            body:
-              application/json:
-                example:
-                  {
-                  response:{
-                    message: Unauthorised,
-                    error: This request can only be performed by a manager
-                    },
-                  success: false,
-                  status : 401
-                  }
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
     post:
       description: POST endpoint for creating a new departmant
       queryParameters:
@@ -695,8 +695,44 @@ version: v1
           required: true
       responses:
         200:
+          body:
+            application/json:
+              example:
+                {
+                  response: {
+                    id: 6,
+                    data:
+                    {
+                      Department: NewDepartmentName
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
         400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request
+                  },
+                success: false,
+                status : 400
+                }
         401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+
     delete:
       description: DELETE endpoint for deleting an existing department
       queryParameters:
@@ -709,61 +745,322 @@ version: v1
         400:
         401:
 /hours:
+  type: collection
   get:
-  /{employee}:
-    get:
-    post:
-    delete:
-  /new:
-    get:
-    post:
-    delete:
-    /{employee}:
-      get:
-      post:
-      delete:
-  /accorded:
-    get:
-    delete:
-    /{employee}:
-      get:
-      post:
-      delete:
-  /unaccorded:
-    get:
-    put:
-    delete:
-    /{employee}:
-      get:
-      put:
-      delete:
-/holidays:
-  get:
-  post:
+    description: GET endpoints for all hours
+    queryParameters:
+      StartDateRange:
+        type: date
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    {
+                      1:{
+                        id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                        data:
+                          {
+                            EmployeeID: 1,
+                            AccordedByManager: 1,
+                            DeclaratedDate: 15-1-2021,
+                            EmployeeHoursQuantityInMinutes: 60,
+                            HoursAccorded: true
+                          }
+                        },
+                      2:{
+                        id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
+                        data:
+                          {
+                            EmployeeID: 2,
+                            AccordedByManager: NULL,
+                            DeclaratedDate: 15-1-2021,
+                            EmployeeHoursQuantityInMinutes: 60,
+                            HoursAccorded: NULL
+                          }
+                        }
+                      }
+                    },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
   put:
-  delete:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Hours can only be altered at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Hours can only be created at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
   /{employee}:
     get:
-  /new:
+    post:
+    delete:
+  /{department}:
     get:
-    /{employee}:
-      get:
-  /accorded:
-    get:
-    /{employee}:
-      get:
-  /unaccorded:
-    get:
-    /{employee}:
-      get:
-/sickleave:
+/holidays:
+  type: collection
+  get:
+    description: GET endpoints for all hours
+    queryParameters:
+      StartDateRange:
+        type: date
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    {
+                      1:{
+                        EmployeeID: 1,
+                        HolidayStartDate: 15-1-2021,
+                        HolidayEndDate: 18-1-2021,
+                        TotalHoursInMinutes: 60,
+                        HolidaysAccorded: true,
+                        AccordedByManager: 1
+                      },
+                      2:{
+                        EmployeeID: 2,
+                        HolidayStartDate: 15-1-2021,
+                        HolidayEndDate: 18-1-2021,
+                        TotalHoursInMinutes: 60,
+                        HolidaysAccorded: NULL,
+                        AccordedByManager: NULL
+                        }
+                      }
+                    },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Holidays can only be altered at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Holidays can only be created at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
+  /{employee}:
     get:
     post:
-    put:
     delete:
-    /{employee}:
-       get:
-    /{deparment}:
-       get:
+  /{department}:
+    get:
+/sickleave:
+  type: collection
+  get:
+    description: GET endpoints for all hours
+    queryParameters:
+      StartDateRange:
+        type: date
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    1:{
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: 17-1-2021,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                    },{
+                    2:{
+                      EmployeeID: 4,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: NULL,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Sickleave can only be altered at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          {
+            response:
+              {
+              message: Invalid request,
+              error: Sickleave can only be created at individual endpoints
+              },
+            success: false,
+            status: 418
+          }
+  /{employee}:
+    get:
+    post:
+    delete:
+  /{department}:
+    get:
 /FAQ:
     get:
