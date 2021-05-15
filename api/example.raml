@@ -1,27 +1,57 @@
-post:
-  description: Create a new contract
-  queryParameters:
-    EmployeeID:
-      type: integer
-      description: Use EmployeeID to identify the employee
-      required: true
-    ContractStartDate:
-      type: date
-      required: true
+ put:
+    description: PUT endpoint for editing any department
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: ID of the object-department
+        required: true
+      DepartmentName:
+        type: string
+        description: New name of the department
+        required: true
     responses:
       200:
         body:
           application/json:
             example:
               {
-              response:
-                {
-                  employeeid: 1,
-                  startdate: 1-1-2021,
-                  enddate: 31-12-2021,
-                  weeklyhours: 40,
-                  payrate: 2000
+                response: {
+                  id: 1,
+                  data:
+                  {
+                    Department: Finance
+                  }
                 },
-              success: true,
-              status: 200
+                success: true,
+                status: 200
               }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+
+EmployeeHoursID
+EmployeeID
+AccordedByManager
+DeclaratedDate
+EmployeeHoursQuantityInMinutes
+HoursAccorded
