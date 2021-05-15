@@ -186,12 +186,11 @@ version: v1
       body:
         application/json:
           example:
-          {
-            EmployeeID: 4
-            FirstName: Jeroen,
-            LastName: Rijkse,
-            ...: ...
-          }
+            {
+              EmployeeID: 4,
+              FirstName: Jeroen,
+              LastName: Rijkse
+            }
       responses:
         200:
           body:
@@ -313,7 +312,7 @@ version: v1
         description: return only contracts from specified DepartmentID
         required: false
       EmployeeID:
-        type: Integer
+        type: integer
         description: Show only contracts for object-employee
         required: false
     responses:
@@ -513,11 +512,12 @@ version: v1
   put:
     description: PUT endpoint for editing any department
     body:
-      example:
-        {
-          DepartmentID: 1,
-          Description: Finance
-        }
+      application/json:
+        example:
+          {
+            DepartmentID: 1,
+            Description: Finance
+          }
     responses:
       200:
         body:
@@ -561,7 +561,7 @@ version: v1
               }
   post:
     description: POST endpoint for creating a new departmant
-      body:
+    body:
         application/json:
           example:
             {
@@ -631,10 +631,11 @@ version: v1
           application/json:
             example:
               {
-                response:{
-                  message: Bad request
-                  error: Department has active employees
-                },
+                response:
+                  {
+                    message: Bad request,
+                    error: Department has active employees
+                  },
                 success: false,
                 status: 400
               }
@@ -894,11 +895,11 @@ version: v1
                 }
     post:
       description: POST endpoint to create hours for employee
-        body:
+      body:
           application/json:
             example:
               {
-                EmployeeHoursID: 15e0c358-8e91-4ed9-a385-6f240827964b
+                EmployeeHoursID: 15e0c358-8e91-4ed9-a385-6f240827964b,
                 EmployeeID: 1,
                 DeclaratedDate: 15-1-2021,
                 EmployeeHoursQuantityInMinutes: 60
@@ -951,12 +952,12 @@ version: v1
                 }
     put:
       description: PUT endpoint to update hours for employee
-        body:
+      body:
           application/json:
             example:
               {
-                EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3
-                HoursAccorded: true
+                EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                HoursAccorded: true,
                 AccordedByManager: 1,
               }
       responses:
@@ -1225,15 +1226,15 @@ version: v1
                 }
     put:
       description: PUT endpoint for individual employees holidays
-        body:
-          application/json:
-            example:
-              {
-                EmployeeID: 1,
-                HolidayStartDate: 15-1-2021,
-                HolidaysAccorded: true,
-                AccordedByManager: 1
-              }
+      body:
+        application/json:
+          example:
+            {
+              EmployeeID: 1,
+              HolidayStartDate: 15-1-2021,
+              HolidaysAccorded: true,
+              AccordedByManager: 1
+            }
       responses:
         200:
           body:
@@ -1278,15 +1279,15 @@ version: v1
                 }
     post:
       description: POST endpoint for creating holiday's for individual users
-        body:
-          application/json:
-            example:
-              {
-                EmployeeID: 1,
-                HolidayStartDate: 15-1-2021,
-                HolidayEndDate: 18-1-2021,
-                TotalHoursInMinutes: 60
-              }
+      body:
+        application/json:
+          example:
+            {
+              EmployeeID: 1,
+              HolidayStartDate: 15-1-2021,
+              HolidayEndDate: 18-1-2021,
+              TotalHoursInMinutes: 60
+            }
       responses:
         200:
           body:
