@@ -2,10 +2,6 @@
 
 class Database
 {
-    protected $hostname = DBCONF::HOSTNAME;
-    protected $database = DBCONF::DBNAME;
-    protected $username = DBCONF::USER;
-    protected $password = DBCONF::PASSWORD;
     protected $pdo;
     protected $debug = false;
     protected $table;
@@ -19,7 +15,7 @@ class Database
         $this->debug = $debug;
         try
         {
-            $this->pdo = new PDO("mysql:host={$this->hostname};dbname={$this->database}",$this->username,$this->password);
+            $this->pdo = new PDO("mysql:host={$_ENV['HOSTNAME']};dbname={$_ENV['DATABASE']}",$_ENV['USERNAME'],$_ENV['PASSWORD']);
             if ($this->debug)
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
@@ -28,7 +24,12 @@ class Database
             die($this->debug ? $e->getMessage() : json_encode(array($e->getMessage() => "Warning")));
         }
     }
-    public function query($sql)
+
+    /**
+     * @param string $sql
+     * @return Database
+     */
+    public function query(string $sql) : Database
     {
         $this->pdo->query($sql);
     }

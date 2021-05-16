@@ -22,13 +22,12 @@ class UUID
      * valid UUID) and a value (the name). Given the same namespace and
      * name, the output is always the same.
      *
-     * @param	uuid	$namespace
-     * @param	string	$name
+     *      * @param string $name
      */
-    protected $namespace = DBCONF::NAMESPACE;
 
-    public static function v3($namespace, $name)
+    public static function v3(string $name)
     {
+        $namespace = $_ENV['NAMESPACE'];
         if(!self::is_valid($namespace)) return false;
 
         // Get hexadecimal components of namespace
@@ -67,6 +66,7 @@ class UUID
             substr($hash, 20, 12)
         );
     }
+  
     /**
      * @param $uuid
      * @return bool
@@ -77,7 +77,8 @@ class UUID
                 '[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
     }
 
-    public static function createRandomUUID($namespace){
+    public static function createRandomUUID(){
+        $namespace = $_ENV['NAMESPACE'];
         $timestamp = uniqid();
         return SELF::v3($namespace,$timestamp);
     }
