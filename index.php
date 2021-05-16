@@ -6,7 +6,7 @@ require_once 'app/init.php';
  * @var Database $db
  */
 
-if (!file_exists("app/conf/DBCONF.php")) header("Location: install/index.php");
+if (!file_exists(".env")) header("Location: install/index.php");
 ?>
 
 <!doctype html>
