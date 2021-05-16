@@ -11,7 +11,7 @@ if (file_exists("$app/conf/DBCONF.php")) {
     require_once "$app/classes/Auth.php";
     require_once "$app/classes/Hash.php";
     $hash = new Hash;
-    $db = new Database();
+    $db = new Database(true);
     $auth = new Auth($db, $hash);
 }
 
