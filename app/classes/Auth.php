@@ -35,7 +35,7 @@ class Auth
         }
         return $this->db->table($this->table)->insert($data);
     }
-    public function signin($data)
+    public function signin($data): bool
     {
         if($this->db->table('employees')->where('Email','=',$data['username'])->count() > 0) {
             $user = $this->db->table('employees')->where('Email','=',$data['username'])->first();
