@@ -78,10 +78,9 @@ class Database
      * 'field' => 'value'
      * ]);
      * @param array $data
-     * @return bool
      */
 
-    public function insert(array $data) : bool
+    public function insert(array $data)
     {
         $keys = array_keys($data);
         $fields = '`' . implode('`, `', $keys) . '`';
@@ -89,7 +88,8 @@ class Database
 
         $sql = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
         $this->stmt = $this->pdo->prepare($sql);
-        return $this->stmt->execute($data);
+        $return = $this->stmt->execute($data);
+        $return > 0 ? $return : $this->stmt->errorInfo();
     }
 
 
