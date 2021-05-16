@@ -4,3 +4,4 @@ app/js/jquery.js
 api/v1/hours/index.php
 /vendor/
 .env
+api/example.raml
