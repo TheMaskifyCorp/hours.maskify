@@ -1,4 +1,2 @@
 <?php
-/*get (url)
-    case url = hours
-        require "hours/index.php"*/
+//todo api explanation page
