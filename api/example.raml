@@ -1,0 +1,50 @@
+ put:
+    description: PUT endpoint for editing any department
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: ID of the object-department
+        required: true
+      DepartmentName:
+        type: string
+        description: New name of the department
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  id: 1,
+                  data:
+                  {
+                    Department: Finance
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }

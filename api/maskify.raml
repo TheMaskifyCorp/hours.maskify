@@ -1,0 +1,1676 @@
+#%RAML 1.0
+---
+title: Maskify Hours API
+baseUri: https://hours.maskify.nl/{version}
+version: v1
+
+/employees:
+  get:
+    description: Endpoint for all employees currently employed
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: Use DepartmentID to identify get all employees in a department
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  {
+                  1:
+                    {
+                    firstname: Jeroen,
+                    lastname: Rijkse,
+                    ...: ...
+                    },
+                  2:
+                    {
+                    firstname: Neorej,
+                    lastname: Eskjir,
+                    ...: ...
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request
+                },
+              success: false,
+              status : 400
+              }
+      401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+  post:
+    description: Create a new employee
+    body:
+      application/json:
+        example:
+          {
+            firstname: Jeroen,
+            lastname: Rijkse,
+            ...: ...
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  id: 1,
+                  data:
+                  {
+                    firstname: Jeroen,
+                    lastname: Rijkse,
+                    ...: ...
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  message: Bad request,
+                  firstname: Firstname is required,
+                  lastname: Lastname is required,
+                  housenumber: House number is a string, expected an integer,
+                ...: ...
+                },
+                success: false,
+                status: 400
+              }
+      401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                  },
+                  success: false,
+                  status: 401
+                }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Employees can only be altered at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  /{employee}:
+    get:
+      description: GET endpoint for single employee
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    {
+                    id: 1,
+                    data:
+                      {
+                      firstname: Jeroen,
+                      lastname: Rijkse,
+                      ...: ...
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager, or the employee involved
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoint for single employee
+      body:
+        application/json:
+          example:
+            {
+              EmployeeID: 4,
+              FirstName: Jeroen,
+              LastName: Rijkse
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    {
+                    id: 1,
+                    data:
+                      {
+                      firstname: Jeroen,
+                      lastname: Rijkse,
+                      ...: ...
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:
+                  {
+                  message: Bad Request,
+                  error:
+                    {
+                    firstname: Firstname must be a string,
+                    housenumber: House number must be an integer,
+                    ...: ...
+                    }
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    post:
+        description: I'm a teapot
+        responses:
+          418:
+            body:
+              application/json:
+                example:
+                  {
+                    response:
+                      {
+                      message: Invalid request,
+                      error: Employees can only be created at top-level endpoint /employees
+                      },
+                    success: false,
+                    status: 418
+                  }
+  /nocontract:
+    get:
+      description: GET endpoint for all employees that have no active contract
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    {
+                    id: 1,
+                    data:
+                      {
+                      firstname: Jeroen,
+                      lastname: Rijkse,
+                      ...: ...
+                      },{
+                      firstname: Neorej,
+                      lastname: Eskjir,
+                      ...: ...
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        401:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                    },
+                  success: false,
+                  status : 401
+                  }
+/contracts:
+  get:
+    description: Endpoint for all contracts
+    queryParameters:
+      OnlyCurrent:
+        type: boolean
+        description: return only the current contracts
+        required: false
+        default: true
+      Department:
+        type: integer
+        description: return only contracts from specified DepartmentID
+        required: false
+      EmployeeID:
+        type: integer
+        description: Show only contracts for object-employee
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  1:{
+                    employeeid: 1,
+                    startdate: 01-01-2000,
+                    enddate: 31-12-2000,
+                    ...: ...
+                    },
+                  2:{
+                    employeeid: 1,
+                    startdate: 01-01-2001,
+                    enddate: 31-12-2001,
+                    ...: ...
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                OnlyCurrent: must be one of true/false
+                },
+              success: false,
+              status : 400
+              }
+      401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager
+                    },
+                  success: false,
+                  status : 401
+                }
+  post:
+    description: Create a new contract
+    body:
+      application/json:
+        example:
+          {
+            EmployeeID: 46,
+            ContractStartDate: 01-12-2021,
+            ContractEndDate: 01-12-2022,
+            WeeklyHours: 40,
+            PayRate: 2400
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              response:
+                {
+                  EmployeeID: 46,
+                  ContractStartDate: 01-12-2021,
+                  ContractEndDate: 01-12-2022,
+                  WeeklyHours: 40,
+                  PayRate: 2400
+                },
+              success: true,
+              status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  message: Bad request,
+                  Firstname: Firstname is required,
+                  ContractStartDate: Provided date is not valid,
+                  error: End-date cannot be earlier than start-date,
+                  ...: ...
+                },
+                success: false,
+                status: 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  delete:
+    description: DELETE endpoint to delete a specific contract
+    queryParameters:
+      EmployeeID:
+        type: integer
+        description: Use EmployeeID to identify the employee
+        required: true
+      ContractStartDate:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              response:
+                {
+                  employeeid: 1,
+                  startdate: 1-1-2021,
+                  enddate: 31-12-2021,
+                  weeklyhours: 40,
+                  payrate: 2000
+                },
+              success: true,
+              status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  message: Bad Request,
+                  EmployeeID: EmployeeID is required,
+                  ContractStartDate: Start-date is required
+                },
+                success: false,
+                status: 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+/departments:
+  get:
+    description: GET endpoint for all departments
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  1:
+                    {
+                    Department: Finance
+                    },
+                  2:
+                    {
+                    Department: Design
+                    },
+                },
+                success: true,
+                status: 200
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: PUT endpoint for editing any department
+    body:
+      application/json:
+        example:
+          {
+            DepartmentID: 1,
+            Description: Finance
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  id: 1,
+                  data:
+                  {
+                    Description: Finance
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                DepartmentID: DepartmentID must be of type integer and cannot be null,
+                Description: Description must be of type string and cannot be null
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  post:
+    description: POST endpoint for creating a new departmant
+    body:
+        application/json:
+          example:
+            {
+              Description: Research and Development
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  id: 6,
+                  data:
+                  {
+                    Department: Research and Development
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                Description: Description must be of type string and cannot be null
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  delete:
+    description: DELETE endpoint for deleting an existing department
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: DepartmentID for the object-department
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:{
+                  message: Finance department deleted
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    message: Bad request,
+                    error: Department has active employees
+                  },
+                success: false,
+                status: 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+                response: {
+                  message: Unauthorized,
+                  error: Can only be performed by manager
+                },
+                succes: false,
+                status: 401
+              }
+/hours:
+  get:
+    description: GET endpoints for all hours
+    queryParameters:
+      EmployeeHoursID:
+        type: string
+        description: The unique ID for a single entry
+        required: false
+      DepartmentID:
+        type: integer
+        description: The object DepartmentID
+        required: false
+      StartDateRange:
+        type: string
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    {
+                      1:{
+                        id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                        data:
+                          {
+                            EmployeeID: 1,
+                            AccordedByManager: 1,
+                            DeclaratedDate: 15-1-2021,
+                            EmployeeHoursQuantityInMinutes: 60,
+                            HoursAccorded: true
+                          }
+                        },
+                      2:{
+                        id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
+                        data:
+                          {
+                            EmployeeID: 2,
+                            AccordedByManager: NULL,
+                            DeclaratedDate: 15-1-2021,
+                            EmployeeHoursQuantityInMinutes: 60,
+                            HoursAccorded: NULL
+                          }
+                        }
+                      }
+                    },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Hours can only be updated at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Hours can only be created at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  delete:
+    description: DELETE endpoint for all hours
+    queryParameters:
+      EmployeeHoursID:
+        type: string
+        description: The unique ID for a single entry
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              response:
+                {
+                  EmployeeHoursID: b8a582db-adeb-4c63-b9e4-a7cc07e76ed7
+                },
+              success: true,
+              status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                {
+                  message: Bad request,
+                  error: EmployeeHoursID is required
+                },
+                success: false,
+                status: 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager or the object employee / accorded hours can only be deleted by a manager
+                },
+              success: false,
+              status : 401
+              }
+  /{employee}:
+    get:
+      description: GET endpoints for individual hours
+      queryParameters:
+        EmployeeHoursID:
+          type: string
+          description: The unique ID for a single entry
+          required: false
+        StartDateRange:
+          type: string
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: 1,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: true
+                            }
+                          },
+                        2:{
+                          id: e372fd35-2af6-4c3a-a362-3d6a8c4e0b4e,
+                          data:
+                            {
+                              EmployeeID: 1,
+                              AccordedByManager: NULL,
+                              DeclaratedDate: 15-1-2021,
+                              EmployeeHoursQuantityInMinutes: 60,
+                              HoursAccorded: NULL
+                            }
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: must be of one true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object-employee
+                  },
+                success: false,
+                status : 401
+                }
+    post:
+      description: POST endpoint to create hours for employee
+      body:
+          application/json:
+            example:
+              {
+                EmployeeHoursID: 15e0c358-8e91-4ed9-a385-6f240827964b,
+                EmployeeID: 1,
+                DeclaratedDate: 15-1-2021,
+                EmployeeHoursQuantityInMinutes: 60
+              }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                        EmployeeID: 1,
+                        AccordedByManager: null,
+                        DeclaratedDate: 15-1-2021,
+                        EmployeeHoursQuantityInMinutes: 60,
+                        HoursAccorded: null
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  EmployeeHoursID: Must be a valid UUID,
+                  DeclaratedDate: Dateformat must be of type DD-MM-YYYY,
+                  EmployeeHoursQuantityInMinutes: Must be an integer
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object-employee
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoint to update hours for employee
+      body:
+          application/json:
+            example:
+              {
+                EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                HoursAccorded: true,
+                AccordedByManager: 1,
+              }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeHoursID: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3,
+                      EmployeeID: 1,
+                      DeclaratedDate: 15-1-2021,
+                      EmployeeHoursQuantityInMinutes: 60,
+                      HoursAccorded: true,
+                      AccordedByManager: 1
+                    },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  EmployeeHoursID: Must be a valid UUID
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    delete:
+        description: DELETE endpoint to delete hours for employee
+        queryParameters:
+          EmployeeHoursID:
+            type: string
+            description: ID for the hours to be deleted
+            required: true
+        responses:
+          200:
+            body:
+              application/json:
+                example:
+                  {
+                    response:
+                      {
+                        {
+                          id: 0b2ebf62-b5a5-4e63-b49b-0bdd594623d3
+                        }
+                      },
+                    success: true,
+                    status: 200
+                  }
+          400:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Bad Request,
+                    EmployeeHoursID: Must be a valid UUID
+                    },
+                  success: false,
+                  status : 400
+                  }
+          401:
+            body:
+              application/json:
+                example:
+                  {
+                  response:{
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager or the object-employee / accorded-hours can only be deleted by a manager
+                    },
+                  success: false,
+                  status : 401
+                  }
+/holidays:
+  get:
+    description: GET endpoints for all holidays
+    queryParameters:
+      DepartmentID:
+        type: integer
+        description: The object DepartmentID
+        required: false
+      StartDateRange:
+        type: string
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    {
+                      1:{
+                        EmployeeID: 1,
+                        HolidayStartDate: 15-1-2021,
+                        HolidayEndDate: 18-1-2021,
+                        TotalHoursInMinutes: 60,
+                        HolidaysAccorded: true,
+                        AccordedByManager: 1
+                      },
+                      2:{
+                        EmployeeID: 2,
+                        HolidayStartDate: 15-1-2021,
+                        HolidayEndDate: 18-1-2021,
+                        TotalHoursInMinutes: 60,
+                        HolidaysAccorded: NULL,
+                        AccordedByManager: NULL
+                        }
+                      }
+                    },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Holidays can only be altered at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Holidays can only be created at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  /{employee}:
+    get:
+      description: GET endpoints for single employee holidays
+      queryParameters:
+        StartDateRange:
+          type: string
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      {
+                        1:{
+                          EmployeeID: 1,
+                          HolidayStartDate: 15-1-2021,
+                          HolidayEndDate: 18-1-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: true,
+                          AccordedByManager: 1
+                        },
+                        2:{
+                          EmployeeID: 1,
+                          HolidayStartDate: 15-2-2021,
+                          HolidayEndDate: 18-2-2021,
+                          TotalHoursInMinutes: 60,
+                          HolidaysAccorded: NULL,
+                          AccordedByManager: NULL
+                          }
+                        }
+                      },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  error: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object employee
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoint for individual employees holidays
+      body:
+        application/json:
+          example:
+            {
+              EmployeeID: 1,
+              HolidayStartDate: 15-1-2021,
+              HolidaysAccorded: true,
+              AccordedByManager: 1
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:{
+                    EmployeeID: 1,
+                    HolidayStartDate: 01-01-2001,
+                    HolidayEndDate: 01-02-2001,
+                    TotalHoursInMinutes: 10000,
+                    HolidaysAccorded: 1,
+                    AccordedByManager: 1
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response: {
+                    message: Bad request,
+                    HolidayStartDate: No holiday found
+                  },
+                  succes: false,
+                  status: 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                    message: Unauthorised,
+                    error: Holidays can only be altered by a manager / only HolidaysAccorded and AccordedByManager can be altered
+                    },
+                  success: false,
+                  status: 401
+                }
+    post:
+      description: POST endpoint for creating holiday's for individual users
+      body:
+        application/json:
+          example:
+            {
+              EmployeeID: 1,
+              HolidayStartDate: 15-1-2021,
+              HolidayEndDate: 18-1-2021,
+              TotalHoursInMinutes: 60
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      HolidayStartDate: 15-1-2021,
+                      HolidayEndDate: 18-1-2021,
+                      TotalHoursInMinutes: 60
+                    },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      message: Bad request,
+                      HolidayStartDate: HolidayStartDate is required / must be of format MM-DD-YYYY,
+                      HolidayEndDate: HolidayStartDate is required / must be of format MM-DD-YYYY,
+                      TotalHoursInMinutes: TotalHoursInMinutes is required / must be of type integer
+                    },
+                  success: false,
+                  status: 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                    message: Unauthorised,
+                    error: This request can only be performed by a manager or the object-employee
+                    },
+                  success: false,
+                  status: 401
+                }
+    delete:
+      description: DELETE endpoint for all holidays for this employee
+      queryParameters:
+        HolidayStartDate:
+          type: string
+          description: Startdate of the object-holiday
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                response:
+                  {
+                    HolidayStartDate: 21-01-2021,
+                    HolidayEndDate: 25-01-2021
+                  },
+                success: true,
+                status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                  {
+                    message: Bad request,
+                    HolidayStartDate: HolidayStartDate is required / must be of type MM-DD-YYYY
+                  },
+                  success: false,
+                  status: 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager or the object employee / accorded holidays can only be deleted by a manager
+                  },
+                success: false,
+                status : 401
+                }
+/sickleave:
+  get:
+    description: GET endpoints for all hours
+    queryParameters:
+      DepartmentID:
+        type: string
+        description: Only show sickleave within object department
+        required: false
+      StartDateRange:
+        type: string
+        description: start of the daterange for querying
+        required: false
+      EndDateRange:
+        type: string
+        description: end of the daterange for querying
+        required: false
+      Status:
+        type: string
+        description: status of the hours. Can be true/false/null
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    1:{
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: 17-1-2021,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                    },{
+                    2:{
+                      EmployeeID: 4,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: NULL,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Bad Request,
+                error: Dateformat must be of type DD-MM-YYYY
+                },
+              success: false,
+              status : 400
+              }
+      401:
+        body:
+          application/json:
+            example:
+              {
+              response:{
+                message: Unauthorised,
+                error: This request can only be performed by a manager
+                },
+              success: false,
+              status : 401
+              }
+  put:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                  message: Invalid request,
+                  error: Sickleave can only be altered at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  post:
+    description: I'm a teapot
+    responses:
+      418:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    message: Invalid request,
+                    error: Sickleave can only be created at individual endpoints
+                  },
+                success: false,
+                status: 418
+              }
+  /{employee}:
+    get:
+      description: GET endpoints for individual sickleave
+      queryParameters:
+        StartDateRange:
+          type: string
+          description: start of the daterange for querying
+          required: false
+        EndDateRange:
+          type: string
+          description: end of the daterange for querying
+          required: false
+        Status:
+          type: string
+          description: status of the hours. Can be true/false/null
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      1:{
+                        EmployeeID: 1,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: 17-1-2021,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      },{
+                      2:{
+                        EmployeeID: 1,
+                        FirstSickDay: 15-1-2021,
+                        LastSickDay: NULL,
+                        AccordedByManager: 1,
+                        Description: COVID-19
+                      }
+                    }
+                  },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  StartDateRange: Dateformat must be of type DD-MM-YYYY,
+                  EndDateRange: Dateformat must be of type DD-MM-YYYY,
+                  Status: Status must be one of true/false/null
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    put:
+      description: PUT endpoints for individual sickleave
+      body:
+        application/json:
+          example:
+            {
+              FirstSickDay: 15-1-2021,
+              LastSickDay: 17-1-2021,
+              AccordedByManager: 1,
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      LastSickDay: 17-1-2021,
+                      AccordedByManager: 1,
+                      Description: COVID-19
+                   },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  FirstSickDay: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+    post:
+      description: POST endpoints for individual sickleave
+      body:
+        application/json:
+          example:
+            {
+            FirstSickDay: 15-1-2021,
+            Description: COVID-19
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      EmployeeID: 1,
+                      FirstSickDay: 15-1-2021,
+                      Description: COVID-19
+                    },
+                  success: true,
+                  status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Bad Request,
+                  FirstSickDay: Dateformat must be of type DD-MM-YYYY
+                  },
+                success: false,
+                status : 400
+                }
+        401:
+          body:
+            application/json:
+              example:
+                {
+                response:{
+                  message: Unauthorised,
+                  error: This request can only be performed by a manager
+                  },
+                success: false,
+                status : 401
+                }
+/FAQ:
+  get:
+    description: GET endpoints for all FAQ-articles
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                response:
+                  {
+                    1:{
+                      Title: Hoe kan ik mijn uren invullen,
+                      content: <blockqoute>Allereerst moet je inloggen ...
+                    },{
+                    2:{
+                      Title: Hoe kan ik mijn vakantie invullen,
+                      content: <blockqoute>Allereerst moet je inloggen ...
+                    }
+                  }
+                },
+                success: true,
+                status: 200
+              }
