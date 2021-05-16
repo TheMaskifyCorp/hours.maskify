@@ -3,7 +3,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/maskify/app/init.php";
 /**
  * @var Database $db
  */
-
+/*
 $values = [
 "FirstName" => "TESTNAAM",
 "LastName" => "ACHTERNAAM",
@@ -18,5 +18,7 @@ $values = [
 "DocumentNumberID" => 123456
 
     ];
-$result = $db->table('employees')->insert($values);
-var_dump($result);
+$result = $db->table('employees')->insert($values);*/
+
+$gemma = new Employee(3);
+var_dump($gemma);

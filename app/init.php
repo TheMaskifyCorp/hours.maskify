@@ -1,6 +1,7 @@
 <?php
 session_start();
 $app = __DIR__;
+require_once "$app/../vendor/autoload.php";
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__."/../");
 try {
