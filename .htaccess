@@ -5,3 +5,7 @@
 #</Files>
 
 #php_value auto_prepend_file "vendor/autoload.php"
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^/?api/v1/(.*?)/?$ /api/v1/index.php?apipath=$1 [L]

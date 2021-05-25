@@ -1,9 +1,8 @@
 <?php
 session_start();
-$app = __DIR__;
-require_once "$app/../vendor/autoload.php";
+require_once $_SERVER['DOCUMENT_ROOT'] ."/vendor/autoload.php";
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__."/../");
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
 try {
     $dotenv->load();
 } catch (Exception $e) {

@@ -1674,3 +1674,68 @@ version: v1
                 success: true,
                 status: 200
               }
+  /{searchterm}:
+    get:
+      description: GET query for searchterms
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      SearchTerm: "Hoe kan ik mijn uren invullen",
+                      SolutionID: 4,
+                      Counter: 26
+                    },
+                  success: true,
+                  status: 200
+                 }
+        404:
+          body:
+            application/json:
+              example:
+               {
+                 response:
+                   {
+                      error: "SearchTerm not found"
+                   },
+                 success: false,
+                 status: 404
+                }
+    put:
+      description: PUT query for searchterms
+      body:
+        application/json:
+          example:
+            {
+              Searchterm: "Waar kan ik mijn uren invullen"
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                response:
+                  {
+                    SearchTerm: "Waar kan ik mijn uren invullen",
+                    Counter: "0"
+                  },
+                success: true,
+                status: 200
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  response:
+                    {
+                      error: Bad Request,
+                      SearchTerm: "SearchTerm must be in body",
+                    },
+                  success: true,
+                  status: 200
+                  }
