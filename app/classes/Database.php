@@ -32,9 +32,8 @@ class Database
     public function query(string $sql) : Database
     {
         $this->pdo->query($sql);
+        return $this;
     }
-
-
 
     /**
      * @param $table
@@ -79,10 +78,9 @@ class Database
      * 'field' => 'value'
      * ]);
      * @param array $data
-     * @return bool
      */
 
-    public function insert(array $data) : bool
+    public function insert(array $data)
     {
         $keys = array_keys($data);
         $fields = '`' . implode('`, `', $keys) . '`';
@@ -90,7 +88,10 @@ class Database
 
         $sql = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
         $this->stmt = $this->pdo->prepare($sql);
-        return $this->stmt->execute($data);
+        $return = $this->stmt->execute($data);
+        if ($return) {
+            return true;
+        } else return $this->stmt->errorInfo();
     }
 
 
@@ -147,6 +148,9 @@ class Database
         $this->stmt->execute(['value' => $value]);
         return $this;
     }
+    public function group($group){
+        $this->group = "GROUP BY $group";
+    }
 
     /**
      * @return int
@@ -165,12 +169,19 @@ class Database
         $field = array_keys($data)[0];
         return $this->where($field,'=', $data[$field])->count() ? true : false;
     }
-    public function get()
+    public function get(): array
     {
+        if (!$this->stmt) {
+            $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+            $this->stmt->execute();
+        }
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
     public function returnstmt()
     {
+        if (!$this->stmt) {
+            $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+        }
         return $this->stmt;
     }
     public function first()
