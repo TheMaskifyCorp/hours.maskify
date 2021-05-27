@@ -4,9 +4,8 @@ namespace API;
 
 interface ApiEndpointInterface
 {
-    public function get ($department, $itemID) : array;
-    public function put () : array;
-    public function post () : array;
-    public function delete () : array;
-    public function validate () : boolean;
+    public function get (array $body) : array;
+    public function put (array $body) : array;
+    public function post (array $body) : array;
+    public function delete (array $body) : array;
 }

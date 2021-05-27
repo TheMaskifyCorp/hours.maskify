@@ -89,7 +89,9 @@ class Database
         $sql = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
         $this->stmt = $this->pdo->prepare($sql);
         $return = $this->stmt->execute($data);
-        $return > 0 ? $return : $this->stmt->errorInfo();
+        if ($return) {
+            return true;
+        } else return $this->stmt->errorInfo();
     }
 
 
@@ -171,6 +173,7 @@ class Database
     {
         if (!$this->stmt) {
             $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+            $this->stmt->execute();
         }
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
