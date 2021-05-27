@@ -1,10 +1,9 @@
-#<Files .env>
-#Order Deny,Allow
-#Deny from all
-#Allow from 127.0.0.1
-#</Files>
+<Files .env>
+Order Deny,Allow
+Deny from all
+Allow from 127.0.0.1
+</Files>
 
-#php_value auto_prepend_file "vendor/autoload.php"
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

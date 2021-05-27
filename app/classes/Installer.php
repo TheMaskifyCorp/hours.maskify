@@ -244,7 +244,8 @@ HOSTNAME="'.$hostname.'"
 DATABASE="'.$database.'"
 USERNAME="'.$username.'"
 PASSWORD="'.$password.'"
-NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"'
+NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"
+JWTSECRET="VerySecretSecret"'
 ;
         file_put_contents($filename, $env);
         chmod($filename, 00644);
