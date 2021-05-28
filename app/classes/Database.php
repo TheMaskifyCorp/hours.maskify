@@ -9,6 +9,7 @@ class Database
     protected $selection;
     protected $innerJoin;
     protected $stmt;
+    protected $update;
 
     public function __construct($debug = false)
     {
@@ -93,7 +94,24 @@ class Database
             return true;
         } else return $this->stmt->errorInfo();
     }
-
+    public function update(array $data,...$args)
+    {
+        $keys = array_keys($data);
+        //$fields = '`' . implode('`, `', $keys) . '`';
+        //$placeholders = ':' . implode(', :', $keys);
+        $setValues = "";
+        foreach ($keys as $key){
+            $setValues .= $key."=:$key";
+        }
+        $where = "";
+        foreach ($args as $arg){
+            var_dump($args);
+/*            $where .= "$arg[0] $arg[1] $arg[2]";
+            if ( ! $arg === array_key_last($args)) $where .= " AND ";*/
+        }
+/*        $this->stmt = "UPDATE $this->table SET $setValues $where";
+        return $this->stmt->execute();*/
+    }
 
     /**
      * @param string $table
@@ -125,6 +143,11 @@ class Database
      */
     public function where($field, $operator, $value) : Database
     {
+        if (isset($this->update)){
+            $this->stmt = $this->pdo->prepare("$this->update WHERE $field $operator :value");
+            return $this->stmt->execute();
+        }
+
         if(!isset($this->selection)) {
             $selection="*";
         } else {
@@ -148,6 +171,8 @@ class Database
         $this->stmt->execute(['value' => $value]);
         return $this;
     }
+
+
     public function group($group){
         $this->group = "GROUP BY $group";
     }

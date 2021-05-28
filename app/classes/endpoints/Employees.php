@@ -30,22 +30,25 @@ class Employees implements ApiEndpointInterface
         //check of het op /employees gebeurd
         if (isset($body['itemid'])) throw new BadRequestException('Employees can only be created at top-level endpoint /employees');
         //verwachte variabelen
-        $newEmployee = [
-            "FirstName" => "Sven",
-            "LastName" => "Muste",
-            "Email"=> "sven2.muste@maskify.nl",
-            "PhoneNumber"=> "+31612345678",
-            "Street"=> "lagelandenlaan",
-            "HouseNumber"=> "4",
-            "City"=> "Groningen",
-            "PostalCode"=> "1234AB",
-            "DateOfBirth"=> "1985-01-01",
-            "FunctionTypeID"=> "3",
-            "DocumentNumbrID"=> "3182f7070UB215",
-    ];
-        $response = $this->db->table('employees')->insert($newEmployee);
+        $required = ["FirstName", "LastName", "Email", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
+        $optional = ['DocumentNumberID'];
+        $missingParams = [];
+        $requestParams = [];
+        foreach($required as $value){
+            if ( ! array_key_exists ( $value, $body ) ) {
+                array_push($missingParams, $value." is required");
+            } else {
+                $requestParams[$value] = $body[$value];
+            }
+        }
+        foreach($optional as $value){
+            if ( array_key_exists ( $value, $body ) ) $requestParams[$value] = $body[$value];
+        }
+        if ( count ( $missingParams ) > 0 ) throw new BadRequestException((  json_encode ( $missingParams ) ) );
+        return (array)$requestParams;
+        /*$response = $this->db->table('employees')->insert($newEmployee);
         if ($response) return [$response];
-        throw new BadRequestException($response[2]);
+        throw new BadRequestException($response[2]);*/
     }
     public function put(array $body) :array {
         return [404,"work in progress"];
@@ -71,6 +74,12 @@ class Employees implements ApiEndpointInterface
             $response[0]->DepartmentID = $departments;
         }
         return (array)$response[0];
+    }
+    private function validatePostRequest(array $request)
+    {
+        //$required = ["FirstName", "LastName", "Email", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
+        //$optional = ['DocumentNumberID'];
+
     }
 
 }

@@ -48,10 +48,6 @@ class API
     }
     public function body(array $body)
     {
-        foreach ($body as $key => $value)
-        {
-            $body[$key] = strtolower($value);
-        }
         $this->body = $body;
         return $this;
     }
