@@ -94,6 +94,7 @@ class Database
             return true;
         } else return $this->stmt->errorInfo();
     }
+
     /**
      * function to insert data in table. function must be called with update-values, and where-arrays.
      * Where-array structure = [$field, $operator, $value].
@@ -131,6 +132,7 @@ class Database
         $this->stmt = $this->pdo->prepare($sql);
         var_dump($this->stmt);
         return $this->stmt->execute($values);
+
     }
 
     /**
@@ -163,6 +165,11 @@ class Database
      */
     public function where($field, $operator, $value) : Database
     {
+        if (isset($this->update)){
+            $this->stmt = $this->pdo->prepare("$this->update WHERE $field $operator :value");
+            return $this->stmt->execute();
+        }
+
         if(!isset($this->selection)) {
             $selection="*";
         } else {
