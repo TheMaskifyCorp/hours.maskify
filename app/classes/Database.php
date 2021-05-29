@@ -94,26 +94,43 @@ class Database
             return true;
         } else return $this->stmt->errorInfo();
     }
-    public function update(array $data,...$args)
+    /**
+     * function to insert data in table. function must be called with update-values, and where-arrays.
+     * Where-array structure = [$field, $operator, $value].
+     * Example: ["EmployeeID","=",1]
+     *
+     *$database->table('tablename')->update([
+     * 'field' => 'value',
+     * 'field' => 'value',
+     * 'field' => 'value'
+     * ],[where-array],[where-array]);
+     * @param array $data
+     */
+    public function update(array $data, ...$args) : bool
     {
         $keys = array_keys($data);
-        //$fields = '`' . implode('`, `', $keys) . '`';
-        //$placeholders = ':' . implode(', :', $keys);
         $setValues = "";
-        foreach ($keys as $key){
-            $setValues .= $key."=:$key";
-        }
         $where = "";
         $values = [];
-        foreach ($args as $arg){
-            var_dump($args);
-            $where .= "$arg[0] $arg[1] ?";
-            array_push($values, $arg[3]);
-            if ( ! $arg === array_key_last($args)) $where .= " AND ";*/
+
+        foreach ($keys as $key){
+            $setValues .= $key."= ? ";
+            if ($key != end($keys)) $setValues .= ",";
+            array_push($values,$data[$key]);
         }
-        $this->stmt = "UPDATE $this->table SET $setValues $where";
+
+        foreach ($args as $arg){
+            $where .= "$arg[0] $arg[1] ?";
+            array_push($values, $arg[2]);
+            if (  $arg !== end($args) ) {
+                $where .= " AND ";
+            }
+        }
+        $sql = "UPDATE {$this->table} SET {$setValues} WHERE {$where}";
+
+        $this->stmt = $this->pdo->prepare($sql);
         var_dump($this->stmt);
-        //return $this->stmt->execute();
+        return $this->stmt->execute($values);
     }
 
     /**
@@ -146,11 +163,6 @@ class Database
      */
     public function where($field, $operator, $value) : Database
     {
-        if (isset($this->update)){
-            $this->stmt = $this->pdo->prepare("$this->update WHERE $field $operator :value");
-            return $this->stmt->execute();
-        }
-
         if(!isset($this->selection)) {
             $selection="*";
         } else {
