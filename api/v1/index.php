@@ -44,12 +44,11 @@ try {
     if ( ! class_exists ($endpoint) ) throw new API\NotFoundException("Endpoint does not exists");
 
     //controleer of de body valide json is
-    if( strlen ($body > 0 )){
-        $body = json_decode($body, true);
-        if ($body == NULL) throw new API\BadRequestException("Body is not json-formatted correctly.");
-    } else {
-        $body = (array)$body;
-    }
+    if ( ( json_decode($body,true) === NULL) AND (strlen($body) >0)) {
+        throw new API\BadRequestException("Body is not json-formatted correctly");
+    } elseif (strlen($body == 0) ) {
+        $body = [];
+    } else $body = json_decode($body,true);
     $api = new API\API($jwt);
 
     //validate all parameters
@@ -87,8 +86,8 @@ try {
         [
         "response" =>
             [
-            "message" => $e->getMessage(),
-            "error" => $e->getError()
+            "message" =>  $e->getMessage() ,
+            "error" =>  $e->getError()
             ],
         "success" => false,
         "status" => $e->getCode()

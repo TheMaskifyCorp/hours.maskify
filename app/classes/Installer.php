@@ -238,13 +238,14 @@ class Installer
         {
             die(json_encode(array($e->getMessage() => "Warning")));
         }
-        $filename = '../.env';
+        $filename = $_SERVER['DOCUMENT_ROOT'].'/.env';
         $env = '
-HOSTNAME="localhost"
-DATABASE="maskify_hours"
-USERNAME="root"
-PASSWORD="rootpassword"
-NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"'
+HOSTNAME="'.$hostname.'"
+DATABASE="'.$database.'"
+USERNAME="'.$username.'"
+PASSWORD="'.$password.'"
+NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"
+JWTSECRET="VerySecretSecret"'
 ;
         file_put_contents($filename, $env);
         chmod($filename, 00644);

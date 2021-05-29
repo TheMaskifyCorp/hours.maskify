@@ -1,13 +1,13 @@
 <?php
-require_once "../vendor/autoload.php";
-$app = "../app";
-require_once("$app/classes/Installer.php");
+
+$app = $_SERVER['DOCUMENT_ROOT']."/app";
+require_once $_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php";
 if(isset($_POST['hostname'])) {
-    $filename = '../.env';
+    $filename = $_SERVER['DOCUMENT_ROOT'].'/.env';
     try {
         $fp = fopen($filename, "w+");
     } catch (Exception $e) {
-        return array("Warning" => "Could not open DBCONF.php for writing, please check file permissions");
+        return array("Warning" => "Could not open .env for writing, please check file permissions");
     }
     $hostname = $_POST['hostname'];
     $database = $_POST['database'];
