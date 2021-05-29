@@ -1,14 +1,17 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
 $values = [
-"HolidaysAccorded" => 1
+    "HolidaysAccorded" => 1,
+    "AccordedByManager" => 2
 ];
-$where = [
-    [
-        "EmployeeID","=",5
-    ],
-    [
-        "HolidayStartDate" => "2020-09-21"
-    ]
-];
-echo $db->table('holidays')->update($values, $where);
+$employeeID = [
+        "EmployeeID","=",1
+    ];
+$startDate =  [
+        "HolidayStartDate","=","2021-06-16"
+    ];
+?><pre><?php
+$response = $db->table('holidays')->update($values, $employeeID, $startDate);
+var_dump($response);
+    ?> </pre>
+
