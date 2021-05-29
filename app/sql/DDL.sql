@@ -103,7 +103,7 @@ CREATE TABLE faq(
       SolutionID INT(11) NOT NULL,
       FAQContent VARCHAR(5000),
       FAQTitle VARCHAR(200) NOT NULL,
-      PRIMARY KEY(SolutionID),
+      PRIMARY KEY(SolutionID)
 ) ENGINE = INNODB;
 
 CREATE TABLE searchresults(
@@ -111,7 +111,7 @@ CREATE TABLE searchresults(
       SearchTermCounter INT(10) NOT NULL,
       SolutionID INT(11) NOT NULL,
       PRIMARY KEY(SearchTerm),
-      FOREIGN KEY(SolutionID) REFERENCES faq(SolutionID),
+      FOREIGN KEY(SolutionID) REFERENCES faq(SolutionID)
 ) ENGINE = INNODB;
 
 /*STORED PROCEDURES*/
