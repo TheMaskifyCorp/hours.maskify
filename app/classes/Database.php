@@ -104,13 +104,16 @@ class Database
             $setValues .= $key."=:$key";
         }
         $where = "";
+        $values = [];
         foreach ($args as $arg){
             var_dump($args);
-/*            $where .= "$arg[0] $arg[1] $arg[2]";
+            $where .= "$arg[0] $arg[1] ?";
+            array_push($values, $arg[3]);
             if ( ! $arg === array_key_last($args)) $where .= " AND ";*/
         }
-/*        $this->stmt = "UPDATE $this->table SET $setValues $where";
-        return $this->stmt->execute();*/
+        $this->stmt = "UPDATE $this->table SET $setValues $where";
+        var_dump($this->stmt);
+        //return $this->stmt->execute();
     }
 
     /**
