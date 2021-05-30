@@ -1,17 +1,12 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
-$values = [
-    "HolidaysAccorded" => 1,
-    "AccordedByManager" => 2
-];
-$employeeID = [
-        "EmployeeID","=",1
-    ];
-$startDate =  [
-        "HolidayStartDate","=","2021-06-16"
-    ];
+/**
+ * @var Auth $auth
+ * @var Database $db
+ */
+
 ?><pre><?php
-$response = $db->table('holidays')->update($values, $employeeID, $startDate);
-var_dump($response);
+    $result = $db->table('employeehours')->delete(["EmployeeHoursID","=","ffdba82c-50f0-3574-9855-784eb6fd7f1b"]);
+    var_dump($result);
     ?> </pre>
 

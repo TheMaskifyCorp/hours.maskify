@@ -107,31 +107,61 @@ class Database
      * ],[where-array],[where-array]);
      * @param array $data
      */
-    public function update(array $data, ...$args) : bool
+    public function update(array $data, ...$where) : bool
     {
         $keys = array_keys($data);
         $setValues = "";
         $where = "";
         $values = [];
-
+        $i = 0;
         foreach ($keys as $key){
-            $setValues .= $key."= ? ";
+            $setValues .= $key."= :$key ";
             if ($key != end($keys)) $setValues .= ",";
-            array_push($values,$data[$key]);
+            $values[$key] = $data[$key];
         }
 
-        foreach ($args as $arg){
-            $where .= "$arg[0] $arg[1] ?";
-            array_push($values, $arg[2]);
-            if (  $arg !== end($args) ) {
-                $where .= " AND ";
+        foreach ($where as $here){
+            $values[$here[0]] = $here[2];
+            $whereString .= "$here[0] $here[1] :$here[0]";
+
+            if (  $here !== end($where) ) {
+                $whereString .= " AND ";
             }
         }
-        $sql = "UPDATE {$this->table} SET {$setValues} WHERE {$where}";
+        $sql = "UPDATE {$this->table} SET {$setValues} WHERE {$whereString}";
 
         $this->stmt = $this->pdo->prepare($sql);
-        var_dump($this->stmt);
         return $this->stmt->execute($values);
+
+    }
+
+    public function delete(array ...$where)
+    {
+        $whereString = " ";
+        $values = [];
+        foreach ($where as $here){
+            $field = $here[0];
+            $operator = $here[1];
+            $value = $here[2];
+            if (strtolower($value) == "null"){
+                $value = NULL;
+            }
+            if ($operator == '=' && $value == NULL){
+                $operator = "IS";
+            }
+            if ($operator == '<>' && $value == NULL){
+                $operator = "IS NOT";
+            }
+            $whereString .= "$field $operator :$field";
+            $values[$field] = $value;
+            if (  $here !== end($where) ) {
+                $whereString .= " AND ";
+            }
+        }
+        $sql = "DELETE FROM {$this->table} WHERE {$whereString}";
+        $this->stmt = $this->pdo->prepare($sql);
+        $response =  $this->stmt->execute($values);
+        return ($response) ? true : $this->stmt->errorInfo();
 
     }
 
@@ -158,13 +188,17 @@ class Database
     }
 
     /**
+     * Usage: $db->table('employees')->where(["EmployeeID",">",0],["FirstName","=","Rita"])->get();
+     * Use for SELECT data from database in combination met ->get() of ->first();
+     *
      * @param $field
      * @param $operator
      * @param $value
      * @return Database
      */
-    public function where($field, $operator, $value) : Database
+    public function where(array ...$where) : Database
     {
+
         if(!isset($this->selection)) {
             $selection="*";
         } else {
@@ -175,21 +209,29 @@ class Database
         } else {
             $innerJoin = $this->innerJoin;
         }
-        if (strtolower($value) == "null"){
-            $value = NULL;
+        $whereString = " ";
+        $values = [];
+        foreach ($where as $here){
+            $field = $here[0];
+            $operator = $here[1];
+            $value = $here[2];
+            if (strtolower($value) == "null"){
+                $value = NULL;
+            }
+            if ($operator == '=' && $value == NULL){
+                $operator = "IS";
+            }
+            if ($operator == '<>' && $value == NULL){
+                $operator = "IS NOT";
+            }
+            $whereString .= "$field $operator :$field";
+            $values[$field] = $value;
+            if (  $here !== end($where) ) {
+                $whereString .= " AND ";
+            }
         }
-
-
-        if ($operator == '=' && $value == NULL){
-            $operator = "IS";
-        }
-        if ($operator == '<>' && $value == NULL){
-            $operator = "IS NOT";
-        }
-
-
-        $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $field $operator :value");
-        $this->stmt->execute(['value' => $value]);
+        $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $whereString");
+        $this->stmt->execute($values);
         return $this;
     }
 
