@@ -15,3 +15,10 @@ VALUES (1, 'Verkoop'),
        (4, 'Financieën '),
        (5, 'Inkoop'),
        (6, 'Design');
+INSERT INTO `faq` (`FAQContent`, `FAQTitle`)
+VALUES (1, 'Verkoop'),
+       (2, 'Personeel'),
+       (3, 'Productie'),
+       (4, 'Financieën '),
+       (5, 'Inkoop'),
+       (6, 'Design');
