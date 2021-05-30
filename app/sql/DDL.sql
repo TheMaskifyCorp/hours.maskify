@@ -7,8 +7,9 @@ DROP TABLE IF EXISTS `holidays`;
 DROP TABLE IF EXISTS `employees`;
 DROP TABLE IF EXISTS `employeetypes`;
 DROP TABLE IF EXISTS `departmenttypes`;
-DROP TABLE IF EXISTS `faq`;
 DROP TABLE IF EXISTS `searchresults`;
+DROP TABLE IF EXISTS `faq`;
+
 
 CREATE TABLE employeetypes(
     FunctionTypeID INT(3) NOT NULL,
@@ -100,7 +101,7 @@ CREATE TABLE holidays(
 ) ENGINE = INNODB;
 
 CREATE TABLE faq(
-      SolutionID INT(11) NOT NULL,
+      SolutionID INT(11) NOT NULL AUTO_INCREMENT,
       FAQContent VARCHAR(5000),
       FAQTitle VARCHAR(200) NOT NULL,
       PRIMARY KEY(SolutionID)

@@ -92,8 +92,8 @@ class Installer
                     $data['DeclaratedDate'] = $date;
                     $accArray = [NULL,"0","1"];
                     $data['HoursAccorded'] = $accArray[array_rand($accArray)];
-                    if ($data['HoursAccorded']=== NULL){
-                        $data['AccordedByManager']= NULL ;
+                    if ($data['HoursAccorded'] === NULL){
+                        $data['AccordedByManager'] = NULL ;
                     }else{
                         $emp = new Employee($i);
                         $data['AccordedByManager'] = $emp->getManager();
