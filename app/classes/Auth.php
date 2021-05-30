@@ -37,8 +37,8 @@ class Auth
     }
     public function signin($data): bool
     {
-        if($this->db->table('employees')->where('Email','=',$data['username'])->count() > 0) {
-            $user = $this->db->table('employees')->where('Email','=',$data['username'])->first();
+        if($this->db->table('employees')->where(['Email','=',$data['username'] ])->count() > 0) {
+            $user = $this->db->table('employees')->where(['Email','=',$data['username']])->first();
             $employee = new Employee($user->EmployeeID);
             $password = $employee->getPassword();
 
