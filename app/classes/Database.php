@@ -165,11 +165,6 @@ class Database
      */
     public function where($field, $operator, $value) : Database
     {
-        if (isset($this->update)){
-            $this->stmt = $this->pdo->prepare("$this->update WHERE $field $operator :value");
-            return $this->stmt->execute();
-        }
-
         if(!isset($this->selection)) {
             $selection="*";
         } else {
@@ -183,12 +178,16 @@ class Database
         if (strtolower($value) == "null"){
             $value = NULL;
         }
+
+
         if ($operator == '=' && $value == NULL){
             $operator = "IS";
         }
         if ($operator == '<>' && $value == NULL){
             $operator = "IS NOT";
         }
+
+
         $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $field $operator :value");
         $this->stmt->execute(['value' => $value]);
         return $this;

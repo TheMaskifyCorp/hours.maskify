@@ -128,6 +128,7 @@ class Installer
         $this->return['Added duplicate hours for testing purposes'] = "Success";
         return $this;
     }
+
     public function createRandomSickLeave($amount = 20) : Installer
     {
         if(empty($this->dates))
