@@ -9,8 +9,6 @@ class API
     protected string $request;
     protected array $body;
     protected array $params;
-    protected int $department;
-    protected int $itemID;
     protected int $requesterID;
     protected bool $manager;
 
@@ -26,16 +24,7 @@ class API
         $this->itemID = 0;
     }
 
-    public function department(string $department) : self
-    {
-        $this->department = $department;
-        return $this;
-    }
-    public function itemID(string $itemID): self
-    {
-        $this->itemID = $itemID;
-        return $this;
-    }
+
     public function endpoint(string $endpoint) : self
     {
         $this->endpoint = $endpoint;
@@ -51,28 +40,25 @@ class API
         $this->body = $body;
         return $this;
     }
+    public function params (array $params)
+    {
+        $this->params = $params;
+        return $this;
+    }
 
     public function execute()
     {
-     $endpoint = new $this->endpoint($this->requesterID,$this->manager);
-     //$endpoint = new Employee(1,true)
-     if ( $this->itemID > 0 ) {
-        $this->body['itemid'] = $this->itemID;
-     }
-     if ( $this->department > 0 ) {
-            $this->body['departmentid'] = $this->department;
-     }
-     return $endpoint->{$this->request}($this->body);
+        $endpoint = new $this->endpoint($this->requesterID,$this->manager);
+        return $endpoint->{$this->request}($this->body, $this->params);
     }
 
     public function validateGet(array $get)
     {
         //validate the passed in query-parameters
-        foreach ($get as $param => $value)
+        foreach ($get as $UCparam => $value)
         {
+            $param = strtolower($UCparam);
             switch ($param){
-                case "apipath":
-                    break;
                 case "departmentid":
                     //max length of the parameter is 15
                     if ( strlen((string)$value)>15 )
@@ -98,8 +84,14 @@ class API
                     }
                     break;
                 //throw bad request if the parameter does not exist
+                case "onlycurrent" :
+                    if (($value !== "true") OR ($value !== "false"))
+                    {
+                        throw new BadRequestException("$UCparam must be true or false");
+                    }
+                    break;
                 default:
-                    throw new BadRequestException("Parameter '$param' is not valid");
+                    throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
     }

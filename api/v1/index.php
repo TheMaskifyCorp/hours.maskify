@@ -44,43 +44,55 @@ try {
     if ( ! class_exists ($endpoint) ) throw new API\NotFoundException("Endpoint does not exists");
 
     //controleer of de body valide json is
-    if ( ( json_decode($body,true) === NULL) AND (strlen($body) >0)) {
+    if ( ( json_decode($body,true) === NULL) AND (strlen($body) > 0)) {
         throw new API\BadRequestException("Body is not json-formatted correctly");
-    } elseif (strlen($body == 0) ) {
+    } elseif (strlen($body == false)) {
         $body = [];
     } else $body = json_decode($body,true);
+
     $api = new API\API($jwt);
 
     //validate all parameters
     unset( $_GET [ 'apipath' ] ) ;
+    $api->validateGet($_GET);
 
     //convert all get vars to lowercase
-    $lowerCaseGet = [];
+    $params = [];
     foreach($_GET as $key => $value)
     {
-        $newKey = strtolower($key);
-        $_GET[$newKey] = ($value);
+        $key = strtolower($key);
+        $params[$key] = ($value);
     }
-
-    //alles met meer dan 2 lagen in het endpoint is verkeerd (/api/v1/employees/1/extraparam)
+    //maximale lengte endpoint is 2
     if (count($apiVars) > 2)
     {
         throw new API\BadRequestException("Endpoint does not exist");
     }
-    elseif ((count($apiVars) == 1) AND (isset($_GET['departmentid'])) AND ( preg_match('/[0-9]+/',$_GET['departmentid'] ) ) )
+    //als het eindpoint faq is, is de tweede parameter de searchterm
+    if ( ( count( $apiVars ) == 2 ) AND (strtolower($apiVars[0]) == "faq") )
     {
-        $response = $api->endpoint($endpoint)->request($httpMethod)->department($_GET['departmentid'])->body($body)->execute();
+        $params['searchterm'] = $apiVars[1];
     }
-    elseif ( ( count( $apiVars ) == 2 ) AND ( preg_match('/[0-9]+/',$apiVars[1] ) ) )
+    //anders :als de tweede parameter van het endpoint een getal is, opslaan als itemid
+    elseif  (( count( $apiVars ) == 2 ) AND ( preg_match('/[0-9]+/',$apiVars[1] ) ))
     {
-        $response = $api->endpoint($endpoint)->request($httpMethod)->itemID((int)$apiVars[1])->body($body)->execute();
+        $params['itemid'] = $apiVars[1];
     }
-    elseif ( ( count( $apiVars ) == 1 ) AND ( $apiVars[0] !== "" ) )
-    {
-    $response = $api->endpoint($endpoint)->request($httpMethod)->body($body)->execute();
+    //anders kan er geen tweede parameter zijn, dus fout
+    else if ( count( $apiVars ) == 2 ) {
+        throw new \API\BadRequestException("Endpoint $apiVars[0]/$apiVars[1] does not exist");
     }
-    //todo else throw error
-    else $response = ['response'=> 401,'success'=> false ];
+    $result = $api->endpoint($endpoint)->request($httpMethod)->body($body)->params($params)->execute();
+    $response =
+        [
+            "response" =>
+                [
+                    $result,
+                ],
+            "success" => true,
+            "status" => 200
+        ];
+
 } catch (Exception $e){
     $response =
         [
@@ -97,6 +109,7 @@ try {
 <pre>
 <?php
 
-echo json_encode($response,JSON_PRETTY_PRINT);
+echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
+
 </pre>
