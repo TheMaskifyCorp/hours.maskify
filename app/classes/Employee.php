@@ -48,7 +48,7 @@ class Employee
 
     public function getManager()
     {
-        $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','departmentmemberlist.EmployeeID = employees.EmployeeID')->where("FunctionTypeID","=","3")->get();
+        $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','EmployeeID')->where("FunctionTypeID","=","3")->get();
         $department = $this->getDepartment();
         foreach($managers as $man){
             $id = $man->EmployeeID;
