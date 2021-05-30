@@ -1,6 +1,6 @@
 <?php
 
-require_once 'app/init.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
 /**
  * @var object $auth
  */
@@ -36,7 +36,7 @@ $auth->signout();
                     <div class="alert alert-primary" role="alert">
                         Signed out
                     </div>
-                    <a href="index.php">
+                    <a href="/view/index.php">
                     <button type="button" class="btn btn-primary">Back to login</button>
                     </a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

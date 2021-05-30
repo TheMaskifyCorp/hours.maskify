@@ -8,6 +8,16 @@ try {
 } catch (Exception $e) {
     header("Location: install/index.php");
 }
+if (isset($_SESSION['employee'])){
+    $token = array (
+        'eid' => ($_SESSION['employee']),
+        'manager' => ($_SESSION['manager']),
+        'iat' => time()
+    );
+    $jwt =  Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);
+    setcookie("jwt",$jwt);
+}
+
 
 $hash = new Hash;
 $db = new Database();

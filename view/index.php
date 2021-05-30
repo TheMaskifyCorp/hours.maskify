@@ -6,6 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
  */
 
 if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/index.php");
+
 ?>
 
 <!doctype html>
@@ -32,7 +33,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/
         <p class="lead">
             <?php
             if(!$auth->check()): ?>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signin">
+                <button id='loginbutton' type="button" class="btn btn-primary" data-toggle="modal" data-target="#signinmodal">
                     Sign in!
                 </button>
             <?php else: ?>
@@ -42,7 +43,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/
                     </button></a>
             <?php endif;?>
         </p>
-        <div class="modal fade" id="signin" tabindex="-1" role="dialog" aria-labelledby="signin" aria-hidden="true">
+        <div class="modal fade" id="signinmodal" tabindex="-1" role="dialog" aria-labelledby="signinmodal" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -52,7 +53,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/
                         </button>
                     </div>
                     <div class="Sign In">
-                        <form id="signin" action="login/signin.php" method="POST">
+                        <form id="signin" action="view/login/signin.php" method="POST">
                             <div id="name-group" class="form-group">
                                 <label for="username">Email</label>
                                 <input type="text" class="form-control" name="username" placeholder="Gebruiker">
@@ -74,12 +75,12 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/
     <div class="row">
         <div id="leftColumn" class="col-sm-12 col-md-6">
         </div>
-        <div class="col-sm-12 col-md-6">
+        <div id="rightColumn" class="col-sm-12 col-md-6">
             <?php
             if($auth->check()): ?>
-                <div class="alert alert-success" role="alert">User is logged in!</div>
+                <div id="logstatus" class="alert alert-success" role="alert">User is logged in!</div>
             <?php else: ?>
-                <div class="alert alert-danger" role="alert">User is not logged in!</div>
+                <div id="logstatus" class="alert alert-danger" role="alert">User is not logged in!</div>
             <?php endif;?>
         </div>
     </div>

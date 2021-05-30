@@ -13,7 +13,7 @@ $(document).ready(function() {
         // process the form
         $.ajax({
             type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-            url         : '/login/signin.php', // the url where we want to POST
+            url         : '/view/login/signin.php', // the url where we want to POST
             data        : formData, // our data object
             dataType    : 'json', // what type of data do we expect back from the server
                         encode          : true
@@ -52,8 +52,10 @@ $(document).ready(function() {
                     }
                 } else {
                     // ALL GOOD! just show the success message!
-                    $('#leftColumn').html('<div class="alert alert-success">' + data.message + '</div>');
-                    $('#signin').modal('hide');
+                    $('#logstatus').remove();
+                    $('#loginbutton').attr('disabled', 'disabled');
+                    $('#rightColumn').html('<div class="alert alert-success">' + data.message + '</div>');
+                    $('#signinmodal').modal('hide');
                 }
             });
 

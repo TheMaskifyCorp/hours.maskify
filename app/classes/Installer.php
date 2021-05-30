@@ -36,7 +36,7 @@ class Installer
             $LastName = $this->lastNames[array_rand($this->lastNames)];
             $Email = $FirstName.".".str_replace(' ', '', $LastName)."@maskify.nl";
             $Email = strtolower($Email);
-            if($this->db->table('employees')->where('Email','=',$Email)->count()) {
+            if($this->db->table('employees')->where(['Email','=',$Email])->count()) {
                 $Email = false;
             } else {
                 $employee['Firstname'] = $FirstName;
@@ -82,7 +82,7 @@ class Installer
 
     public function insertRandomHours() : Installer
     {
-        $count = $this->db->table("employees")->where("EmployeeID",">","0")->count();
+        $count = $this->db->table("employees")->where(["EmployeeID",">","0"])->count();
         $this->createDates();
         $i=1;
         while($i <= $count){
@@ -136,7 +136,7 @@ class Installer
            $this->createDates();
         }
         if (empty($this->numEmp)){
-            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+            $numEmp = $this->db->table('employees')->where(['EmployeeID', '>', 0])->count();
         } else {
             $numEmp = $this->numEmp;
         };
@@ -164,7 +164,7 @@ class Installer
     public function createRandomHolidays() : Installer
     {
         if (empty($this->numEmp)){
-            $numEmp = $this->db->table('employees')->where('EmployeeID', '>', 0)->count();
+            $numEmp = $this->db->table('employees')->where(['EmployeeID', '>', 0])->count();
         } else {
             $numEmp = $this->numEmp;
         };

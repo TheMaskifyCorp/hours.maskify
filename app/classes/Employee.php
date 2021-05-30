@@ -20,12 +20,12 @@ class Employee
     public function __construct($id)
     {
         $this->db = new Database;
-        $result = $this->db->table('employees')->where("EmployeeID", "=", "$id")->first();
+        $result = $this->db->table('employees')->where(["EmployeeID", "=", "$id"])->first();
         $result = (array)$result;
         foreach ($result as $key => $value) {
             $this->$key = $result[$key];
         }
-        $result = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where("EmployeeID", "=", "$id")->get();
+        $result = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where(["EmployeeID", "=", "$id"])->get();
         foreach ($result as $key => $value){
             $dep = $result[$key]->DepartmentID;
             $this->DepartmentID[] = $dep;
@@ -42,13 +42,13 @@ class Employee
     }
 
     public function getDepartment(){
-        $id = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where('EmployeeID','=',$this->EmployeeID)->first();
+        $id = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where(['EmployeeID','=',$this->EmployeeID])->first();
         return $id->DepartmentID;
     }
 
     public function getManager()
     {
-        $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','EmployeeID')->where("FunctionTypeID","=","3")->get();
+        $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','EmployeeID')->where(["FunctionTypeID",">","1"])->get();
         $department = $this->getDepartment();
         foreach($managers as $man){
             $id = $man->EmployeeID;
@@ -61,7 +61,7 @@ class Employee
     }
     public function getPassword()
     {
-        $credentials = $this->db->table('logincredentials')->where('EmployeeID','=',$this->EmployeeID)->first();
+        $credentials = $this->db->table('logincredentials')->where(['EmployeeID','=',$this->EmployeeID])->first();
         return $credentials->Password;
     }
 }

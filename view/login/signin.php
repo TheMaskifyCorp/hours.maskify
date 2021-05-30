@@ -1,6 +1,6 @@
 <?php
 
-require_once 'app/init.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
 /**
  * @var object $auth
  */
@@ -29,6 +29,6 @@ if ( ! empty($errors)) {
     ]))
 {
     $data['success'] = true;
-    $data['message'] = 'Success!';
+    $data['message'] = 'User logged in.';
 }
 echo json_encode($data);
