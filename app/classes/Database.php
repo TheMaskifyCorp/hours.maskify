@@ -111,7 +111,7 @@ class Database
     {
         $keys = array_keys($data);
         $setValues = "";
-        $where = "";
+        $whereString = "";
         $values = [];
         $i = 0;
         foreach ($keys as $key){
@@ -119,7 +119,6 @@ class Database
             if ($key != end($keys)) $setValues .= ",";
             $values[$key] = $data[$key];
         }
-
         foreach ($where as $here){
             $values[$here[0]] = $here[2];
             $whereString .= "$here[0] $here[1] :$here[0]";
@@ -141,6 +140,7 @@ class Database
         $values = [];
         foreach ($where as $here){
             $field = $here[0];
+            $placeholder = preg_replace("/\./","", $field);
             $operator = $here[1];
             $value = $here[2];
             if (strtolower($value) == "null"){
@@ -152,8 +152,8 @@ class Database
             if ($operator == '<>' && $value == NULL){
                 $operator = "IS NOT";
             }
-            $whereString .= "$field $operator :$field";
-            $values[$field] = $value;
+            $whereString .= "$field $operator :$placeholder";
+            $values[$placeholder] = $value;
             if (  $here !== end($where) ) {
                 $whereString .= " AND ";
             }
@@ -213,6 +213,7 @@ class Database
         $values = [];
         foreach ($where as $here){
             $field = $here[0];
+            $placeholder = preg_replace("/\./","", $field);
             $operator = $here[1];
             $value = $here[2];
             if (strtolower($value) == "null"){
@@ -224,8 +225,8 @@ class Database
             if ($operator == '<>' && $value == NULL){
                 $operator = "IS NOT";
             }
-            $whereString .= "$field $operator :$field";
-            $values[$field] = $value;
+            $whereString .= "$field $operator :$placeholder";
+            $values[$placeholder] = $value;
             if (  $here !== end($where) ) {
                 $whereString .= " AND ";
             }
