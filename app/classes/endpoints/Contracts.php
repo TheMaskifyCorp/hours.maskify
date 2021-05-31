@@ -24,36 +24,15 @@ class Contracts implements ApiEndpointInterface
      * @throws NotAuthorizedException
      */
 
-
+    //manager get all contracts
     //return only the current contracts
+    //
     public function get (array $body, array $params) :array
     {
-        $employeeid = $params['employeeid'];
-        $onlycurrent = $params['onlycurrent'];
-        $currentDateTime = date('Y-m-d ');
-
-        if((isset($params['itemid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        if(isset($params['employeeid']));
-        if (($currentDateTime >= $params['contractenddate']) || (!$params['contractenddate'] !== null));
-        $onlycurrent = true;
-        //add every parameter to an array
-        $where = [];
-        if(isset($params['startdate'])) array_push($where,["ContractStartDate",'<=',$params['startdate']]);
-        if(isset($params['enddate'])) array_push($where,["DeclaratedDate",'<=',$params['contractenddate']]);
-        if(isset($params['WeeklyHours'])) array_push($where,["contracts.WeeklyHours",'=',$params['weeklyhours']]);
-        if(isset($params['PayRate'])) array_push($where,["PayRate",'=',$params['payrate']]);
-        if(isset($params['employeeid'])) array_push($where,["EmployeeID",'=',$params['employeeid']]);
-
-        //if no where clauses, select all employees
-        if (!count($where)>0) array_push($where,["contracts.EmployeeID",'>',0]);
-
-        //fetch and return the result
-        $result = $this->db->table('employeehours')->innerjoin('departmentmemberlist','EmployeeID')->where($where)->get();
-        return (array)$result;
-//        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
-//        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-//        return $this->db->table('contracts')->get();
+        if(isset($params['itemid'])) return $this->returnSingleItem($params['itemid']);
+        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
+        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
+        return $this->db->table('employees')->get();
     }
 
     /**
@@ -145,13 +124,18 @@ class Contracts implements ApiEndpointInterface
      * @return array
      * @throws NotAuthorizedException
      */
-    private function returnSingleItem(int $employeeid): array
+    private function returnSingleItem(int $itemID): array
     {
-        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
-        if (isset( $response )) {
-            return (array)$response[0];
+        if ( ( ! $this->manager) AND ( $itemID !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+        $response = (array)$this->db->table('contracts')->innerjoin('departmentmemberlist','EmployeeID')->where(['employees.EmployeeID','=',$itemID])->get();
+        if ( count ( $response ) >1 ) {
+            $departments = (array)[];
+            foreach ($response as $emp){
+                array_push($departments, $emp->DepartmentID);
+            }
+            $response[0]->DepartmentID = $departments;
         }
+        return (array)$response[0];
     }
 
     /**
