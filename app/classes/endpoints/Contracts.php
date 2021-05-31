@@ -29,10 +29,12 @@ class Contracts implements ApiEndpointInterface
     //
     public function get (array $body, array $params) :array
     {
-        if(isset($params['itemid'])) return $this->returnSingleItem($params['itemid']);
-        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
-        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        return $this->db->table('employees')->get();
+        if(isset($params['employeeid']) AND (isset($params["onlycurrent"])))
+            return $this->returnSingleItem($params['employeeid']);
+        return [];
+//        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
+//        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
+//        return $this->db->table('contracts')->get();
     }
 
     /**
@@ -124,18 +126,13 @@ class Contracts implements ApiEndpointInterface
      * @return array
      * @throws NotAuthorizedException
      */
-    private function returnSingleItem(int $itemID): array
+    private function returnSingleItem(int $employeeid): array
     {
-        if ( ( ! $this->manager) AND ( $itemID !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        $response = (array)$this->db->table('contracts')->innerjoin('departmentmemberlist','EmployeeID')->where(['employees.EmployeeID','=',$itemID])->get();
-        if ( count ( $response ) >1 ) {
-            $departments = (array)[];
-            foreach ($response as $emp){
-                array_push($departments, $emp->DepartmentID);
-            }
-            $response[0]->DepartmentID = $departments;
+        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+        $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
+        if (isset( $response )) {
+            return (array)$response[0];
         }
-        return (array)$response[0];
     }
 
     /**
