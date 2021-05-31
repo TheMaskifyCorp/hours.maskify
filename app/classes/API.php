@@ -59,6 +59,17 @@ class API
         {
             $param = strtolower($UCparam);
             switch ($param){
+                case "employeeid":
+                    if ( strlen((string)$value)>15 )
+                    {
+                        throw new BadRequestException("EmployeeID cannot exceed 15 characters");
+                    }
+
+                    //parameter must be an integer
+                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) ) {
+                        throw new BadRequestException("EmployeeID must be an integer");
+                    }
+                    break;
                 case "departmentid":
                     //max length of the parameter is 15
                     if ( strlen((string)$value)>15 )
@@ -85,7 +96,7 @@ class API
                     break;
                 //throw bad request if the parameter does not exist
                 case "onlycurrent" :
-                    if (($value !== "true") OR ($value !== "false"))
+                    if (($value !== "true") AND ($value !== "false"))
                     {
                         throw new BadRequestException("$UCparam must be true or false");
                     }
