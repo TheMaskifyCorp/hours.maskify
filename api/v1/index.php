@@ -1,7 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
-//TODO remove token generation in life versie
+//TODO remove token generation in live versie
 $token = array (
     'eid' => 1,
     'manager' => true,
@@ -64,6 +64,7 @@ try {
         $params[$key] = ($value);
     }
     //maximale lengte endpoint is 2
+    $api->validateEndpoint($apiVars);
     if (count($apiVars) > 2)
     {
         throw new API\BadRequestException("Endpoint does not exist");
