@@ -44,6 +44,8 @@ class Database
     {
         unset($this->selection);
         unset($this->innerJoin);
+        unset($this->table);
+        unset($this->stmt);
         $this->table = $table;
         return $this;
     }
@@ -260,7 +262,7 @@ class Database
     }
     public function get(): array
     {
-        if (!$this->stmt) {
+        if ( !isset( $this->stmt) ) {
             $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
             $this->stmt->execute();
         }

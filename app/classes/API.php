@@ -69,6 +69,16 @@ class API
                     if ( ! preg_match('/^[0-9]{0,15}$/', $value ) ) {
                         throw new BadRequestException("EmployeeID must be an integer");
                     }
+                    $empArray = $this->db->table("employees")->get();
+                    $numbers = [];
+                    foreach ($empArray as $obj)
+                    {
+                        array_push($numbers,$obj->EmployeeID);
+                    }
+                    if ( ! in_array ( $value,$numbers ) )
+                    {
+                        throw new NotFoundException("Employee '$value' does not exist");
+                    }
                     break;
                 case "departmentid":
                     //max length of the parameter is 15
@@ -87,6 +97,7 @@ class API
                     $numbers = [];
                     foreach ($departments as $obj)
                     {
+                        var_dump($obj);
                         array_push($numbers,$obj->DepartmentID);
                     }
                     if ( ! in_array ( $value,$numbers ) )
@@ -105,5 +116,35 @@ class API
                     throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
+    }
+    /**
+     * @throws BadRequestException
+     */
+    public function validateEndpoint(array $apipath)
+    {
+        $ep = strtolower($apipath[0]);
+        $path = implode('/',$apipath);
+        switch($ep)
+        {
+            case "employees":
+                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+                if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
+                    break;
+            case "contracts":
+                if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
+                break;
+            case "hours":
+                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+                if ( ( isset($apipath[1]) ) AND (! \UUID::is_valid($apipath[1]) ) ) throw new BadRequestException("Unvalid UUID");
+                break;
+            case "departments":
+            case "holidays":
+            case "sickleave":
+            case "faq":
+                break;
+            default:
+                throw new BadRequestException("wat je niet ziet bestaat niet");
+        }
+
     }
 }
