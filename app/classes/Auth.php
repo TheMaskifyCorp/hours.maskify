@@ -8,6 +8,11 @@ class Auth
     public $session = 'employee';
 
 
+    /**
+     * Auth constructor.
+     * @param Database $db
+     * @param Hash $hash
+     */
     public function __construct(Database $db, Hash $hash)
     {
         $this->db = $db;
@@ -15,20 +20,34 @@ class Auth
         $this->hash = $hash;
     }
 
+    /**
+     * @return bool
+     */
     public function check()
     {
         return isset($_SESSION[$this->session]);
     }
+
     public function signout()
     {
         unset($_SESSION[$this->session]);
         unset($_SESSION['manager']);
     }
+
+    /**
+     * @param $id
+     * @param false $manager
+     */
     protected function setAuthSession($id, $manager = false)
     {
         $_SESSION[$this->session] = $id;
         $_SESSION['manager'] = $manager;
     }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
     public function create(array $data) : bool
     {
         if(isset($data['password']))
@@ -37,6 +56,11 @@ class Auth
         }
         return $this->db->table('logincredentials')->insert($data);
     }
+
+    /**
+     * @param $data
+     * @return bool
+     */
     public function signin($data): bool
     {
         if($this->db->table('employees')->where(['Email','=',$data['username'] ])->count() > 0) {

@@ -85,7 +85,7 @@ class API
                     break;
                 //throw bad request if the parameter does not exist
                 case "onlycurrent" :
-                    if (($value !== "true") OR ($value !== "false"))
+                    if (($value !== "true") AND ($value !== "false"))
                     {
                         throw new BadRequestException("$UCparam must be true or false");
                     }
@@ -94,5 +94,37 @@ class API
                     throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    public function validateEndpoint(array $apipath)
+    {
+        $ep = strtolower($apipath[0]);
+        $path = implode('/',$apipath);
+        switch($ep)
+        {
+            case "employees":
+                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+                if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
+                break;
+            case "contracts":
+                if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
+                break;
+            case "hours":
+                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+                if ( ( isset($apipath[1]) ) AND (! \UUID::is_valid($apipath[1]) ) ) throw new BadRequestException("Unvalid UUID");
+                break;
+            case "departments":
+            case "holidays":
+            case "sickleave":
+            case "faq":
+                break;
+            default:
+                throw new BadRequestException("wat je niet ziet bestaat niet");
+        }
+
+
     }
 }
