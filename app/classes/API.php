@@ -59,6 +59,17 @@ class API
         {
             $param = strtolower($UCparam);
             switch ($param){
+                case "employeeid":
+                    if ( strlen((string)$value)>15 )
+                    {
+                        throw new BadRequestException("EmployeeID cannot exceed 15 characters");
+                    }
+
+                    //parameter must be an integer
+                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) ) {
+                        throw new BadRequestException("EmployeeID must be an integer");
+                    }
+                    break;
                 case "departmentid":
                     //max length of the parameter is 15
                     if ( strlen((string)$value)>15 )
@@ -94,37 +105,5 @@ class API
                     throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
-    }
-
-    /**
-     * @throws BadRequestException
-     */
-    public function validateEndpoint(array $apipath)
-    {
-        $ep = strtolower($apipath[0]);
-        $path = implode('/',$apipath);
-        switch($ep)
-        {
-            case "employees":
-                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
-                if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
-                break;
-            case "contracts":
-                if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
-                break;
-            case "hours":
-                if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
-                if ( ( isset($apipath[1]) ) AND (! \UUID::is_valid($apipath[1]) ) ) throw new BadRequestException("Unvalid UUID");
-                break;
-            case "departments":
-            case "holidays":
-            case "sickleave":
-            case "faq":
-                break;
-            default:
-                throw new BadRequestException("wat je niet ziet bestaat niet");
-        }
-
-
     }
 }
