@@ -63,6 +63,7 @@ try {
         $key = strtolower($key);
         $params[$key] = ($value);
     }
+
     //maximale lengte endpoint is 2
     $api->validateEndpoint($apiVars);
     if (count($apiVars) > 2)
