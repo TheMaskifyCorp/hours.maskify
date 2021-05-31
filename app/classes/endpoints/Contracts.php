@@ -30,6 +30,7 @@ class Contracts implements ApiEndpointInterface
     public function get (array $body, array $params) :array
     {
         if(isset($params['employeeid']) AND (isset($params["onlycurrent"])))
+            $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
             return $this->returnSingleItem($params['employeeid']);
         return [];
 //        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
