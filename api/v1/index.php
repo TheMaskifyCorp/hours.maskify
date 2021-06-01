@@ -2,12 +2,12 @@
 
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
 //TODO remove token generation in live versie
-$token = array (
+/*$token = array (
     'eid' => 1,
     'manager' => true,
     'iat' => time()
 );
-$jwt = Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);
+$jwt = Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);*/
 // EINDE token generation
 
 //gather all request-data
@@ -30,15 +30,68 @@ $body = file_get_contents('php://input');
 $apiVars=explode('/',$apipath);
 
 try {
+    /*
+     * BEGIN VALIDATION OF JWT TOKEN
+     */
+
+    //check of een token is meegestuurd
+
+    /*
+     * START OF LIVE VERSION FOR JWT
+     */
+/*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
+
+        throw new API\NotAuthorizedException('Token not found');
+
+    }
+    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+        throw new API\NotAuthorizedException('Token not found');
+    }
+    $jwt = $matches[1];*/
+
+    /*
+     * END OF LIVE VERSION FOR JWT
+     * START OF TEST VERSION FOR JWT
+     */
+    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        //throw new API\NotAuthorizedException('Token not found');
+        $token = array (
+            'eid' => 1,
+            'manager' => true,
+            'iat' => time()
+        );
+        $matches[1] = Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);
+    }
+    elseif (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+        throw new API\NotAuthorizedException('Token not found');
+    }
+    /*
+     * END OF TEST VERSION FOR JWT
+     */
+    $jwt = $matches[1];
+
+    if (! $jwt) {
+        // No token was able to be extracted from the authorization header
+
+        throw new API\NotAuthorizedException('Token not found');
+
+
+    }
     //controleer of het JWT token valide is
     try{
         $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
-        //als het ouder is dan 8 uur is het niet valid
-        if ($decoded->iat < (time()-28800)) throw new Exception;
+        //als het ouder is dan 1 uur is het niet valid
+        if ($decoded->iat < (time()-3600)) throw new Exception;
     } catch (Exception $e)
     {
         throw new API\NotAuthorizedException('Token not valid');
     }
+
+    /*
+     * BEGIN VALIDATION OF ENDPOINT AND PARAMETERS
+     *
+     */
+
     //controleer of het endpoint bestaat
     $endpoint = "API\\".ucfirst( strtolower( $apiVars[0] ) );
     if ( ! class_exists ($endpoint) ) throw new API\NotFoundException("Endpoint does not exists");
@@ -63,26 +116,13 @@ try {
         $key = strtolower($key);
         $params[$key] = ($value);
     }
-    //maximale lengte endpoint is 2
+
     $api->validateEndpoint($apiVars);
-    if (count($apiVars) > 2)
-    {
-        throw new API\BadRequestException("Endpoint does not exist");
-    }
-    //als het eindpoint faq is, is de tweede parameter de searchterm
-    if ( ( count( $apiVars ) == 2 ) AND (strtolower($apiVars[0]) == "faq") )
-    {
-        $params['searchterm'] = $apiVars[1];
-    }
-    //anders :als de tweede parameter van het endpoint een getal is, opslaan als itemid
-    elseif  (( count( $apiVars ) == 2 ) AND ( preg_match('/[0-9]+/',$apiVars[1] ) ))
-    {
-        $params['itemid'] = $apiVars[1];
-    }
-    //anders kan er geen tweede parameter zijn, dus fout
-    else if ( count( $apiVars ) == 2 ) {
-        throw new \API\BadRequestException("Endpoint $apiVars[0]/$apiVars[1] does not exist");
-    }
+
+    /*
+     * Execute the request
+     */
+
     $result = $api->endpoint($endpoint)->request($httpMethod)->body($body)->params($params)->execute();
     $response =
         [
