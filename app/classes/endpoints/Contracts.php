@@ -24,15 +24,18 @@ class Contracts implements ApiEndpointInterface
      * @throws NotAuthorizedException
      */
 
-    //manager get all contracts
+
     //return only the current contracts
-    //
     public function get (array $body, array $params) :array
     {
+        $employeeid = $params['employeeid'];
+        $onlycurrent = $params['onlycurrent'];
+        $currentDateTime = date('Y-m-d H:i:s');
+
         if(isset($params['employeeid']) AND (isset($params["onlycurrent"])))
-            $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
+            $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid AND ] )->get();
             return $this->returnSingleItem($params['employeeid']);
-        return [];
+        return [$currentDateTime];
 //        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
 //        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
 //        return $this->db->table('contracts')->get();
