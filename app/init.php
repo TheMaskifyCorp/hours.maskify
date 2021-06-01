@@ -8,6 +8,7 @@ try {
 } catch (Exception $e) {
     header("Location: install/index.php");
 }
+$jwt = "";
 if (isset($_SESSION['employee'])){
     $token = array (
         'eid' => ($_SESSION['employee']),
