@@ -9,3 +9,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{QUERY_STRING} ^(.*?)$
 RewriteRule ^/?api/v1/(.*?)/?$ /api/v1/index.php?apipath=$1&%1 [NC,L]
+
+#send Authorization header also via HTTP:
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
