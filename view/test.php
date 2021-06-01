@@ -6,8 +6,9 @@ require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
  * @var Database $db
  */
 ?><pre><?php
-    $result = $db->table('employeehours')->delete(["EmployeeHoursID","=","ffdba82c-50f0-3574-9855-784eb6fd7f1b"]);
-    var_dump($result);
+
+    var_dump($db->table('employees')->where( [['EmployeeID','=',1],['FirstName','=','Sven']],['FunctionTypeID','>',0])->get() );
+
     ?> </pre>
 
 

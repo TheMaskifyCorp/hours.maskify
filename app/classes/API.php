@@ -59,29 +59,33 @@ class API
         {
             $param = strtolower($UCparam);
             switch ($param){
-                case "departmentid":
-                    //max length of the parameter is 15
+                case "employeeid":
+                    //parameter cannot exceed length 15
                     if ( strlen((string)$value)>15 )
-                    {
-                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
-                    }
+                        throw new BadRequestException("EmployeeID cannot exceed 15 characters");
 
                     //parameter must be an integer
-                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) ) {
+                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) )
+                        throw new BadRequestException("EmployeeID must be an integer");
+
+                    //parameter must be existing employee
+                    if (! $this->exists($value, "EmployeeID","employees")  )
+                        throw new NotFoundException("Employee '$value' does not exist");
+
+                    break;
+                case "departmentid":
+                    //parameter cannot exceed length 15
+                    if ( strlen((string)$value)>15 )
+                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) )
                         throw new BadRequestException("DepartmentID must be an integer");
-                    }
 
                     //parameter must be existing department
-                    $departments = $this->db->table("departmenttypes")->get();
-                    $numbers = [];
-                    foreach ($departments as $obj)
-                    {
-                        array_push($numbers,$obj->DepartmentID);
-                    }
-                    if ( ! in_array ( $value,$numbers ) )
-                    {
+                    if ( ! $this->exists($value,'DepartmentID','departmenttypes') )
                         throw new NotFoundException("DepartmentID '$value' does not exist");
-                    }
+
                     break;
                 //throw bad request if the parameter does not exist
                 case "onlycurrent" :
@@ -91,11 +95,11 @@ class API
                     }
                     break;
                 default:
-                    throw new BadRequestException("Parameter '$UCparam' is not valid");
+                    //throw new BadRequestException("Parameter '$UCparam' is not valid");
+                    break;
             }
         }
     }
-
     /**
      * @throws BadRequestException
      */
@@ -108,13 +112,16 @@ class API
             case "employees":
                 if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
                 if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
-                break;
+                    break;
             case "contracts":
                 if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
                 break;
             case "hours":
                 if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
-                if ( ( isset($apipath[1]) ) AND (! \UUID::is_valid($apipath[1]) ) ) throw new BadRequestException("Unvalid UUID");
+
+                if(isset($apipath[1]))settype($apipath[1],"integer");
+
+                if ( ( isset($apipath[1]) ) AND (! $this->exists($apipath[1],'EmployeeID','employees') ) ) throw new BadRequestException("Employee does not exist");
                 break;
             case "departments":
             case "holidays":
@@ -125,6 +132,9 @@ class API
                 throw new BadRequestException("wat je niet ziet bestaat niet");
         }
 
-
+    }
+    private function exists(int $id, string $idName, string $table)
+    {
+        return($this->db->table($table)->where([$idName,"=",$id])->count() > 0 );
     }
 }
