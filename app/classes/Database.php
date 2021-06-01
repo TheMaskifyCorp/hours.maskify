@@ -114,6 +114,7 @@ class Database
         $keys = array_keys($data);
         $setValues = "";
         $whereString = "";
+        $where = $this->deNestWhere($where);
         $values = [];
         $i = 0;
         foreach ($keys as $key){
@@ -146,6 +147,7 @@ class Database
     {
         $whereString = " ";
         $values = [];
+        $where = $this->deNestWhere($where);
         foreach ($where as $here){
             $field = $here[0];
             $placeholder = preg_replace("/\./","", $field);
@@ -219,18 +221,7 @@ class Database
         }
         $whereString = " ";
         $values = [];
-        $newArray = [];
-        //if a nested array was passed as parameter, fix the nesting
-        foreach ($where as $here) {
-            if (is_array($here[0])) {
-                foreach  ($here as $her) {
-                    array_push($newArray, $her);
-                }
-            }else{
-                array_push($newArray, $here);
-            }
-            $where = $newArray;
-        }
+        $where = $this->deNestWhere($where);
 
         foreach ($where as $here){
 
@@ -302,5 +293,24 @@ class Database
     public function lastID()
     {
         return $this->pdo->lastInsertId();
+    }
+
+    /*
+     * PRIVATE FUNCTIONS
+     */
+
+    private function deNestWhere(array $where) : array
+    {
+        $newArray = [];
+        foreach ($where as $here) {
+            if (is_array($here[0])) {
+                foreach  ($here as $her) {
+                    array_push($newArray, $her);
+                }
+            }else{
+                array_push($newArray, $here);
+            }
+        }
+        return $newArray;
     }
 }
