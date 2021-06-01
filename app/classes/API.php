@@ -119,8 +119,7 @@ class API
             case "hours":
                 if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
 
-                if(isset($apipath[1]))settype($apipath[1],"integer");
-
+                if ( isset( $apipath [ 1 ] ) ) intval( $apipath [ 1 ] );
                 if ( ( isset($apipath[1]) ) AND (! $this->exists($apipath[1],'EmployeeID','employees') ) ) throw new BadRequestException("Employee does not exist");
                 break;
             case "departments":
