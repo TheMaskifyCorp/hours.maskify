@@ -2,6 +2,8 @@
 
 namespace API;
 
+use MongoDB\Driver\Exception\AuthenticationException;
+
 class Hours implements ApiEndpointInterface
 {
     protected int $employee;
@@ -17,6 +19,8 @@ class Hours implements ApiEndpointInterface
 
     public function get(array $body, array $params): array
     {
+        //TODO check manager and employee
+        if ( ( (! isset($params['itemid']) ) OR ( $this->employee != $params [ 'itemid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
         //throw error for filtering on department AND employee
         if((isset($params['itemid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
 
