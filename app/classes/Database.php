@@ -122,6 +122,12 @@ class Database
             $values[$key] = $data[$key];
         }
         foreach ($where as $here){
+            if(is_array($here)){
+                foreach($here as $her){
+                    array_push( $where, $here );
+                }
+                break;
+            }
             $values[$here[0]] = $here[2];
             $whereString .= "$here[0] $here[1] :$here[0]";
 
@@ -213,7 +219,21 @@ class Database
         }
         $whereString = " ";
         $values = [];
+        $newArray = [];
+        //if a nested array was passed as parameter, fix the nesting
+        foreach ($where as $here) {
+            if (is_array($here[0])) {
+                foreach  ($here as $her) {
+                    array_push($newArray, $her);
+                }
+            }else{
+                array_push($newArray, $here);
+            }
+            $where = $newArray;
+        }
+
         foreach ($where as $here){
+
             $field = $here[0];
             $placeholder = preg_replace("/\./","", $field);
             $operator = $here[1];
