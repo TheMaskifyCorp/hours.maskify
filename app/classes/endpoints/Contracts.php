@@ -30,12 +30,27 @@ class Contracts implements ApiEndpointInterface
     {
         $employeeid = $params['employeeid'];
         $onlycurrent = $params['onlycurrent'];
-        $currentDateTime = date('Y-m-d H:i:s');
+        $currentDateTime = date('Y-m-d ');
 
-        if(isset($params['employeeid']) AND (isset($params["onlycurrent"])))
-            $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid AND ] )->get();
-            return $this->returnSingleItem($params['employeeid']);
-        return [$currentDateTime];
+        if((isset($params['itemid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
+        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+        if(isset($params['employeeid']));
+        if (($currentDateTime >= $params['contractenddate']) || (!$params['contractenddate'] !== null));
+        $onlycurrent = true;
+        //add every parameter to an array
+        $where = [];
+        if(isset($params['startdate'])) array_push($where,["ContractStartDate",'<=',$params['startdate']]);
+        if(isset($params['enddate'])) array_push($where,["DeclaratedDate",'<=',$params['contractenddate']]);
+        if(isset($params['WeeklyHours'])) array_push($where,["contracts.WeeklyHours",'=',$params['weeklyhours']]);
+        if(isset($params['PayRate'])) array_push($where,["PayRate",'=',$params['payrate']]);
+        if(isset($params['employeeid'])) array_push($where,["EmployeeID",'=',$params['employeeid']]);
+
+        //if no where clauses, select all employees
+        if (!count($where)>0) array_push($where,["contracts.EmployeeID",'>',0]);
+
+        //fetch and return the result
+        $result = $this->db->table('employeehours')->innerjoin('departmentmemberlist','EmployeeID')->where($where)->get();
+        return (array)$result;
 //        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
 //        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
 //        return $this->db->table('contracts')->get();
