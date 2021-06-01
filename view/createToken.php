@@ -4,7 +4,7 @@ $jwt = "";
 if (isset ($_POST['id']) ) {
     $id = $_POST['id'];
     $emp = $db->table('employees')->where(['EmployeeID','=',$id])->first();
-    $manager = $emp->FunctionTypeID == 2;
+    $manager = $emp->FunctionTypeID > 1;
     $token = array (
     'eid' => $id,
     'manager' => $manager,
