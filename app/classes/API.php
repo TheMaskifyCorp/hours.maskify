@@ -73,6 +73,21 @@ class API
                         throw new NotFoundException("Employee '$value' does not exist");
 
                     break;
+                case "manager":
+                    //parameter cannot exceed length 15
+                    if ( strlen((string)$value)>15 )
+                        throw new BadRequestException("Manager cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if ( ! preg_match('/^[0-9]{0,15}$/', $value ) )
+                        throw new BadRequestException("Managers EmployeeID must be an integer");
+
+                    //parameter must be existing employee
+                    if (! $this->exists($value, "EmployeeID","employees")  )
+                        throw new NotFoundException("EmployeeID '$value' does not exist");
+
+                    //TODO NON BREAKING: CHECK IF ID BELONGS TO MANAGER
+                    break;
                 case "departmentid":
                     //parameter cannot exceed length 15
                     if ( strlen((string)$value)>15 )
@@ -124,7 +139,7 @@ class API
             case "employees":
                 if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
                 if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
-                    return ['itemid' => $apipath[1]];
+                    return ['employeeid' => $apipath[1]];
                 break;
             case "contracts":
                 if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
@@ -135,7 +150,7 @@ class API
                 if ( isset( $apipath [ 1 ] ) ) intval( $apipath [ 1 ] );
                 if ( ( isset($apipath[1]) ) AND (! $this->exists($apipath[1],'EmployeeID','employees') ) ) throw new BadRequestException("Employee does not exist");
                 if ( isset($apipath[1]) )
-                    return ['itemid' => $apipath[1]];
+                    return ['employeeid' => $apipath[1]];
                 break;
             case "departments":
             case "holidays":
@@ -146,6 +161,7 @@ class API
                     throw new BadRequestException('Searchterm cannot contain a slash');
                 if (! preg_match('/^[A-z0-9]+$/'))
                     throw newBadRequestException('Searchterm cannot contain special characters');
+                return ['searchterm' => $apipath[1]];
                 break;
             default:
                 throw new BadRequestException("wat je niet ziet bestaat niet");

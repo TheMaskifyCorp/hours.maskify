@@ -9,7 +9,7 @@ class Database
     protected $selection;
     protected $innerJoin;
     protected $stmt;
-    protected $update;
+    protected $distinct = "";
 
     public function __construct($debug = false)
     {
@@ -98,7 +98,7 @@ class Database
     }
 
     /**
-     * function to insert data in table. function must be called with update-values, and where-arrays.
+     * function to update data in table. function must be called with update-values, and where-arrays.
      * Where-array structure = [$field, $operator, $value].
      * Example: ["EmployeeID","=",1]
      *
@@ -123,12 +123,6 @@ class Database
             $values[$key] = $data[$key];
         }
         foreach ($where as $here){
-            if(is_array($here)){
-                foreach($here as $her){
-                    array_push( $where, $here );
-                }
-                break;
-            }
             $values[$here[0]] = $here[2];
             $whereString .= "$here[0] $here[1] :$here[0]";
 
@@ -244,8 +238,14 @@ class Database
                 $whereString .= " AND ";
             }
         }
-        $this->stmt = $this->pdo->prepare("SELECT $selection FROM $this->table $innerJoin WHERE $whereString");
+        $this->stmt = $this->pdo->prepare("SELECT $this->distinct $selection FROM $this->table $innerJoin WHERE $whereString");
         $this->stmt->execute($values);
+        return $this;
+    }
+
+    public function distinct()
+    {
+        $this->distinct = "DISTINCT";
         return $this;
     }
 
