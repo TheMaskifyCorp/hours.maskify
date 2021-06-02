@@ -1,19 +1,11 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
-//TODO remove token generation in live versie
-/*$token = array (
-    'eid' => 1,
-    'manager' => true,
-    'iat' => time()
-);
-$jwt = Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);*/
-// EINDE token generation
 
 //gather all request-data
 $httpMethod = strtolower($_SERVER['REQUEST_METHOD']);
 
-//controle of er een endpoint gegeven is
+//check if endpoint is given
 if (isset($_GET['apipath']))
 {
     $apipath = $_GET['apipath'];
@@ -34,19 +26,18 @@ try {
      * BEGIN VALIDATION OF JWT TOKEN
      */
 
-    //check of een token is meegestuurd
+
 
     /*
      * START OF LIVE VERSION FOR JWT
      */
-/*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
-
+    //check of een token is meegestuurd
+/*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
         throw new API\NotAuthorizedException('Token not found');
 
-    }
-    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
         throw new API\NotAuthorizedException('Token not found');
-    }
+
     $jwt = $matches[1];*/
 
     /*
@@ -70,13 +61,10 @@ try {
      */
     $jwt = $matches[1];
 
-    if (! $jwt) {
+    if (! $jwt)
         // No token was able to be extracted from the authorization header
-
         throw new API\NotAuthorizedException('Token not found');
 
-
-    }
     //controleer of het JWT token valide is
     try{
         $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
@@ -109,6 +97,10 @@ try {
     unset( $_GET [ 'apipath' ] ) ;
     $api->validateGet($_GET);
 
+    //IMPORTANT
+    //TODO GET ITEMID BACK
+    
+
     //convert all get vars to lowercase
     $params = [];
     foreach($_GET as $key => $value)
@@ -117,8 +109,12 @@ try {
         $params[$key] = ($value);
     }
 
-    $api->validateEndpoint($apiVars);
-
+    $extraGetParams = $api->validateEndpoint($apiVars);
+    if(isset($extraGetParams) > 0) {
+        foreach ($extraGetParams as $key => $value) {
+            $params[$key] = $value;
+        }
+    }
     /*
      * Execute the request
      */
