@@ -25,8 +25,8 @@ class Employees implements ApiEndpointInterface
      */
     public function get (array $body, array $params) :array
     {
-        if((isset($params['itemid'])) AND (isset($params['departmentid']))) throw new API\BadRequestException("Cannot Filter single Employee on Departments");
-        if(isset($params['itemid'])) return $this->returnSingleItem($params['itemid']);
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new API\BadRequestException("Cannot Filter single Employee on Departments");
+        if(isset($params['employeeid'])) return $this->returnSingleItem($params['employeeid']);
         if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
         if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
         return $this->db->table('employees')->get();
@@ -42,7 +42,7 @@ class Employees implements ApiEndpointInterface
     {
         if( ! $this->manager) throw new NotAuthorizedException("Employees can only be created by a manager");
         //check of het op /employees gebeurd
-        if (isset($params['itemid'])) throw new BadRequestException('Employees can only be created at top-level endpoint /employees');
+        if (isset($params['employeeid'])) throw new BadRequestException('Employees can only be created at top-level endpoint /employees');
         //verwachte variabelen
         $required = ["FirstName", "LastName", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
         $optional = ['DocumentNumberID','Email'];
@@ -81,20 +81,20 @@ class Employees implements ApiEndpointInterface
         return ['message' => "Employee created"];
     }
     public function put (array $body, array $params) :array {
-        if (( ! $this->manager) AND (! ($this->employee == $params['itemid'] ) ) ) throw new NotAuthorizedException("Employees can only be updated by a manager, or the object employee");
-        if (!isset( $params['itemid']) ) throw new TeapotException("Employees can only be updated at employee-specific endpoints");
+        if (( ! $this->manager) AND (! ($this->employee == $params['employeeid'] ) ) ) throw new NotAuthorizedException("Employees can only be updated by a manager, or the object employee");
+        if (!isset( $params['employeeid']) ) throw new TeapotException("Employees can only be updated at employee-specific endpoints");
         //validate body
         $this->validatePostRequest($body);
         $response = [];
         $optional = ['DocumentNumberID','Email',"FirstName", "LastName", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
         //check if departmentID must be altered, and if so do it
         if(isset($body['DepartmentID'])) {
-            $dpResult = $this->db->table("departmentmembertypes")->update(['DepartmentID'], ['EmployeeID', "=", $params['itemid']]);
+            $dpResult = $this->db->table("departmentmembertypes")->update(['DepartmentID'], ['EmployeeID', "=", $params['employeeid']]);
             if ($dpResult !== true) throw new BadRequestException("Could not update department");
             unset($body['DepartmentID']);
         }
-        var_dump($params['itemid']);
-        $empResult = $this->db->table('employees')->update($body,['EmployeeID','=',$params['itemid']]);
+
+        $empResult = $this->db->table('employees')->update($body,['EmployeeID','=',$params['employeeid']]);
         if ($empResult !== true) throw new BadRequestException("Could not update Employee");
         return ["Employee Updated Succesfully"];
     }
