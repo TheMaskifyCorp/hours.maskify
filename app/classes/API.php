@@ -90,13 +90,25 @@ class API
                 //throw bad request if the parameter does not exist
                 case "onlycurrent" :
                     if (($value !== "true") AND ($value !== "false"))
-                    {
                         throw new BadRequestException("$UCparam must be true or false");
-                    }
+                    break;
+                case "startdaterange":
+                case "enddaterange":
+                    if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value ) )
+                        throw new BadRequestException('Dates must be formatten YYYY-MM-DD');
+                    break;
+                case "status":
+                    if (! in_array(strtolower($value),['null','0','1']))
+                        throw new BadRequestException('Status must be 0, 1 or NULL');
+                    break;
+                case "employeehoursid":
+                    if (! \UUID::is_valid($value) )
+                        throw new BadRequestException("EmployeeHoursID must be a valid UUID");
+                    if ( ! $this->exists($value,'EmployeeHoursID','employeehours'))
+                        throw new NotFoundException("EmployeeHoursID not found");
                     break;
                 default:
-                    //throw new BadRequestException("Parameter '$UCparam' is not valid");
-                    break;
+                    throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
     }
@@ -112,7 +124,8 @@ class API
             case "employees":
                 if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
                 if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
-                    break;
+                    return ['itemid' => $apipath[1]];
+                break;
             case "contracts":
                 if (count ($apipath) > 1) throw new BadRequestException("Endpoint $path could not be validated");
                 break;
@@ -121,18 +134,25 @@ class API
 
                 if ( isset( $apipath [ 1 ] ) ) intval( $apipath [ 1 ] );
                 if ( ( isset($apipath[1]) ) AND (! $this->exists($apipath[1],'EmployeeID','employees') ) ) throw new BadRequestException("Employee does not exist");
+                if ( isset($apipath[1]) )
+                    return ['itemid' => $apipath[1]];
                 break;
             case "departments":
             case "holidays":
             case "sickleave":
+                break;
             case "faq":
+                if (count ($apipath) > 2)
+                    throw new BadRequestException('Searchterm cannot contain a slash');
+                if (! preg_match('/^[A-z0-9]+$/'))
+                    throw newBadRequestException('Searchterm cannot contain special characters');
                 break;
             default:
                 throw new BadRequestException("wat je niet ziet bestaat niet");
         }
 
     }
-    private function exists(int $id, string $idName, string $table)
+    private function exists($id, string $idName, string $table)
     {
         return($this->db->table($table)->where([$idName,"=",$id])->count() > 0 );
     }
