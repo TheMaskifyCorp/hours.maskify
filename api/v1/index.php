@@ -122,10 +122,8 @@ try {
     $result = $api->endpoint($endpoint)->request($httpMethod)->body($body)->params($params)->execute();
     $response =
         [
-            "response" =>
-                [
-                    $result,
-                ],
+            "response" => $result,
+
             "success" => true,
             "status" => 200
         ];
