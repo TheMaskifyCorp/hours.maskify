@@ -286,6 +286,14 @@ class Database
         }
         return $this->stmt;
     }
+    public function returnError()
+    {
+        if (!$this->stmt) {
+            $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
+        }
+        return $this->stmt->errorInfo();
+    }
+
     public function first()
     {
         return $this->get()[0];
