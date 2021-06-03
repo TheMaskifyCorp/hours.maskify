@@ -34,8 +34,8 @@ class Hours extends Endpoint implements ApiEndpointInterface
             });
             array_push($where,["employeehours.EmployeeID",'=',$params['employeeid']]);
         }
-        if(isset($params['employeehoursid'])) array_push($where,["EmployeeHoursID",'=',$params['employeehoursid']]);
-        if(isset($params['status'])) array_push($where,["HoursAccorded",'=',$params['status']]);
+        if(isset($employeehoursid)) array_push($where,["EmployeeHoursID",'=',$employeehoursid]);
+        if(isset($status)) array_push($where,["HoursAccorded",'=',$status]);
 
         //if no where clauses, select all employees
         if (!count($where)>0) array_push($where,["employeehours.EmployeeID",'>',0]);
@@ -51,9 +51,9 @@ class Hours extends Endpoint implements ApiEndpointInterface
     public function put(array $body, array $params): array
     {
         // check for employeeid
-        if (! isset($params['employeeid'])) throw new TeapotException('Hours can only be updated at individual endpoints');
+        if (! isset($employeeid)) throw new TeapotException('Hours can only be updated at individual endpoints');
         //check manager and employee for authorisation
-        if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
+        if ( ( (! isset($employeeid) ) OR ( $this->employee != $employeeid ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
 
         //check if all required parameters are set
         $requiredParamsArray = ["EmployeeHoursID", "HoursAccorded", "AccordedByManager"];
@@ -61,25 +61,28 @@ class Hours extends Endpoint implements ApiEndpointInterface
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
         }
+        //move employeeid from body to where-clause
         $where = ['EmployeeHoursID','=', $body['EmployeeHoursID'] ];
         unset($body['EmployeeHoursID']);
+        //execute request
         try{
             $this->db->table('employeehours')->update($body,$where);
         } catch (\Exception $e){
             throw new BadRequestException("Error updating record in database");
         }
-
+        //response
         return [$where[2] . " updated"];
     }
 
     public function post(array $body, array $params): array
     {
+        extract($params);
         // check for employeeid
-        if (isset($params['employeeid'])) throw new TeapotException('Hours can only be created at the general endpoint');
+        if (isset($employeeid)) throw new TeapotException('Hours can only be created at the general endpoint');
         // TODO: Implement delete() method.
-        if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) )
+        if ( ( (! isset($employeeid) ) OR ( $this->employee != $employeeid ) ) AND ( !$this->manager) )
             throw new NotAuthorizedException('Hours can only be deleted by a manager or the object employee');
-        if (isset ($params['employeehoursid']))
+        if (isset ($employeehoursid))
             throw new BadRequestException("UUID will be generated on insertion");
         //check if the request is okay
         $requiredParamsArray = ["EmployeeID", "DeclaratedDate", "EmployeeHoursQuantityInMinutes"];
@@ -102,14 +105,15 @@ class Hours extends Endpoint implements ApiEndpointInterface
 
     public function delete(array $body, array $params): array
     {
+        extract($params);
         // check for employeeid
-        if ( isset( $params [ 'employeeid' ] ) )
+        if ( isset( $employeeid ) )
             throw new TeapotException('Hours can only be deleted at general endpoint' );
         //check for object id
-        if (! isset ( $params['employeehoursid'] ))
+        if (! isset ( $employeehoursid ))
             throw new BadRequestException('Object EmployeeHoursID is not set');
         //check authorisation
-        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['employeehoursid']])->first();
+        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$employeehoursid])->first();
         $employee = $object->EmployeeID;
 
         if ( ( ( $this->employee != $employee ) ) AND ( !$this->manager) )
@@ -121,12 +125,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
 
         //try database request
         try {
-            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['employeehoursid']]);
+            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $employeehoursid]);
         }catch(\Exception $e){
             throw new BadRequestException('Error updating database');
         }
         //return message
-        return ["Hours with ID {$params['employeehoursid']} deleted"];
+        return ["Hours with ID $employeehoursid deleted"];
     }
 
     /**
