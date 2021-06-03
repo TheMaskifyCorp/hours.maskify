@@ -2,7 +2,7 @@
 
 namespace API;
 
-use MongoDB\Driver\Exception\AuthenticationException;
+use Dotenv\Dotenv;
 
 class Hours implements ApiEndpointInterface
 {
@@ -137,6 +137,75 @@ class Hours implements ApiEndpointInterface
         //return message
         return ["Hours with ID {$params['employeehoursid']} deleted"];
     }
+
+    /**
+     * @throws BadRequestException
+     */
+    public static function validateEndpoint($apipath) : array
+    {
+        $db = new \Database;
+        if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+
+        if ( isset( $apipath [ 1 ] ) ) intval( $apipath [ 1 ] );
+        if ( ( isset($apipath[1]) ) AND (! $db->table('employees')->exists($apipath[1],'EmployeeID') ) ) throw new BadRequestException("Employee does not exist");
+        if ( isset($apipath[1]) )
+            return ['employeeid' => $apipath[1]];
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
+
+    public static function validateGet($get)
+    {
+        $db = new \Database();
+        foreach ($get as $UCparam => $value) {
+            $param = strtolower($UCparam);
+            switch ($param) {
+                case "employeeid":
+                    //parameter cannot exceed length 15
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("EmployeeID cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (!preg_match('/^[0-9]{0,15}$/', $value))
+                        throw new BadRequestException("EmployeeID must be an integer");
+
+                    //parameter must be existing employee
+                    if ($db->table('employees')->exists($value, "EmployeeID"))
+                        throw new NotFoundException("Employee '$value' does not exist");
+                case "departmentid":
+                    //parameter cannot exceed length 15
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (!preg_match('/^[0-9]{0,15}$/', $value))
+                        throw new BadRequestException("DepartmentID must be an integer");
+
+                    //parameter must be existing department
+                    if ($db->table('departmenttypes')->exists(['DepartmentID'=>$value]))
+                        throw new NotFoundException("DepartmentID '$value' does not exist");
+                case "startdaterange":
+                case "enddaterange":
+                    if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value ) )
+                        throw new BadRequestException('Dates must be formatten YYYY-MM-DD');
+                    break;
+                case "status":
+                    if (! in_array(strtolower($value),['null','0','1']))
+                        throw new BadRequestException('Status must be 0, 1 or NULL');
+                    break;
+                default:
+                    throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
+            }
+        }
+    }
+
+
+    /*
+     * PRIVATE FUNCTIONS
+     */
 
     private function checkHourStatus(string $uuid) : bool
     {

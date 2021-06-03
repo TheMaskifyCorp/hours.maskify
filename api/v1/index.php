@@ -91,11 +91,13 @@ try {
         $body = [];
     } else $body = json_decode($body,true);
 
+    //create objects for resolving
     $api = new API\API($jwt);
-
     //validate all parameters
     unset( $_GET [ 'apipath' ] ) ;
-    $api->validateGet($_GET);
+
+    $endpoint::validateGet($_GET);
+
 
     //IMPORTANT
     //TODO GET ITEMID BACK
@@ -109,9 +111,9 @@ try {
         $params[$key] = ($value);
     }
 
-    $extraGetParams = $api->validateEndpoint($apiVars);
-    if(isset($extraGetParams) > 0) {
-        foreach ($extraGetParams as $key => $value) {
+    $endpointParams = $endpoint::validateEndpoint($apiVars);
+    if(isset($endpointParams) > 0) {
+        foreach ($endpointParams as $key => $value) {
             $params[$key] = $value;
         }
     }
