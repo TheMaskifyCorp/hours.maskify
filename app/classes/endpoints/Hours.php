@@ -31,7 +31,7 @@ class Hours implements ApiEndpointInterface
             "HoursAccorded",
             "AccordedByManager",
             "DeclaratedDate",
-            "EmployeeHoursQuantityInMinutes"];
+        "EmployeeHoursQuantityInMinutes"];
         $where = [];
         if(isset($params['departmentid'])) array_push($where,["DepartmentID",'=',$params['departmentid']]);
         if(isset($params['startdaterange'])) array_push($where,["DeclaratedDate",'>=',$params['startdaterange']]);
