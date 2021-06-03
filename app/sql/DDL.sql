@@ -110,7 +110,7 @@ CREATE TABLE faq(
 CREATE TABLE searchresults(
       SearchTerm VARCHAR(200) NOT NULL,
       SearchTermCounter INT(10) NOT NULL,
-      SolutionID INT(11) NOT NULL,
+      SolutionID INT(11),
       PRIMARY KEY(SearchTerm),
       FOREIGN KEY(SolutionID) REFERENCES faq(SolutionID)
 ) ENGINE = INNODB;
