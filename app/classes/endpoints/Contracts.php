@@ -24,18 +24,55 @@ class Contracts implements ApiEndpointInterface
      * @throws NotAuthorizedException
      */
 
-    //manager get all contracts
-    //return only the current contracts
-    //
+    //return only the current contract for 1 employee
+
     public function get (array $body, array $params) :array
     {
-        if(isset($params['employeeid']) AND (isset($params["onlycurrent"])))
-            return $this->returnSingleItem($params['employeeid']);
-        return [];
-//        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
-//        if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-//        return $this->db->table('contracts')->get();
+        $employeeid = $params['employeeid'];
+        $currentDateTime = date('Y-m-d ');
+
+        if(isset($params['departmentid'])) return $this->returnDepartmentEmployeesContracts($params['departmentid']);
+
+        if(isset($params['onlycurrent']))
+        {
+            $onlycurrent = $params['onlycurrent'];
+        } else $onlycurrent = true;
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
+        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+        if(isset($params['employeeid']))
+        $currentDateTime = date('Y-m-d ');
+        $where = [];
+        array_push($where, ["contracts.EmployeeID", '=', $params['employeeid']]);
+        if($onlycurrent == true) {
+            //add parameters to an array
+            array_push($where, ["contracts.ContractStartDate", '<=', $currentDateTime]);
+            array_push($where, ["contracts.ContractEndDate", '>=', $currentDateTime]);
+        }
+            //if no where clauses, select all employees
+            if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
+
+            //fetch and return the result
+            $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+
+            return (array)$result;
+
     }
+
+    //This function needs to return only contracts from specified DepartmentID
+    /**
+     * @param int $itemID
+     * @return array
+     * @throws NotAuthorizedException
+     */
+    private function returnDepartmentEmployeesContracts(int $itemID): array
+    {
+        if (! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
+        $employeesindepartment = (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
+        (array)$this->db->table('contracts')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
+        return $employeesindepartment;
+    }
+
+    //return only contracts from specified DepartmentID
 
     /**
      * @param array $body
