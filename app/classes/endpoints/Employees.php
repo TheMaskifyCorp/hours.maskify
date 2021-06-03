@@ -25,7 +25,7 @@ class Employees implements ApiEndpointInterface
      */
     public function get (array $body, array $params) :array
     {
-        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new API\BadRequestException("Cannot Filter single Employee on Departments");
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot Filter single Employee on Departments");
         if(isset($params['employeeid'])) return $this->returnSingleItem($params['employeeid']);
         if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
         if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
@@ -146,7 +146,7 @@ class Employees implements ApiEndpointInterface
     private function returnDepartmentEmployees(int $itemID): array
     {
         if (! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        return (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
+        return (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where(['DepartmentID','=',$itemID])->get();
     }
 
     /**

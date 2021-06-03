@@ -141,7 +141,7 @@ class Hours implements ApiEndpointInterface
     /**
      * @throws BadRequestException
      */
-    public static function validateEndpoint($apipath) : array
+    public static function validateEndpoint($apipath)
     {
         $db = new \Database;
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
@@ -175,6 +175,7 @@ class Hours implements ApiEndpointInterface
                     //parameter must be existing employee
                     if ($db->table('employees')->exists($value, "EmployeeID"))
                         throw new NotFoundException("Employee '$value' does not exist");
+                    break;
                 case "departmentid":
                     //parameter cannot exceed length 15
                     if (strlen((string)$value) > 15)
@@ -185,8 +186,9 @@ class Hours implements ApiEndpointInterface
                         throw new BadRequestException("DepartmentID must be an integer");
 
                     //parameter must be existing department
-                    if ($db->table('departmenttypes')->exists(['DepartmentID'=>$value]))
+                    if (! $db->table('departmenttypes')->exists(['DepartmentID'=>$value]))
                         throw new NotFoundException("DepartmentID '$value' does not exist");
+                    break;
                 case "startdaterange":
                 case "enddaterange":
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value ) )

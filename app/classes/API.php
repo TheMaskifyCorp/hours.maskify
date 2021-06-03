@@ -51,8 +51,8 @@ class API
         $endpoint = new $this->endpoint($this->requesterID,$this->manager);
         return $endpoint->{$this->request}($this->body, $this->params);
     }
-
-    public function validateGet(array $get)
+//TODO Delete commented section
+/*    public function validateGet(array $get)
     {
         //validate the passed in query-parameters
         foreach ($get as $UCparam => $value)
@@ -126,7 +126,7 @@ class API
                     throw new BadRequestException("Parameter '$UCparam' is not valid");
             }
         }
-    }
+    }*/
     /**
      * @throws BadRequestException
      */
