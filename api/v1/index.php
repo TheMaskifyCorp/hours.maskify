@@ -122,6 +122,7 @@ try {
      */
 
     $result = $api->endpoint($endpoint)->request($httpMethod)->body($body)->params($params)->execute();
+    //create the response
     $response =
         [
             "response" => $result,
@@ -131,6 +132,7 @@ try {
         ];
 
 } catch (Exception $e){
+    //create the response if error was thrown in the proces
     $response =
         [
         "response" =>
@@ -142,10 +144,11 @@ try {
         "status" => $e->getCode()
         ];
 }
+//TODO: Remove pre tags
 ?>
 <pre>
 <?php
-
+//print the response
 echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
 

@@ -131,10 +131,8 @@ class Database
             }
         }
         $sql = "UPDATE {$this->table} SET {$setValues} WHERE {$whereString}";
-
         $this->stmt = $this->pdo->prepare($sql);
         return $this->stmt->execute($values);
-
     }
 
     public function delete(array ...$where)
@@ -242,6 +240,40 @@ class Database
         $this->stmt->execute($values);
         return $this;
     }
+
+    public function increment(string $incValue, array ...$where)
+    {
+        $whereString = " ";
+        $values = [];
+        $where = $this->deNestWhere($where);
+        foreach ($where as $here){
+            $field = $here[0];
+            $placeholder = preg_replace("/\./","", $field);
+            $operator = $here[1];
+            $value = $here[2];
+            if (strtolower($value) == "null"){
+                $value = NULL;
+            }
+            if ($operator == '=' && $value == NULL){
+                $operator = "IS";
+            }
+            if ($operator == '<>' && $value == NULL){
+                $operator = "IS NOT";
+            }
+            $whereString .= "$field $operator :$placeholder";
+            $values[$placeholder] = $value;
+            if (  $here !== end($where) ) {
+                $whereString .= " AND ";
+            }
+        }
+        $sql = "UPDATE $this->table SET $incValue = $incValue + 1 WHERE $whereString";
+        $this->stmt = $this->pdo->prepare($sql);
+        $response =  $this->stmt->execute($values);
+        return ($response) ? true : $this->stmt->errorInfo();
+        //UPDATE searchresults SET SearchTermCounter= :SearchTermCounter WHERE SearchTerm = :SearchTerm"
+    }
+
+
 
     public function distinct()
     {
