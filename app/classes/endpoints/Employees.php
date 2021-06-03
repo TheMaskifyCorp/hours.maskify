@@ -14,11 +14,16 @@ class Employees extends Endpoint implements ApiEndpointInterface
      */
     public function get (array $body, array $params) :array
     {
-        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot Filter single Employee on Departments");
-        if(isset($params['employeeid'])) return $this->returnSingleItem($params['employeeid']);
-        if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
+        extract($params);
+        if((isset($employeeid)) AND (isset($departmentid))) throw new BadRequestException("Cannot Filter single Employee on Departments");
+        if(isset($employeeid)) return $this->returnSingleItem($employeeid);
+        if(isset($departmentid)) return $this->returnDepartmentEmployees($departmentid);
         if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        return $this->db->table('employees')->get();
+        try {
+            return $this->db->table('employees')->get();
+        } catch(\Exception){
+            throw new DatabaseConnectionException();
+        }
     }
 
     /**
@@ -54,7 +59,9 @@ class Employees extends Endpoint implements ApiEndpointInterface
         if ( !isset( $requestParams['Email'] ) ){
             $requestParams['Email'] = strtolower( $requestParams['FirstName'].'.'.$requestParams['LastName']."@maskify.nl");
         }
+        //validate the request
         $this->validatePostRequest($requestParams);
+        //set the department in it's own array for insertion
         $dp['DepartmentID'] = $requestParams["DepartmentID"];
         unset($requestParams["DepartmentID"]);
         $employeeCreated = $this->db->table('employees')->insert($requestParams);
@@ -63,10 +70,12 @@ class Employees extends Endpoint implements ApiEndpointInterface
         if ($employeeCreated !== true) throw new BadRequestException( ["Could not create Employee"] );
 
         $dp['EmployeeID'] = $this->db->lastID();
-        $employeeDepartmentAdded = $this->db->table('departmentmemberlist')->insert($dp);
-        //throw error of employee could not be added tot department
+        try{
+            $this->db->table('departmentmemberlist')->insert($dp);
+        } catch(Exception $e){
+            throw new DatabaseConnectionError();
+        }
 
-        if ($employeeDepartmentAdded !== true) throw new BadRequestException( ["Could not add Employee to Department"] );
         return ['message' => "Employee created"];
     }
     public function put (array $body, array $params) :array {
@@ -82,10 +91,12 @@ class Employees extends Endpoint implements ApiEndpointInterface
             if ($dpResult !== true) throw new BadRequestException("Could not update department");
             unset($body['DepartmentID']);
         }
-
-        $empResult = $this->db->table('employees')->update($body,['EmployeeID','=',$params['employeeid']]);
-        if ($empResult !== true) throw new BadRequestException("Could not update Employee");
-        return ["Employee Updated Succesfully"];
+        try{
+            $empResult = $this->db->table('employees')->update($body,['EmployeeID','=',$params['employeeid']]);
+            return ["Employee Updated Succesfully"];
+        } catch(\Exception) {
+            throw new DatabaseConnectionException();
+        }
     }
     public function delete (array $body, array $params) :array{
         throw new TeapotException("Employees can not be deleted. Update current contract to alter end-date");
