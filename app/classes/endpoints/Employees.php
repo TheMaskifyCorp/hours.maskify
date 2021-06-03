@@ -4,19 +4,8 @@ namespace API;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
-class Employees implements ApiEndpointInterface
+class Employees extends Endpoint implements ApiEndpointInterface
 {
-    protected int $employee;
-    protected bool $manager;
-    protected object $db;
-
-    public function __construct(int $employee, bool $manager)
-    {
-        $this->employee = $employee;
-        $this->manager = $manager;
-        $this->db = new \Database;
-    }
-
     /**
      * @param array $body
      * @param array $params
@@ -102,11 +91,12 @@ class Employees implements ApiEndpointInterface
         throw new TeapotException("Employees can not be deleted. Update current contract to alter end-date");
         return [];
     }
-    public static function validateEndpoint(array $apipath)
+    public static function validateEndpoint(array $apipath): ?array
     {
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
         if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
             return ['employeeid' => $apipath[1]];
+        return null;
     }
 
     public static function validateGet(array $get)

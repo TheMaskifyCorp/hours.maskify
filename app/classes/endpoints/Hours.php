@@ -4,25 +4,16 @@ namespace API;
 
 use Dotenv\Dotenv;
 
-class Hours implements ApiEndpointInterface
+class Hours extends Endpoint implements ApiEndpointInterface
 {
-    protected int $employee;
-    protected bool $manager;
-    protected object $db;
-
-    public function __construct(int $employee, bool $manager)
-    {
-        $this->employee = $employee;
-        $this->manager = $manager;
-        $this->db = new \Database;
-    }
 
     public function get(array $body, array $params): array
     {
+        extract($params);
         //check manager and employee for authorisation
-        if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
+        if ( ( (! isset($employeeid) ) OR ( $this->employee != $employeeid ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
         //throw error for filtering on department AND employee
-        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
+        if((isset($employeeid)) AND (isset($departmentid))) throw new BadRequestException("Cannot filter on both single Employee and Department");
 
         //add every parameter to an array
         $selection =[
@@ -33,9 +24,9 @@ class Hours implements ApiEndpointInterface
             "DeclaratedDate",
             "EmployeeHoursQuantityInMinutes"];
         $where = [];
-        if(isset($params['departmentid'])) array_push($where,["DepartmentID",'=',$params['departmentid']]);
-        if(isset($params['startdaterange'])) array_push($where,["DeclaratedDate",'>=',$params['startdaterange']]);
-        if(isset($params['enddaterange'])) array_push($where,["DeclaratedDate",'<=',$params['enddaterange']]);
+        if(isset($departmentid)) array_push($where,["DepartmentID",'=',$departmentid]);
+        if(isset($startdaterange)) array_push($where,["DeclaratedDate",'>=',$startdaterange]);
+        if(isset($enddaterange)) array_push($where,["DeclaratedDate",'<=',$enddaterange]);
         if(isset($params['employeeid'])) {
 
             $selection = array_filter($selection, function($v){
@@ -52,7 +43,7 @@ class Hours implements ApiEndpointInterface
         try{
             $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
         }catch (\Exception $e){
-            throw new BadRequestException("Error getting records from database");
+            throw new DatabaseConnectionException();
         }
         return (array)$result;
     }
@@ -141,7 +132,7 @@ class Hours implements ApiEndpointInterface
     /**
      * @throws BadRequestException
      */
-    public static function validateEndpoint($apipath)
+    public static function validateEndpoint($apipath): ?array
     {
         $db = new \Database;
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
@@ -150,6 +141,7 @@ class Hours implements ApiEndpointInterface
         if ( ( isset($apipath[1]) ) AND (! $db->table('employees')->exists($apipath[1],'EmployeeID') ) ) throw new BadRequestException("Employee does not exist");
         if ( isset($apipath[1]) )
             return ['employeeid' => $apipath[1]];
+        return null;
     }
 
     /**
