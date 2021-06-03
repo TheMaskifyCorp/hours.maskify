@@ -266,10 +266,10 @@ class Database
      * @param $data
      * @return bool
      */
-    public function exists($data) : bool
+    public function exists(array $data) : bool
     {
         $field = array_keys($data)[0];
-        return $this->where($field,'=', $data[$field])->count() ? true : false;
+        return $this->where([$field,'=', $data[$field] ])->count() ? true : false;
     }
     public function get(): array
     {

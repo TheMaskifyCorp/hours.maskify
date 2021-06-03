@@ -25,7 +25,7 @@ class Employees implements ApiEndpointInterface
      */
     public function get (array $body, array $params) :array
     {
-        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new API\BadRequestException("Cannot Filter single Employee on Departments");
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot Filter single Employee on Departments");
         if(isset($params['employeeid'])) return $this->returnSingleItem($params['employeeid']);
         if(isset($params['departmentid'])) return $this->returnDepartmentEmployees($params['departmentid']);
         if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
@@ -102,8 +102,41 @@ class Employees implements ApiEndpointInterface
         throw new TeapotException("Employees can not be deleted. Update current contract to alter end-date");
         return [];
     }
+    public static function validateEndpoint(array $apipath)
+    {
+        if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+        if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
+            return ['employeeid' => $apipath[1]];
+    }
 
-    //private functies ter ondersteuning vd public functies
+    public static function validateGet(array $get)
+    {
+        $db = new \Database;
+        foreach ($get as $UCparam => $value) {
+            $param = strtolower($UCparam);
+            switch ($param) {
+                case "departmentid":
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (!preg_match('/^[0-9]{0,15}$/', $value))
+                        throw new BadRequestException("DepartmentID must be an integer");
+
+                    //parameter must be existing department
+                    if (! $db->table('departmenttypes')->exists(['DepartmentID' => $value]))
+                        throw new NotFoundException($db->returnstmt());
+
+                    break;
+                default:
+                    throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
+            }
+        }
+    }
+
+    /*
+     * PRIVATE FUNCTIONS
+     */
 
     /**
      * @param int $itemID
@@ -113,7 +146,7 @@ class Employees implements ApiEndpointInterface
     private function returnDepartmentEmployees(int $itemID): array
     {
         if (! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        return (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
+        return (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where(['DepartmentID','=',$itemID])->get();
     }
 
     /**
@@ -158,5 +191,6 @@ class Employees implements ApiEndpointInterface
         if (isset($request["Email"])) if (!preg_match( $emailRegex, $request['Email'])) throw new BadRequestException("Email adres is not a valid e-mail");
         if (isset($request["Email"])) if ($this->db->table("employees")->where(["Email","=",$request['Email']])->count() > 0) throw new BadRequestException("Emailadres already in database");
     }
+
 
 }
