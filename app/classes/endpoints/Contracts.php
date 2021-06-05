@@ -24,55 +24,66 @@ class Contracts implements ApiEndpointInterface
      * @throws NotAuthorizedException
      */
 
-    //return only the current contract for 1 employee
+
 
     public function get (array $body, array $params) :array
     {
         $employeeid = $params['employeeid'];
         $currentDateTime = date('Y-m-d ');
+        $onlycurrent =  $params['onlycurrent'];
 
-        if(isset($params['departmentid'])) return $this->returnDepartmentEmployeesContracts($params['departmentid']);
-
-        if(isset($params['onlycurrent']))
+        //return only contracts from specified DepartmentID
+        if(isset($params['departmentid']))
         {
-            $onlycurrent = $params['onlycurrent'];
-        } else $onlycurrent = true;
+            $result = (array)$this->db->table('departmentmemberlist')->innerjoin('contracts','EmployeeID')->where(['DepartmentID','=',$params['departmentid']])->get();
+            return (array)$result;
+        }
+        //return only the current contracts
+//        if(isset($params['onlycurrent']))
+//        {
+//            $onlycurrent = $params['onlycurrent'];
+//        } else $onlycurrent = true;
         if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
         if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        if(isset($params['employeeid']))
-        $currentDateTime = date('Y-m-d ');
-        $where = [];
-        array_push($where, ["contracts.EmployeeID", '=', $params['employeeid']]);
-        if($onlycurrent == true) {
-            //add parameters to an array
-            array_push($where, ["contracts.ContractStartDate", '<=', $currentDateTime]);
-            array_push($where, ["contracts.ContractEndDate", '>=', $currentDateTime]);
+        if(isset($params['onlycurrent'])) {
+            $currentDateTime = date('Y-m-d ');
+            $where = [];
+            if ($onlycurrent == 'true') {
+                //add parameters to an array
+                array_push($where, ["contracts.ContractStartDate", '<=', $currentDateTime]);
+                array_push($where, ["contracts.ContractEndDate", '>=', $currentDateTime]);
+
+                //if no where clauses, select all employees
+                if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
+
+                //fetch and return the result
+                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+                var_dump($onlycurrent);
+                return (array)$result;
+            }
+            //return expired contracts
+            if ($onlycurrent == 'false') {
+                //add parameters to an array
+                array_push($where, ["contracts.ContractEndDate", '<=', $currentDateTime]);
+
+                //if no where clauses, select all employees
+                if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
+
+                //fetch and return the result
+                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+
+                return (array)$result;
+            }
         }
-            //if no where clauses, select all employees
-            if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
 
-            //fetch and return the result
-            $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
-
-            return (array)$result;
-
+        //Show only contracts for object-employee
+        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+        $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
+        if (isset( $response )) {
+            return (array)$response;
+        }
     }
 
-    //This function needs to return only contracts from specified DepartmentID
-    /**
-     * @param int $itemID
-     * @return array
-     * @throws NotAuthorizedException
-     */
-    private function returnDepartmentEmployeesContracts(int $itemID): array
-    {
-        if (! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        $employeesindepartment = (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
-        (array)$this->db->table('contracts')->innerjoin('departmentmemberlist','EmployeeID')->where(['DepartmentID','=',$itemID])->get();
-        return $employeesindepartment;
-    }
-
-    //return only contracts from specified DepartmentID
 
     /**
      * @param array $body
@@ -82,12 +93,12 @@ class Contracts implements ApiEndpointInterface
      */
     public function post(array $body, array $params) :array
     {
-        if( ! $this->manager) throw new NotAuthorizedException("Employees can only be created by a manager");
+        if( ! $this->manager) throw new NotAuthorizedException("Contracts can only be created by a manager");
         //check of het op /employees gebeurd
-        if (isset($params['itemid'])) throw new BadRequestException('Employees can only be created at top-level endpoint /employees');
+        if (isset($params['itemid'])) throw new BadRequestException('Contracts can only be created at top-level endpoint /contracts');
         //verwachte variabelen
-        $required = ["FirstName", "LastName", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
-        $optional = ['DocumentNumberID','Email'];
+        $required = ["EmployeeID", "ContractStartDate", "WeeklyHours"];
+        $optional = ['ContractEndDate','PayRate'];
         $missingParams = [];
         $requestParams = [];
         foreach($required as $value){
@@ -102,25 +113,12 @@ class Contracts implements ApiEndpointInterface
         }
         // throw an error if parameters are missing
         if ( count ( $missingParams ) > 0 ) throw new BadRequestException((  json_encode ( $missingParams ) ) );
-        //throw an error if parameters are not valid
 
-        if ( !isset( $requestParams['Email'] ) ){
-            $requestParams['Email'] = strtolower( $requestParams['FirstName'].'.'.$requestParams['LastName']."@maskify.nl");
-        }
         $this->validatePostRequest($requestParams);
-        $dp['DepartmentID'] = $requestParams["DepartmentID"];
-        unset($requestParams["DepartmentID"]);
-        $employeeCreated = $this->db->table('employees')->insert($requestParams);
+        $contractCreated = $this->db->table('contracts')->insert($requestParams);
 
-        // throw error if employee is not created
-        if ($employeeCreated !== true) throw new BadRequestException( ["Could not create Employee"] );
-
-        $dp['EmployeeID'] = $this->db->lastID();
-        $employeeDepartmentAdded = $this->db->table('departmentmemberlist')->insert($dp);
-        //throw error of employee could not be added tot department
-
-        if ($employeeDepartmentAdded !== true) throw new BadRequestException( ["Could not add Employee to Department"] );
-        return ['message' => "Employee created"];
+        // throw error if contract is not created
+        if ($contractCreated !== true) throw new BadRequestException( ["Could not create contract"] );
     }
     public function put (array $body, array $params) :array {
         if (( ! $this->manager) AND (! ($this->employee == $params['itemid'] ) ) ) throw new NotAuthorizedException("Employees can only be updated by a manager, or the object employee");
@@ -177,8 +175,9 @@ class Contracts implements ApiEndpointInterface
      */
     private function validatePostRequest(array $request)
     {
-        $requiredString =["FirstName","LastName","City"];
-        $requiredAlphaNum = ["Street", "HouseNumber"];
+        $requiredString =["EmployeeID"];
+        $requiredDate=["ContractStartDate", "ContractEndDate"];
+        $requiredAlphaNum = ["WeeklyHours", "PayRate"];
         if (isset($request['FunctionTypeID'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['FunctionTypeID'] )) throw new BadRequestException("Functiontype must be integer");
         if (isset($request['DepartmentID'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['DepartmentID'] )) throw new BadRequestException("DepartmentID must be integer");
         if (isset($request['PhoneNumber'])) if ( ! preg_match ( '/\+[0-9]{11}$/', $request['PhoneNumber']) ) throw new BadRequestException("PhoneNumber must be like +31612345678");
