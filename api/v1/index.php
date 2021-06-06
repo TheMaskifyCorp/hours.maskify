@@ -32,13 +32,13 @@ try {
      * START OF LIVE VERSION FOR JWT
      */
     //check of een token is meegestuurd
-/*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
-        throw new API\NotAuthorizedException('Token not found');
+    /*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
+            throw new API\NotAuthorizedException('Token not found');
 
-    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
-        throw new API\NotAuthorizedException('Token not found');
+        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
+            throw new API\NotAuthorizedException('Token not found');
 
-    $jwt = $matches[1];*/
+        $jwt = $matches[1];*/
 
     /*
      * END OF LIVE VERSION FOR JWT
@@ -101,7 +101,7 @@ try {
 
     //IMPORTANT
     //TODO GET ITEMID BACK
-    
+
 
     //convert all get vars to lowercase
     $params = [];
@@ -135,13 +135,13 @@ try {
     //create the response if error was thrown in the proces
     $response =
         [
-        "response" =>
-            [
-            "message" =>  $e->getMessage() ,
-            "error" =>  $e->getError()
-            ],
-        "success" => false,
-        "status" => $e->getCode()
+            "response" =>
+                [
+                    "message" =>  $e->getMessage() ,
+                    "error" =>  $e->getError()
+                ],
+            "success" => false,
+            "status" => $e->getCode()
         ];
 }
 //TODO: Remove pre tags
