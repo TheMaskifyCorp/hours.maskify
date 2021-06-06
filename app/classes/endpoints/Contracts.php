@@ -131,7 +131,7 @@ class Contracts implements ApiEndpointInterface
         $contractstartdate = $params['contractstartdate'];
         $where = [];
 
-            //check for object id
+            //check if employee id and contractstartdate are set
             if (! isset ( $params['employeeid'] ) OR (! isset($params['contractstartdate'] )))
                 throw new BadRequestException('emplopyeeid or contractstartdate is not set');
 
@@ -169,18 +169,29 @@ class Contracts implements ApiEndpointInterface
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {
-                case "departmentid":
+                case "employeeid":
                     if (strlen((string)$value) > 15)
-                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
+                        throw new BadRequestException("emplooyeeid cannot exceed 15 characters");
 
                     //parameter must be an integer
                     if (!preg_match('/^[0-9]{0,15}$/', $value))
-                        throw new BadRequestException("DepartmentID must be an integer");
+                        throw new BadRequestException("emplooyeeid must be an integer");
 
                     //parameter must be existing department
-                    if (! $db->table('departmenttypes')->exists(['DepartmentID' => $value]))
+                    if (! $db->table('employees')->exists(['emplooyeeid' => $value]))
                         throw new NotFoundException($db->returnstmt());
+                    break;
 
+                case "contractstartdate":
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("contractstartdate cannot exceed 15 characters");
+
+                    if (isset($request['ContractStartDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractStartDate']))
+                        throw new BadRequestException("ContractStartDate must be formatted as: YYYY-MM-DD");
+
+                    //parameter must be existing contract
+                    if (! $db->table('contracts')->exists(['contractstartdate' => $value])->exists())
+                        throw new NotFoundException($db->returnstmt());
                     break;
                 default:
                     throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");

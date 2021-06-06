@@ -32,13 +32,13 @@ try {
      * START OF LIVE VERSION FOR JWT
      */
     //check of een token is meegestuurd
-/*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
-        throw new API\NotAuthorizedException('Token not found');
+    /*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
+            throw new API\NotAuthorizedException('Token not found');
 
-    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
-        throw new API\NotAuthorizedException('Token not found');
+        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
+            throw new API\NotAuthorizedException('Token not found');
 
-    $jwt = $matches[1];*/
+        $jwt = $matches[1];*/
 
     /*
      * END OF LIVE VERSION FOR JWT
@@ -91,15 +91,17 @@ try {
         $body = [];
     } else $body = json_decode($body,true);
 
+    //create objects for resolving
     $api = new API\API($jwt);
-
     //validate all parameters
     unset( $_GET [ 'apipath' ] ) ;
-    $api->validateGet($_GET);
+
+    $endpoint::validateGet($_GET);
+
 
     //IMPORTANT
     //TODO GET ITEMID BACK
-    
+
 
     //convert all get vars to lowercase
     $params = [];
@@ -109,9 +111,9 @@ try {
         $params[$key] = ($value);
     }
 
-    $extraGetParams = $api->validateEndpoint($apiVars);
-    if(isset($extraGetParams) > 0) {
-        foreach ($extraGetParams as $key => $value) {
+    $endpointParams = $endpoint::validateEndpoint($apiVars);
+    if(isset($endpointParams) > 0) {
+        foreach ($endpointParams as $key => $value) {
             $params[$key] = $value;
         }
     }
@@ -131,13 +133,13 @@ try {
 } catch (Exception $e){
     $response =
         [
-        "response" =>
-            [
-            "message" =>  $e->getMessage() ,
-            "error" =>  $e->getError()
-            ],
-        "success" => false,
-        "status" => $e->getCode()
+            "response" =>
+                [
+                    "message" =>  $e->getMessage() ,
+                    "error" =>  $e->getError()
+                ],
+            "success" => false,
+            "status" => $e->getCode()
         ];
 }
 ?>
