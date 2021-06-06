@@ -43,12 +43,24 @@ class Contracts implements ApiEndpointInterface
             $result = (array)$this->db->table('departmentmemberlist')->innerjoin('contracts','EmployeeID')->where(['DepartmentID','=',$params['departmentid']])->get();
             return (array)$result;
         }
+        
+        if(isset($params['employeeid']))
+        {
+            $result = (array)$this->db->table('contracts')->where(['EmployeeID','=',$params['employeeid']])->get();
+            return (array)$result;
+        }
+
+        if(!isset($params['employeeid']))
+        {
+            $result = (array)$this->db->table('contracts')->get();
+            return (array)$result;
+        }
 
 
         if(isset($params['onlycurrent'])) {
             $currentDateTime = date('Y-m-d ');
             $where = [];
-            if ($onlycurrent == 'true') {
+            if ($onlycurrent == true) {
                 //add parameters to an array
                 array_push($where, ["contracts.ContractStartDate", '<=', $currentDateTime]);
                 array_push($where, ["contracts.ContractEndDate", '>=', $currentDateTime]);
@@ -57,8 +69,7 @@ class Contracts implements ApiEndpointInterface
                 if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
 
                 //fetch and return the result
-                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
-                var_dump($onlycurrent);
+                $result = $this->db->table('contracts')->selection(['EmployeeID', 'ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
                 return (array)$result;
             }
             //return expired contracts
@@ -70,7 +81,7 @@ class Contracts implements ApiEndpointInterface
                 if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
 
                 //fetch and return the result
-                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+                $result = $this->db->table('contracts')->selection(['EmployeeID', 'ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
 
                 return (array)$result;
             }
@@ -87,8 +98,6 @@ class Contracts implements ApiEndpointInterface
     public function post(array $body, array $params) :array
     {
         if( ! $this->manager) throw new NotAuthorizedException("Contracts can only be created by a manager");
-        //check of het op /contracts endpoint gebeurd
-        if (isset($params['itemid'])) throw new BadRequestException('Contracts can only be created at top-level endpoint /contracts');
         if((isset($body['ContractEndDate'])) AND strtotime($body['ContractEndDate']) < strtotime($body['ContractStartDate'])) throw new BadRequestException("End date cannot be earlier than start date");
         //verwachte variabelen
         $required = ["EmployeeID", "ContractStartDate", "WeeklyHours"];
@@ -162,7 +171,7 @@ class Contracts implements ApiEndpointInterface
         return null;
     }
 
-    public static function validateGet(array $get)
+   public static function validateGet(array $get)
     {
         $db = new \Database;
         foreach ($get as $UCparam => $value) {
@@ -238,3 +247,4 @@ class Contracts implements ApiEndpointInterface
 
     }
 }
+
