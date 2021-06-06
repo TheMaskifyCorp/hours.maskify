@@ -70,13 +70,6 @@ class Contracts implements ApiEndpointInterface
                 return (array)$result;
             }
         }
-
-        //Show only contracts for object-employee
-        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        $response = (array)$this->db->table('contracts')->where(['contracts.EmployeeID','=',$employeeid])->get();
-        if (isset( $response )) {
-            return (array)$response;
-        }
     }
 
 
