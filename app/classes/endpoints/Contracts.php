@@ -82,9 +82,7 @@ class Contracts implements ApiEndpointInterface
     public function post(array $body, array $params) :array
     {
         if( ! $this->manager) throw new NotAuthorizedException("Contracts can only be created by a manager");
-        //check of het op /contracts endpoint gebeurd
-        if (isset($params['itemid'])) throw new BadRequestException('Contracts can only be created at top-level endpoint /contracts');
-        if((isset($body['ContractEndDate'])) AND $body['ContractEndDate'] < $body['ContractStartDate']) throw new BadRequestException("End date cannot be earlier than start date");
+        if((isset($body['ContractEndDate'])) AND strtotime($body['ContractEndDate']) < strtotime($body['ContractStartDate'])) throw new BadRequestException("End date cannot be earlier than start date");
         //verwachte variabelen
         $required = ["EmployeeID", "ContractStartDate", "WeeklyHours"];
         $optional = ['ContractEndDate','PayRate'];
