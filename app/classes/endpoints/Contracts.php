@@ -54,7 +54,7 @@ class Contracts implements ApiEndpointInterface
         if(isset($params['onlycurrent'])) {
             $currentDateTime = date('Y-m-d ');
             $where = [];
-            if ($onlycurrent == 'true') {
+            if ($onlycurrent == true) {
                 //add parameters to an array
                 array_push($where, ["contracts.ContractStartDate", '<=', $currentDateTime]);
                 array_push($where, ["contracts.ContractEndDate", '>=', $currentDateTime]);
@@ -63,11 +63,11 @@ class Contracts implements ApiEndpointInterface
                 if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
 
                 //fetch and return the result
-                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+                $result = $this->db->table('contracts')->selection(['EmployeeID', 'ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
                 return (array)$result;
             }
             //return expired contracts
-            if ($onlycurrent == 'false') {
+            if ($onlycurrent == false) {
                 //add parameters to an array
                 array_push($where, ["contracts.ContractEndDate", '<=', $currentDateTime]);
 
@@ -75,7 +75,7 @@ class Contracts implements ApiEndpointInterface
                 if (!count($where) > 0) array_push($where, ["contracts.EmployeeID", '>', 0]);
 
                 //fetch and return the result
-                $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
+                $result = $this->db->table('contracts')->selection(['EmployeeID', 'ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
 
                 return (array)$result;
             }
