@@ -183,6 +183,12 @@ class Contracts implements ApiEndpointInterface
                         throw new NotFoundException( "employeeid not found");
                     break;
 
+                case "onlycurrent":
+                    if (is_bool($value))
+                        throw new BadRequestException("emplooyeeid cannot exceed 15 characters");
+
+                    break;
+
                 case "contractstartdate":
                     if (strlen((string)$value) > 15)
                         throw new BadRequestException("contractstartdate cannot exceed 15 characters");
