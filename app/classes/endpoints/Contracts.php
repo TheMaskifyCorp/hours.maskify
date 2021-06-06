@@ -43,6 +43,12 @@ class Contracts implements ApiEndpointInterface
             $result = (array)$this->db->table('departmentmemberlist')->innerjoin('contracts','EmployeeID')->where(['DepartmentID','=',$params['departmentid']])->get();
             return (array)$result;
         }
+        
+        if(isset($params['employeeid']))
+        {
+            $result = (array)$this->db->table('contracts')->where(['EmployeeID','=',$params['employeeid']])->get();
+            return (array)$result;
+        }
 
 
         if(isset($params['onlycurrent'])) {
@@ -58,7 +64,6 @@ class Contracts implements ApiEndpointInterface
 
                 //fetch and return the result
                 $result = $this->db->table('contracts')->selection(['ContractStartDate', 'ContractEndDate', 'PayRate', 'WeeklyHours'])->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
-                var_dump($onlycurrent);
                 return (array)$result;
             }
             //return expired contracts
