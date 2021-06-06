@@ -23,6 +23,10 @@ class Departments extends Endpoint implements ApiEndpointInterface
             $result = (array)$this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->where(['DepartmentID', '=', $params['departmentid']])->get();
             return (array)$result;
         }
+        if (!isset($params['departmentid'])) {
+            $result = (array)$this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->get();
+            return (array)$result;
+        }
     }
 
     public function post(array $body, array $params) :array
@@ -34,14 +38,15 @@ class Departments extends Endpoint implements ApiEndpointInterface
     {
         $where = [];
         if (!$this->manager) throw new NotAuthorizedException("This request can only be performed by a manager");
-        if (isset($body ['departmentid'], $body['description'])) {
+
+        if (isset($body ['DepartmentID'], $body['Description'])) {
             //check if all required parameters are set
-            $requiredParamsArray = ["departmentid", "description"];
+            $requiredParamsArray = ["DepartmentID", "Description"];
             foreach ($requiredParamsArray as $param) {
                 if (!isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
             }
             //move departmentid and description from body to where-clause
-            $where = ['departmentid', '=', $body['departmentid'], 'description', '=', $body['description']];
+            $where = ['DepartmentID', '=', $body['DepartmentID'], 'Description', '=', $body['Description']];
             unset($body['departmentid'], $body['description']);
             //execute request
             try {
@@ -50,7 +55,7 @@ class Departments extends Endpoint implements ApiEndpointInterface
                 throw new BadRequestException("Error updating record in database");
             }
             //response
-            return [$where[2] . " updated"];
+            return [$where[5] . " updated"];
         }
     }
 
@@ -100,17 +105,30 @@ class Departments extends Endpoint implements ApiEndpointInterface
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {
-                case "departmentid":
+                case "DepartmentID":
                     if (strlen((string)$value) > 15)
-                        throw new BadRequestException("departmentid cannot exceed 15 characters");
+                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
 
                     //parameter must be an integer
                     if (!preg_match('/^[0-9]{0,15}$/', $value))
                         throw new BadRequestException("departmentid must be an integer");
 
                     //parameter must be existing department
-                    if (!$db->table('departmenttypes')->exists(['departmentid' => $value]))
+                    if (!$db->table('departmenttypes')->exists(['DepartmentID' => $value]))
                         throw new NotFoundException("departmentid not found");
+                    break;
+
+                case "Description":
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("Description cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (is_string($value))
+                        throw new BadRequestException("Description must be an string");
+
+                    //parameter must be existing department
+                    if (!$db->table('departmenttypes')->exists(['DepartmentID' => $value]))
+                        throw new NotFoundException("Description not found");
                     break;
 
 //                case "contractstartdate":
