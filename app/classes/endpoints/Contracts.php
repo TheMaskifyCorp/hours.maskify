@@ -129,7 +129,6 @@ class Contracts implements ApiEndpointInterface
     {
         $employeeid = $params['employeeid'];
         $contractstartdate = $params['contractstartdate'];
-        var_dump($contractstartdate);
         $where = [];
 
             //check for object id
@@ -155,6 +154,38 @@ class Contracts implements ApiEndpointInterface
                 //return message
                 return ["Contract with {$params['employeeid']} and {$params['contractstartdate']} deleted"];
 
+    }
+
+    public static function validateEndpoint(array $apipath)
+    {
+        if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
+        if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
+            return ['employeeid' => $apipath[1]];
+    }
+
+    public static function validateGet(array $get)
+    {
+        $db = new \Database;
+        foreach ($get as $UCparam => $value) {
+            $param = strtolower($UCparam);
+            switch ($param) {
+                case "departmentid":
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("DepartmentID cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (!preg_match('/^[0-9]{0,15}$/', $value))
+                        throw new BadRequestException("DepartmentID must be an integer");
+
+                    //parameter must be existing department
+                    if (! $db->table('departmenttypes')->exists(['DepartmentID' => $value]))
+                        throw new NotFoundException($db->returnstmt());
+
+                    break;
+                default:
+                    throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
+            }
+        }
     }
 
 
