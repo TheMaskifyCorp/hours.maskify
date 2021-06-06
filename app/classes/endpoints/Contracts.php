@@ -136,7 +136,7 @@ class Contracts implements ApiEndpointInterface
                 throw new NotAuthorizedException('This request can only be performed by a manager');
 
             // check if both employeeid and startdate params are set
-            if ( isset( $params [ 'employeeid' ]  ) AND isset($params['contractstartdate'] )) {
+                if ( isset ($params [ 'employeeid' ] , $params['contractstartdate'])){
                 array_push($where, ["contracts.EmployeeID", '=', $employeeid]);
                 array_push($where, ["contracts.ContractStartDate", '=', $contractstartdate]);
             }
