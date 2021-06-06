@@ -156,11 +156,12 @@ class Contracts implements ApiEndpointInterface
 
     }
 
-    public static function validateEndpoint(array $apipath)
+    public static function validateEndpoint(array $apipath) : ?array
     {
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
         if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
             return ['employeeid' => $apipath[1]];
+        return null;
     }
 
     public static function validateGet(array $get)
@@ -178,8 +179,8 @@ class Contracts implements ApiEndpointInterface
                         throw new BadRequestException("emplooyeeid must be an integer");
 
                     //parameter must be existing department
-                    if (! $db->table('employees')->exists(['emplooyeeid' => $value]))
-                        throw new NotFoundException($db->returnstmt());
+                    if (! $db->table('employees')->exists(['EmployeeID' => $value]))
+                        throw new NotFoundException( "employeeid not found");
                     break;
 
                 case "contractstartdate":
@@ -189,9 +190,6 @@ class Contracts implements ApiEndpointInterface
                     if (isset($request['ContractStartDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractStartDate']))
                         throw new BadRequestException("ContractStartDate must be formatted as: YYYY-MM-DD");
 
-                    //parameter must be existing contract
-                    if (! $db->table('contracts')->exists(['contractstartdate' => $value])->exists())
-                        throw new NotFoundException($db->returnstmt());
                     break;
                 default:
                     throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
