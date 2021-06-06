@@ -218,18 +218,13 @@ class Contracts implements ApiEndpointInterface
      */
     private function validatePostRequest(array $request)
     {
-        $requiredString =["EmployeeID"];
         $requiredDate=["ContractStartDate", "ContractEndDate"];
-        $requiredAlphaNum = ["WeeklyHours", "PayRate"];
+        $requiredAlphaNum = ["EmployeeID", "WeeklyHours", "PayRate"];
         if (isset($request['EmployeeID'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['EmployeeID'] )) throw new BadRequestException("EmployeeID must be integer");
         if (isset($request['WeeklyHours'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['WeeklyHours'] )) throw new BadRequestException("WeeklyHours must be integer");
         if (isset($request['PayRate'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['PayRate'] )) throw new BadRequestException("PayRate must be integer");
         if (isset($request['ContractStartDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractStartDate'])) throw new BadRequestException("ContractStartDate must be formatted as: YYYY-MM-DD");
         if (isset($request['ContractEndDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractEndDate'])) throw new BadRequestException("ContractEndDate must be formatted as: YYYY-MM-DD");
-        foreach($requiredString as $key)
-        {
-            if (isset($request[$key])) if ( ! preg_match ( '/[A-z0-9]+$/', $request[$key]) ) throw new BadRequestException("$key can only contain alphanumeric symbols");
-        }
         foreach($requiredAlphaNum as $key)
         {
             if (isset($request[$key])) if ( ! preg_match ( '/[A-z0-9]+$/', $request[$key]) ) throw new BadRequestException("$key can only contain alphanumeric symbols");
@@ -240,5 +235,5 @@ class Contracts implements ApiEndpointInterface
         }
 
     }
-
 }
+
