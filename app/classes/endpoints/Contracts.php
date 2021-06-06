@@ -28,18 +28,23 @@ class Contracts implements ApiEndpointInterface
 
     public function get (array $body, array $params) :array
     {
-        $employeeid = $params['employeeid'];
         $currentDateTime = date('Y-m-d ');
-        $onlycurrent =  $params['onlycurrent'];
+        if(isset($params['employeeid']))$employeeid = $params['employeeid'];
+        if(isset($params['departmentid']))$employeeid = $params['departmentid'];
+        if(!isset($params['onlycurrent']))$params['onlycurrent']=true;
+        $onlycurrent = $params['onlycurrent'];
 
+        //check if employeeid and department id are both set
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
+        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
         //return only contracts from specified DepartmentID
         if(isset($params['departmentid']))
         {
             $result = (array)$this->db->table('departmentmemberlist')->innerjoin('contracts','EmployeeID')->where(['DepartmentID','=',$params['departmentid']])->get();
             return (array)$result;
         }
-        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        if ( ( ! $this->manager) AND ( $employeeid !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
+
+
         if(isset($params['onlycurrent'])) {
             $currentDateTime = date('Y-m-d ');
             $where = [];
@@ -155,7 +160,7 @@ class Contracts implements ApiEndpointInterface
         return null;
     }
 
-    public static function validateGet(array $get)
+   public static function validateGet(array $get)
     {
         $db = new \Database;
         foreach ($get as $UCparam => $value) {
@@ -178,6 +183,19 @@ class Contracts implements ApiEndpointInterface
                     if (is_bool($value))
                         throw new BadRequestException("emplooyeeid cannot exceed 15 characters");
 
+                    break;
+
+                case "departmentid":
+                    if (strlen((string)$value) > 15)
+                        throw new BadRequestException("departmentid cannot exceed 15 characters");
+
+                    //parameter must be an integer
+                    if (!preg_match('/^[0-9]{0,15}$/', $value))
+                        throw new BadRequestException("departmentid must be an integer");
+
+                    //parameter must be existing department
+                    if (! $db->table('departmenttypes')->exists(['DepartmentID' => $value]))
+                        throw new NotFoundException( "departmentid not found");
                     break;
 
                 case "contractstartdate":
