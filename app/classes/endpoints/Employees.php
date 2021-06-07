@@ -1,6 +1,9 @@
 <?php
 
 namespace API;
+use Database;
+use Exception;
+
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
@@ -10,7 +13,7 @@ class Employees extends Endpoint implements ApiEndpointInterface
      * @param array $body
      * @param array $params
      * @return array
-     * @throws NotAuthorizedException
+     * @throws NotAuthorizedException|DatabaseConnectionException|BadRequestException
      */
     public function get (array $body, array $params) :array
     {
@@ -21,7 +24,7 @@ class Employees extends Endpoint implements ApiEndpointInterface
         if( ! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
         try {
             return $this->db->table('employees')->get();
-        } catch(\Exception){
+        } catch(Exception $e){
             throw new DatabaseConnectionException();
         }
     }
@@ -30,7 +33,7 @@ class Employees extends Endpoint implements ApiEndpointInterface
      * @param array $body
      * @param array $params
      * @return string[]
-     * @throws BadRequestException|NotAuthorizedException
+     * @throws BadRequestException|NotAuthorizedException|DatabaseConnectionException
      */
     public function post(array $body, array $params) :array
     {
@@ -64,55 +67,82 @@ class Employees extends Endpoint implements ApiEndpointInterface
         //set the department in it's own array for insertion
         $dp['DepartmentID'] = $requestParams["DepartmentID"];
         unset($requestParams["DepartmentID"]);
-        $employeeCreated = $this->db->table('employees')->insert($requestParams);
-
-        // throw error if employee is not created
-        if ($employeeCreated !== true) throw new BadRequestException( ["Could not create Employee"] );
+        try{
+            $this->db->table('employees')->insert($requestParams);
+        }catch(Exception $e){
+            throw new DatabaseConnectionException();
+        }
 
         $dp['EmployeeID'] = $this->db->lastID();
         try{
             $this->db->table('departmentmemberlist')->insert($dp);
         } catch(Exception $e){
-            throw new DatabaseConnectionError();
+            throw new DatabaseConnectionException();
         }
 
         return ['message' => "Employee created"];
     }
+
+    /**
+     * @param array $body
+     * @param array $params
+     * @return array
+     * @throws BadRequestException | DatabaseConnectionException | NotAuthorizedException | TeapotException
+     */
     public function put (array $body, array $params) :array {
         if (( ! $this->manager) AND (! ($this->employee == $params['employeeid'] ) ) ) throw new NotAuthorizedException("Employees can only be updated by a manager, or the object employee");
         if (!isset( $params['employeeid']) ) throw new TeapotException("Employees can only be updated at employee-specific endpoints");
         //validate body
         $this->validatePostRequest($body);
-        $response = [];
-        $optional = ['DocumentNumberID','Email',"FirstName", "LastName", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
+
+        //TODO: Check why 99+100 are not used anymore
+        //$response = [];
+        //$optional = ['DocumentNumberID','Email',"FirstName", "LastName", "PhoneNumber", "Street", "HouseNumber","City", "PostalCode", "DateOfBirth", "FunctionTypeID","DepartmentID"];
         //check if departmentID must be altered, and if so do it
-        if(isset($body['DepartmentID'])) {
-            $dpResult = $this->db->table("departmentmembertypes")->update(['DepartmentID'], ['EmployeeID', "=", $params['employeeid']]);
-            if ($dpResult !== true) throw new BadRequestException("Could not update department");
+        if(isset($body['DepartmentID'])) try {
+            $this->db->table("departmentmembertypes")->update(['DepartmentID'], ['EmployeeID', "=", $params['employeeid']]);
             unset($body['DepartmentID']);
+        }catch(Exception $e){
+            throw new DatabaseConnectionException();
         }
+        //Update everything else
         try{
-            $empResult = $this->db->table('employees')->update($body,['EmployeeID','=',$params['employeeid']]);
+            $this->db->table('employees')->update($body,['EmployeeID','=',$params['employeeid']]);
             return ["Employee Updated Succesfully"];
-        } catch(\Exception) {
+        } catch(Exception $e) {
             throw new DatabaseConnectionException();
         }
     }
+
+    /**
+     * @throws TeapotException
+     */
     public function delete (array $body, array $params) :array{
         throw new TeapotException("Employees can not be deleted. Update current contract to alter end-date");
         return [];
     }
+
+
+    /**
+     * @param array $apipath
+     * @return array|null
+     * @throws BadRequestException
+     */
     public static function validateEndpoint(array $apipath): ?array
     {
-        if (count ($apipath) > 2) throw new BadRequestException("Endpoint $path could not be validated");
+        if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
         if ((isset ( $apipath[1]) ) AND (preg_match('/[0-9]+/',$apipath[1])))
             return ['employeeid' => $apipath[1]];
         return null;
     }
 
+    /**
+     * @param array $get
+     * @throws BadRequestException | NotFoundException
+     */
     public static function validateGet(array $get)
     {
-        $db = new \Database;
+        $db = new Database;
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {
@@ -147,7 +177,7 @@ class Employees extends Endpoint implements ApiEndpointInterface
     private function returnDepartmentEmployees(int $itemID): array
     {
         if (! $this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
-        return (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where(['DepartmentID','=',$itemID])->get();
+        return $this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where(['DepartmentID','=',$itemID])->get();
     }
 
     /**
@@ -158,9 +188,9 @@ class Employees extends Endpoint implements ApiEndpointInterface
     private function returnSingleItem(int $itemID): array
     {
         if ( ( ! $this->manager) AND ( $itemID !=$this->employee ) ) throw new NotAuthorizedException("Can only be viewed by a manager or the object employee");
-        $response = (array)$this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['employees.EmployeeID','=',$itemID])->get();
+        $response = $this->db->table('employees')->innerjoin('departmentmemberlist','EmployeeID')->where(['employees.EmployeeID','=',$itemID])->get();
         if ( count ( $response ) >1 ) {
-            $departments = (array)[];
+            $departments = [];
             foreach ($response as $emp){
                 array_push($departments, $emp->DepartmentID);
             }
