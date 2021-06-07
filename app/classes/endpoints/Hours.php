@@ -2,10 +2,6 @@
 
 namespace API;
 
-use Dotenv\Dotenv;
-use PHPUnit\Exception;
-use function Webmozart\Assert\Tests\StaticAnalysis\throws;
-
 class Hours extends Endpoint implements ApiEndpointInterface
 {
 
