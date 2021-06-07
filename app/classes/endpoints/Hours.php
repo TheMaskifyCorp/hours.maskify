@@ -2,6 +2,10 @@
 
 namespace API;
 
+use Database;
+use Exception;
+use UUID;
+
 class Hours extends Endpoint implements ApiEndpointInterface
 {
 
@@ -23,7 +27,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
             $response = $this->db->table('employeehours')->where(['EmployeeHoursID','=',$params['uuid']])->first();
             if (count((array)$response) > 0) return [$response];
             throw new BadRequestException("Record {$params['uuid']} not found");
-        }catch(\Exception $e){
+        }catch(Exception $e){
             throw new DatabaseConnectionException();
         }
 
@@ -54,7 +58,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
             //fetch and return the result
         try{
             $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
-        }catch (\Exception $e){
+        }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
         return (array)$result;
@@ -87,7 +91,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         //execute request
         try{
             $this->db->table('employeehours')->update($body,$where);
-        } catch (\Exception $e){
+        } catch (Exception $e){
             throw new BadRequestException("Error updating record in database");
         }
         //response
@@ -111,18 +115,26 @@ class Hours extends Endpoint implements ApiEndpointInterface
             throw new BadRequestException("UUID will be generated on insertion");
         //check if the request is okay
         $requiredParamsArray = ["EmployeeID", "DeclaratedDate", "EmployeeHoursQuantityInMinutes"];
+
         $insert = [];
         foreach ($requiredParamsArray as $param)
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
+            $insert['param'] = $body['param'];
+        }
+        //check if the record is set with Accorded status
+        if (isset($body['HoursAccorded'],$body['AccordedByManager']))
+        {
+            $insert['HoursAccorded'] = $body['HoursAccorded'];
+            $insert['AccordedByManager'] = $body['AccordedByManager'];
         }
 
         //start insertion
-        $uuid = \UUID::createRandomUUID();
-        $body['EmployeeHoursID'] = $uuid;
+        $uuid = UUID::createRandomUUID();
+        $insert['EmployeeHoursID'] = $uuid;
         try {
-            $result = $this->db->table('employeehours')->insert($body);
-        }catch(\Exception $e){
+            $this->db->table('employeehours')->insert($insert);
+        }catch(Exception $e){
             throw new BadRequestException("Error updating record in database");
         }
         return ["New record with ID $uuid created"];
@@ -156,7 +168,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         //try database request
         try {
             $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['employeehoursid']]);
-        }catch(\Exception $e){
+        }catch(Exception $e){
             throw new BadRequestException('Error updating database');
         }
         //return message
@@ -172,7 +184,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
      */
     public static function validateEndpoint(array $apipath): ?array
     {
-        $db = new \Database;
+        $db = new Database;
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
         //check if second item is in the list of integers
         if ( isset( $apipath [ 1 ] ) and (preg_match('/^[0-9]+$/',$apipath[ 1 ])  ) ){
@@ -196,7 +208,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
 
     public static function validateGet(array $get)
     {
-        $db = new \Database();
+        $db = new Database();
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {
