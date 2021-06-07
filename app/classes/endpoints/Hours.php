@@ -2,8 +2,8 @@
 
 namespace API;
 
-use Dotenv\Dotenv;
-use PHPUnit\Exception;
+
+use Exception;
 
 class Hours extends Endpoint implements ApiEndpointInterface
 {
@@ -17,8 +17,8 @@ class Hours extends Endpoint implements ApiEndpointInterface
         if (isset($params['uuid'])) {
             try {
                 $this->db->table('employeehours')->where(['EmployeeHoursID','=',$params['uuid'] ] )->get();
-            }catch(\Exception $e){
-                throw new DatabaseConnectionError();
+            }catch(Exception $e){
+                throw new \DatabaseConnectionError();
             }
         }
 
@@ -49,7 +49,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         //fetch and return the result
         try{
             $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
-        }catch (\Exception $e){
+        }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
         return (array)$result;
@@ -74,7 +74,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         //execute request
         try{
             $this->db->table('employeehours')->update($body,$where);
-        } catch (\Exception $e){
+        } catch (Exception $e){
             throw new BadRequestException("Error updating record in database");
         }
         //response
@@ -103,7 +103,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         $body['EmployeeHoursID'] = $uuid;
         try {
             $result = $this->db->table('employeehours')->insert($body);
-        }catch(\Exception $e){
+        }catch(Exception $e){
             throw new BadRequestException("Error updating record in database");
         }
         return ["New record with ID $uuid created"];
@@ -131,7 +131,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         //try database request
         try {
             $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['employeehoursid']]);
-        }catch(\Exception $e){
+        }catch(Exception $e){
             throw new BadRequestException('Error updating database');
         }
         //return message
