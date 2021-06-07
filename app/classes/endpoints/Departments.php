@@ -31,23 +31,45 @@ class Departments extends Endpoint implements ApiEndpointInterface
 
     public function post(array $body, array $params) :array
     {
-        if(isset($body)) throw new BadRequestException("Can not create new departments");
+        if (!$this->manager)  throw new NotAuthorizedException("This request can only be performed by a manager");
+        if(isset($body["Description"]) AND (is_string($body["Description"])!== true))
+            throw new BadRequestException("Description must be of type string and cannot be null");
+        if(isset($body["DepartmentID"]))
+        {
+            $required = ["DepartmentID", "Description"];
+            $missingParams = [];
+            $requestParams = [];
+            foreach($required as $value)
+            {
+                if ( ! array_key_exists ( $value, $body ) ) {
+                    array_push($missingParams, $value." is required");
+                } else {
+                    $requestParams[$value] = $body[$value];
+                }
+            }
+            $departmentCreated = $this->db->table('departmenttypes')->insert($requestParams);
+
+            // throw error if employee is not created
+            if ($departmentCreated !== true) throw new BadRequestException( "Could not create department" );
+            return ["New department created"];
+        }
     }
 
     public function put (array $body, array $params) :array
     {
-        $where = [];
+
         if (!$this->manager) throw new NotAuthorizedException("This request can only be performed by a manager");
 
-        if (isset($body ['DepartmentID'], $body['Description'])) {
             //check if all required parameters are set
-            $requiredParamsArray = ["DepartmentID", "Description"];
-            foreach ($requiredParamsArray as $param) {
+            $requiredBodyParam = ["DepartmentID", "Description"];
+            foreach ($requiredBodyParam as $param) {
                 if (!isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
             }
+
             //move departmentid and description from body to where-clause
+            $where = [];
             $where = ['DepartmentID', '=', $body['DepartmentID'], 'Description', '=', $body['Description']];
-            unset($body['departmentid'], $body['description']);
+
             //execute request
             try {
                 $this->db->table('departmenttypes')->update($body, $where);
@@ -56,38 +78,24 @@ class Departments extends Endpoint implements ApiEndpointInterface
             }
             //response
             return [$where[5] . " updated"];
-        }
-    }
 
+    }
 
     public function delete (array $body, array $params) :array
     {
-        $employeeid = $params['employeeid'];
-        $contractstartdate = $params['contractstartdate'];
-        $where = [];
-
-        //check if employee id and contractstartdate are set
-        if (! isset ( $params['employeeid'] ) OR (! isset($params['contractstartdate'] )))
-            throw new BadRequestException('emplopyeeid or contractstartdate is not set');
+        //check if department id param is set
+        if (! isset ( $params['departmentid'] ))
+            throw new BadRequestException('departmentid is not set');
 
         //check if user is manager
         if ( !$this->manager)
             throw new NotAuthorizedException('This request can only be performed by a manager');
 
-        // check if both employeeid and startdate params are set
-        if ( isset( $params [ 'employeeid' ]  ) AND isset($params['contractstartdate'] )) {
-            array_push($where, ["contracts.EmployeeID", '=', $employeeid]);
-            array_push($where, ["contracts.ContractStartDate", '=', $contractstartdate]);
-        }
-
-        //try database request
-        try {
-            $this->db->table('contracts')->delete($where);
-        } catch (\Exception $e) {
-            throw new BadRequestException('Error updating database');
-        }
-        //return message
-        return ["Contract with {$params['employeeid']} and {$params['contractstartdate']} deleted"];
+        $departmentid = $params['departmentid'];
+        $where = [];
+        array_push($where, ["departmenttypes.DepartmentID", '=', $departmentid]);
+        $this->db->table('departmenttypes')->delete($where);
+        return (['department deleted']);
 
     }
 //
@@ -111,11 +119,13 @@ class Departments extends Endpoint implements ApiEndpointInterface
 
                     //parameter must be an integer
                     if (!preg_match('/^[0-9]{0,15}$/', $value))
-                        throw new BadRequestException("departmentid must be an integer");
+                        throw new BadRequestException("DepartmentID must be an integer");
 
                     //parameter must be existing department
+                    //ps: departments always have employees because employeeID is part of the PK of departmenttypes,
+                    // I'll pretend I did not read the word 'active', what is the use case for this again?
                     if (!$db->table('departmenttypes')->exists(['DepartmentID' => $value]))
-                        throw new NotFoundException("departmentid not found");
+                        throw new NotFoundException("DepartmentID not found");
                     break;
 
                 case "Description":
@@ -131,47 +141,7 @@ class Departments extends Endpoint implements ApiEndpointInterface
                         throw new NotFoundException("Description not found");
                     break;
 
-//                case "contractstartdate":
-//                    if (strlen((string)$value) > 15)
-//                        throw new BadRequestException("contractstartdate cannot exceed 15 characters");
-//
-//                    if (isset($request['ContractStartDate'])) if (!preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractStartDate']))
-//                        throw new BadRequestException("ContractStartDate must be formatted as: YYYY-MM-DD");
-//
-//                    break;
-//                default:
-//                    throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
             }
         }
     }
-
-
-    /**
-     * @throws BadRequestException
-     */
-    private function validatePostRequest(array $request)
-    {
-        $requiredString =["EmployeeID"];
-        $requiredDate=["ContractStartDate", "ContractEndDate"];
-        $requiredAlphaNum = ["WeeklyHours", "PayRate"];
-        if (isset($request['EmployeeID'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['EmployeeID'] )) throw new BadRequestException("EmployeeID must be integer");
-        if (isset($request['WeeklyHours'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['WeeklyHours'] )) throw new BadRequestException("WeeklyHours must be integer");
-        if (isset($request['PayRate'])) if ( ! preg_match ( '/[0-9]{1,11}$/', $request['PayRate'] )) throw new BadRequestException("PayRate must be integer");
-        if (isset($request['ContractStartDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractStartDate'])) throw new BadRequestException("ContractStartDate must be formatted as: YYYY-MM-DD");
-        if (isset($request['ContractEndDate'])) if ( ! preg_match ( '/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $request['ContractEndDate'])) throw new BadRequestException("ContractEndDate must be formatted as: YYYY-MM-DD");
-        foreach($requiredString as $key)
-        {
-            if (isset($request[$key])) if ( ! preg_match ( '/[A-z0-9]+$/', $request[$key]) ) throw new BadRequestException("$key can only contain alphanumeric symbols");
-        }
-        foreach($requiredAlphaNum as $key)
-        {
-            if (isset($request[$key])) if ( ! preg_match ( '/[A-z0-9]+$/', $request[$key]) ) throw new BadRequestException("$key can only contain alphanumeric symbols");
-        }
-        foreach($requiredDate as $key)
-        {
-            if (isset($request[$key])) if ( ! preg_match ( '/[A-z0-9]+$/', $request[$key]) ) throw new BadRequestException("$key can only contain alphanumeric symbols");
-        }
-
-    }
-
 }
