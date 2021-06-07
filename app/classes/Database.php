@@ -11,6 +11,10 @@ class Database
     protected $stmt;
     protected $distinct = "";
 
+    /**
+     * Database constructor.
+     * @param false $debug
+     */
     public function __construct($debug = false)
     {
         $this->debug = $debug;
@@ -50,11 +54,20 @@ class Database
         return $this;
     }
 
+    /**
+     * @param $row
+     * @return $this
+     */
     public function row($row): Database
     {
             $this->row = $this->table.".".$row;
             return $this;
     }
+
+    /**
+     * @param array $tablerows
+     * @return $this
+     */
     public function selection(array $tablerows): Database
     {
         $this->selection = $tablerows;
@@ -108,6 +121,8 @@ class Database
      * 'field' => 'value'
      * ],[where-array],[where-array]);
      * @param array $data
+     * @param mixed ...$where
+     * @return bool
      */
     public function update(array $data, ...$where) : bool
     {
@@ -135,6 +150,10 @@ class Database
         return $this->stmt->execute($values);
     }
 
+    /**
+     * @param mixed ...$where
+     * @return array|bool
+     */
     public function delete(array ...$where)
     {
         $whereString = " ";
@@ -177,7 +196,7 @@ class Database
      * "roles.description"
      * ])->innerJoin("roles","users.role = roles.id")->get();
      */
-    public function innerJoin(string $table, string $on)
+    public function innerJoin(string $table, string $on): Database
     {
         $on = $this->table.".".$on." = ".$table.".".$on;
 
@@ -241,6 +260,11 @@ class Database
         return $this;
     }
 
+    /**
+     * @param string $incValue
+     * @param mixed ...$where
+     * @return array|bool
+     */
     public function increment(string $incValue, array ...$where)
     {
         $whereString = " ";
@@ -270,20 +294,27 @@ class Database
         $this->stmt = $this->pdo->prepare($sql);
         $response =  $this->stmt->execute($values);
         return ($response) ? true : $this->stmt->errorInfo();
-        //UPDATE searchresults SET SearchTermCounter= :SearchTermCounter WHERE SearchTerm = :SearchTerm"
     }
 
 
-
-    public function distinct()
+    /**
+     * @return $this
+     */
+    public function distinct(): Database
     {
         $this->distinct = "DISTINCT";
         return $this;
     }
 
 
-    public function group($group){
+    /**
+     * @param $group
+     * @return $this
+     */
+    public function group($group): Database
+    {
         $this->group = "GROUP BY $group";
+        return $this;
     }
 
     /**
@@ -295,7 +326,7 @@ class Database
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @return bool
      */
     public function exists(array $data) : bool
@@ -303,6 +334,10 @@ class Database
         $field = array_keys($data)[0];
         return $this->where([$field,'=', $data[$field] ])->count() ? true : false;
     }
+
+    /**
+     * @return array
+     */
     public function get(): array
     {
         if ( !isset( $this->stmt) ) {
@@ -311,6 +346,10 @@ class Database
         }
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    /**
+     * @return PDOStatement
+     */
     public function returnstmt()
     {
         if (!$this->stmt) {
@@ -318,7 +357,11 @@ class Database
         }
         return $this->stmt;
     }
-    public function returnError()
+
+    /**
+     * @return array
+     */
+    public function returnError(): array
     {
         if (!$this->stmt) {
             $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");
@@ -326,11 +369,18 @@ class Database
         return $this->stmt->errorInfo();
     }
 
-    public function first()
+    /**
+     * @return object
+     */
+    public function first() : object
     {
         return $this->get()[0];
     }
-    public function lastID()
+
+    /**
+     * @return int
+     */
+    public function lastID() : integer
     {
         return $this->pdo->lastInsertId();
     }
@@ -339,6 +389,10 @@ class Database
      * PRIVATE FUNCTIONS
      */
 
+    /**
+     * @param array $where
+     * @return array
+     */
     private function deNestWhere(array $where) : array
     {
         $newArray = [];

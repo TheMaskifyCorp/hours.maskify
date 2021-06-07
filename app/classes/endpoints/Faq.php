@@ -2,7 +2,6 @@
 
 namespace API;
 
-use PharIo\Manifest\ElementCollectionException;
 
 class Faq extends Endpoint implements ApiEndpointInterface
 {
@@ -12,6 +11,12 @@ class Faq extends Endpoint implements ApiEndpointInterface
      * protected object $db;
      */
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return array
+     * @throws DatabaseConnectionException
+     */
     public function get(array $body, array $params): array
     {
         extract($params);
@@ -37,6 +42,7 @@ class Faq extends Endpoint implements ApiEndpointInterface
             }
         }
         $searchtermResult = $this->db->table('searchresults')->where(['SearchTerm','=',$searchterm])->first();
+        //if searchterm is connected to a solution, also return the title and content of the solution
         if ($searchtermResult->SolutionID <> null){
             $result = $this->db->table("searchresults")->innerJoin("faq","SolutionID")->where(['searchresults.SolutionID','=',$searchtermResult->SolutionID])->first();
         } else {
@@ -60,6 +66,11 @@ class Faq extends Endpoint implements ApiEndpointInterface
         // TODO: Implement delete() method.
     }
 
+    /**
+     * @param array $apipath
+     * @return array|null
+     * @throws BadRequestException
+     */
     public static function validateEndpoint(array $apipath) : ?array
     {
         if (count ($apipath) > 2)

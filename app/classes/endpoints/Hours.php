@@ -5,6 +5,12 @@ namespace API;
 class Hours extends Endpoint implements ApiEndpointInterface
 {
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return array
+     * @throws BadRequestException | DatabaseConnectionException | NotAuthorizedException
+     */
     public function get(array $body, array $params): array
     {
         //check manager and employee for authorisation
@@ -54,6 +60,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return (array)$result;
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return string[]
+     * @throws BadRequestException | NotAuthorizedException | TeapotException
+     */
     public function put(array $body, array $params): array
     {
         // check for employeeid
@@ -82,6 +94,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return [$where[2] . " updated"];
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return string[]
+     * @throws BadRequestException | NotAuthorizedException | TeapotException
+     */
     public function post(array $body, array $params): array
     {
         // check for employeeid
@@ -110,6 +128,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return ["New record with ID $uuid created"];
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return string[]
+     * @throws BadRequestException | NotAuthorizedException | TeapotException
+     */
     public function delete(array $body, array $params): array
     {
         // check for employeeid
@@ -140,9 +164,13 @@ class Hours extends Endpoint implements ApiEndpointInterface
     }
 
     /**
+     *
+     * @param array $apipath
+     * @return array|null
      * @throws BadRequestException
+     * @throws NotFoundException
      */
-    public static function validateEndpoint($apipath): ?array
+    public static function validateEndpoint(array $apipath): ?array
     {
         $db = new \Database;
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
@@ -161,11 +189,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
     }
 
     /**
+     * @param array $get
      * @throws BadRequestException
      * @throws NotFoundException
      */
 
-    public static function validateGet($get)
+    public static function validateGet(array $get)
     {
         $db = new \Database();
         foreach ($get as $UCparam => $value) {
@@ -210,17 +239,5 @@ class Hours extends Endpoint implements ApiEndpointInterface
                     throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
             }
         }
-    }
-
-
-    /*
-     * PRIVATE FUNCTIONS
-     */
-
-    private function checkHourStatus(string $uuid) : bool
-    {
-        $result = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$uuid])->first();
-        if ($result->HoursAccorded = null) return true;
-        return false;
     }
 }
