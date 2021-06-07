@@ -2,29 +2,24 @@
 
 namespace API;
 
+use Dotenv\Dotenv;
+use PHPUnit\Exception;
+
 class Hours extends Endpoint implements ApiEndpointInterface
 {
 
-    /**
-     * @param array $body
-     * @param array $params
-     * @return array
-     * @throws BadRequestException | DatabaseConnectionException | NotAuthorizedException
-     */
     public function get(array $body, array $params): array
     {
         //check manager and employee for authorisation
         if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
         //throw error for filtering on department AND employee
         if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        //is a uuid is provided, return that uuid
-        if (isset($params['uuid']))
-        try{
-            $response = $this->db->table('employeehours')->where(['EmployeeHoursID','=',$params['uuid']])->first();
-            if (count((array)$response) > 0) return [$response];
-            throw new BadRequestException("Record {$params['uuid']} not found");
-        }catch(\Exception $e){
-            throw new DatabaseConnectionException();
+        if (isset($params['uuid'])) {
+            try {
+                $this->db->table('employeehours')->where(['EmployeeHoursID','=',$params['uuid'] ] )->get();
+            }catch(\Exception $e){
+                throw new DatabaseConnectionError();
+            }
         }
 
         //add every parameter to an array
@@ -46,12 +41,12 @@ class Hours extends Endpoint implements ApiEndpointInterface
             });
             array_push($where,["employeehours.EmployeeID",'=',$params['employeeid']]);
         }
-        if(isset($params['uuid'])) array_push($where,["EmployeeHoursID",'=',$params['uuid']]);
+        if(isset($params['employeehoursid'])) array_push($where,["EmployeeHoursID",'=',$params['employeehoursid']]);
         if(isset($params['status'])) array_push($where,["HoursAccorded",'=',$params['status']]);
 
         //if no where clauses, select all employees
         if (!count($where)>0) array_push($where,["employeehours.EmployeeID",'>',0]);
-            //fetch and return the result
+        //fetch and return the result
         try{
             $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
         }catch (\Exception $e){
@@ -60,12 +55,6 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return (array)$result;
     }
 
-    /**
-     * @param array $body
-     * @param array $params
-     * @return string[]
-     * @throws BadRequestException | NotAuthorizedException | TeapotException
-     */
     public function put(array $body, array $params): array
     {
         // check for employeeid
@@ -74,16 +63,14 @@ class Hours extends Endpoint implements ApiEndpointInterface
         if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
 
         //check if all required parameters are set
-        $update = [];
         $requiredParamsArray = ["EmployeeHoursID", "HoursAccorded", "AccordedByManager"];
         foreach ($requiredParamsArray as $param)
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
-            $update['$param'] = $body['$param'];
         }
         //move employeeid from body to where-clause
         $where = ['EmployeeHoursID','=', $body['EmployeeHoursID'] ];
-        unset($update['EmployeeHoursID']);
+        unset($body['EmployeeHoursID']);
         //execute request
         try{
             $this->db->table('employeehours')->update($body,$where);
@@ -94,20 +81,14 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return [$where[2] . " updated"];
     }
 
-    /**
-     * @param array $body
-     * @param array $params
-     * @return string[]
-     * @throws BadRequestException | NotAuthorizedException | TeapotException
-     */
     public function post(array $body, array $params): array
     {
         // check for employeeid
         if (isset($params['employeeid'])) throw new TeapotException('Hours can only be created at the general endpoint');
-
+        // TODO: Implement delete() method.
         if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) )
             throw new NotAuthorizedException('Hours can only be deleted by a manager or the object employee');
-        if (isset ($params['uuid']))
+        if (isset ($params['employeehoursid']))
             throw new BadRequestException("UUID will be generated on insertion");
         //check if the request is okay
         $requiredParamsArray = ["EmployeeID", "DeclaratedDate", "EmployeeHoursQuantityInMinutes"];
@@ -128,20 +109,14 @@ class Hours extends Endpoint implements ApiEndpointInterface
         return ["New record with ID $uuid created"];
     }
 
-    /**
-     * @param array $body
-     * @param array $params
-     * @return string[]
-     * @throws BadRequestException | NotAuthorizedException | TeapotException
-     */
     public function delete(array $body, array $params): array
     {
         // check for employeeid
         if ( isset( $params [ 'employeeid' ] ) )
             throw new TeapotException('Hours can only be deleted at general endpoint' );
         //check for object id
-        if (! isset ( $params['uuid'] ))
-            throw new BadRequestException('Object UUID is not set');
+        if (! isset ( $params['employeehoursid'] ))
+            throw new BadRequestException('Object EmployeeHoursID is not set');
         //check authorisation
         $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['employeehoursid']])->first();
         $employee = $object->EmployeeID;
@@ -160,41 +135,33 @@ class Hours extends Endpoint implements ApiEndpointInterface
             throw new BadRequestException('Error updating database');
         }
         //return message
-        return ["Hours with ID {$params['uuid']} deleted"];
+        return ["Hours with ID {$params['employeehoursid']} deleted"];
     }
 
     /**
-     *
-     * @param array $apipath
-     * @return array|null
      * @throws BadRequestException
-     * @throws NotFoundException
      */
-    public static function validateEndpoint(array $apipath): ?array
+    public static function validateEndpoint($apipath): ?array
     {
         $db = new \Database;
         if (count ($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
-        //check if second item is in the list of integers
+
         if ( isset( $apipath [ 1 ] ) and (preg_match('/^[0-9]+$/',$apipath[ 1 ])  ) ){
-            if ( ( isset($apipath[1]) ) AND (! $db->table('employees')->exists(['EmployeeID' => $apipath[1]]) ) ) throw new BadRequestException("Employee does not exist");
+            if ( ( isset($apipath[1]) ) AND (! $db->table('employees')->exists($apipath[1],'EmployeeID') ) ) throw new BadRequestException("Employee does not exist");
             return ['employeeid' => $apipath[1]];
         }
-        if ( isset($apipath[1]) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',$apipath[1]) ) {
-
-            if (! $db->table('employeehours')->exists(['EmployeeHoursID' => $apipath[1]])) throw new NotFoundException("UUID not found in database");
+        if ( isset($apipath[1]) && UUID::is_valid($apipath[1] ) ){
             return ['uuid' => $apipath[1]];
-            }
-        if (isset ($apipath[1])) throw new BadRequestException('Could not validate endpoint');
+        }
         return null;
     }
 
     /**
-     * @param array $get
      * @throws BadRequestException
      * @throws NotFoundException
      */
 
-    public static function validateGet(array $get)
+    public static function validateGet($get)
     {
         $db = new \Database();
         foreach ($get as $UCparam => $value) {
@@ -210,7 +177,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
                         throw new BadRequestException("EmployeeID must be an integer");
 
                     //parameter must be existing employee
-                    if ($db->table('employees')->exists(["EmployeeID" => $value]))
+                    if ($db->table('employees')->exists($value, "EmployeeID"))
                         throw new NotFoundException("Employee '$value' does not exist");
                     break;
                 case "departmentid":
@@ -239,5 +206,17 @@ class Hours extends Endpoint implements ApiEndpointInterface
                     throw new BadRequestException("Parameter $UCparam is not valid for this endpoint");
             }
         }
+    }
+
+
+    /*
+     * PRIVATE FUNCTIONS
+     */
+
+    private function checkHourStatus(string $uuid) : bool
+    {
+        $result = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$uuid])->first();
+        if ($result->HoursAccorded = null) return true;
+        return false;
     }
 }
