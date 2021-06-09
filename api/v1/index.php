@@ -15,12 +15,11 @@ else
     header("Location: /");
 };
 
-
 //capture the body
 $body = file_get_contents('php://input');
 // URL naar variabelen omzetten door te splitsen op '/'
 $apiVars=explode('/',$apipath);
-
+$statusCode = 200;
 try {
     /*
      * BEGIN VALIDATION OF JWT TOKEN
@@ -32,19 +31,20 @@ try {
      * START OF LIVE VERSION FOR JWT
      */
     //check of een token is meegestuurd
-    /*    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
-            throw new API\NotAuthorizedException('Token not found');
+    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
 
-        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
-            throw new API\NotAuthorizedException('Token not found');
+        throw new API\NotAuthorizedException('Token not found');
 
-        $jwt = $matches[1];*/
+    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
+        throw new API\NotAuthorizedException('Token not found');
+
+    $jwt = $matches[1];
 
     /*
      * END OF LIVE VERSION FOR JWT
      * START OF TEST VERSION FOR JWT
      */
-    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
+/*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
         //throw new API\NotAuthorizedException('Token not found');
         $token = array (
             'eid' => 1,
@@ -55,7 +55,7 @@ try {
     }
     elseif (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
         throw new API\NotAuthorizedException('Token not found');
-    }
+    }*/
     /*
      * END OF TEST VERSION FOR JWT
      */
@@ -133,6 +133,7 @@ try {
 
 } catch (Exception $e){
     //create the response if error was thrown in the proces
+    $statusCode = $e->getCode();
     $response =
         [
             "response" =>
@@ -149,6 +150,7 @@ try {
 
 <?php
 //print the response
+//http_response_code($statusCode);
 echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
 

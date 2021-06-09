@@ -67,7 +67,7 @@ class Auth
             $user = $this->db->table('employees')->where(['Email','=',$data['username']])->first();
             $employee = new Employee($user->EmployeeID);
             $password = $employee->getPassword();
-            if ($user->FunctionTypeID == 2) {
+            if ($user->FunctionTypeID > 1) {
                 $manager = true;
             } else $manager = false ;
             if ($this->hash->verify($data['password'], $password)) {

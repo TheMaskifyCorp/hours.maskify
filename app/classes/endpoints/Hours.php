@@ -16,7 +16,9 @@ class Hours extends Endpoint implements ApiEndpointInterface
      * @throws BadRequestException | DatabaseConnectionException | NotAuthorizedException
      */
     public function get(array $body, array $params): array
+
     {
+
         //check manager and employee for authorisation
         if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
         //throw error for filtering on department AND employee
@@ -52,12 +54,20 @@ class Hours extends Endpoint implements ApiEndpointInterface
         }
         if(isset($params['uuid'])) array_push($where,["EmployeeHoursID",'=',$params['uuid']]);
         if(isset($params['status'])) array_push($where,["HoursAccorded",'=',$params['status']]);
-
         //if no where clauses, select all employees
         if (!count($where)>0) array_push($where,["employeehours.EmployeeID",'>',0]);
             //fetch and return the result
+
         try{
-            $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
+            $result = $this->db
+                ->table('employeehours')
+                ->selection($selection)
+                ->innerjoin('departmentmemberlist','EmployeeID')
+                ->distinct()
+                ->where($where)
+                ->get();
+//                ->returnstmt();
+//                ->returnError();
         }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
