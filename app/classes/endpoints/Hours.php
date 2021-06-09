@@ -64,6 +64,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
                 ->selection($selection)
                 ->innerjoin('departmentmemberlist','EmployeeID')
                 ->distinct()
+                ->order("DeclaratedDate","DESC")
                 ->where($where)
                 ->get();
 //                ->returnstmt();
@@ -165,7 +166,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         if (! isset ( $params['uuid'] ))
             throw new BadRequestException('Object UUID is not set');
         //check authorisation
-        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['employeehoursid']])->first();
+        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['uuid']])->first();
         $employee = $object->EmployeeID;
 
         if ( ( ( $this->employee != $employee ) ) AND ( !$this->manager) )
@@ -177,7 +178,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
 
         //try database request
         try {
-            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['employeehoursid']]);
+            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['uuid']]);
         }catch(Exception $e){
             throw new BadRequestException('Error updating database');
         }

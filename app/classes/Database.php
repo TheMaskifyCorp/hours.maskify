@@ -10,6 +10,8 @@ class Database
     protected $innerJoin;
     protected $stmt;
     protected $distinct = "";
+    protected $group = "";
+    protected $order = "";
 
     /**
      * Database constructor.
@@ -131,7 +133,6 @@ class Database
         $whereString = "";
         $where = $this->deNestWhere($where);
         $values = [];
-        $i = 0;
         foreach ($keys as $key){
             $setValues .= $key."= :$key ";
             if ($key != end($keys)) $setValues .= ",";
@@ -257,7 +258,7 @@ class Database
                 $whereString .= " AND ";
             }
         }
-        $this->stmt = $this->pdo->prepare("SELECT $this->distinct $selection FROM $this->table $innerJoin WHERE $whereString");
+        $this->stmt = $this->pdo->prepare("SELECT $this->distinct $selection FROM $this->table $innerJoin WHERE $whereString $this->order");
         $this->stmt->execute($values);
         return $this;
     }
@@ -321,6 +322,17 @@ class Database
     }
 
     /**
+     * @param string $order
+     * @param string $asc
+     * @return $this
+     */
+    public function order(string $order, string $asc = "ASC"): Database
+    {
+        $this->order = "ORDER BY $order $asc";
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function count() : int
@@ -380,10 +392,11 @@ class Database
         return $this->get()[0];
     }
 
+
     /**
-     * @return int
+     * @return string
      */
-    public function lastID() : integer
+    public function lastID() : string
     {
         return $this->pdo->lastInsertId();
     }
