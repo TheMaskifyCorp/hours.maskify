@@ -20,7 +20,8 @@ function getCookie(cname) {
 
 //setting axios token header
 let jwt = getCookie("jwt");
-config = { headers: {Authorization: `Bearer ${jwt}`} }
+let config = {};
+config.headers = {Authorization: `Bearer ${jwt}`}
 
 // functions to handle data
 function objectToTable(employee) {
@@ -37,18 +38,18 @@ function objectToTable(employee) {
 
 function formatEmployeeHours(obj){
     let deletionLink = "";
-    let alertClass = "alert-secondary";
+    let alertClass = "alert-primary";
     if (obj.HoursAccorded === null){
 
-        deletionLink = "<a href='#'><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></a>"
+        deletionLink = "<a href='#'><button class=\"btn btn-light py-0 \" onclick=\"deleteHour(\'"+obj.EmployeeHoursID+"\')\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></a>"
     }
     if (obj.HoursAccorded === "1"){
-        let alertClass = "alert-succes";
+        alertClass = "alert-success";
     }
     if (obj.HoursAccorded === "0"){
-        let alertClass = "alert-warning";
+        alertClass = "alert-danger";
     }
-    let content = "<div class='eh-hours "+alertClass+"'>" +
+    let content = "<div id='"+obj.EmployeeHoursID+"' class='eh-hours "+alertClass+"'>" +
         "<div class='eh-hours1'>"+obj.DeclaratedDate+"</div>" +
         "<div class='eh-hours2'>"+obj.EmployeeHoursQuantityInMinutes+"</div>" +
         "<div class='eh-hours3'>"+deletionLink+"</div>" +
@@ -57,8 +58,9 @@ function formatEmployeeHours(obj){
 }
 
 
-//functions to get data from api
-
+/*
+   GET FUNCTIONS
+ */
 function getSingleEmployee(employee){
     return axios.get("/api/v1/employees/"+employee, config)
         .then( (data) => data['data']['response'])
@@ -71,4 +73,38 @@ function getSingleEmployeeHours(employee,startdate = null,enddate = null){
     return axios.get("/api/v1/hours/"+employee+params, config)
         .then( (data) => data['data']['response'])
         .catch( (e) => console.log( e ))
+}
+
+/*
+    POST FUNCTIONS
+ */
+
+/*
+    PUT FUNCTIONS
+ */
+
+/*
+    DELETE FUNCTIONS
+ */
+
+function deleteHour(id) {
+    axios.delete("/api/v1/hours/" + id, config)
+        .then((data) => data['data'])
+        .then((data) => {
+            if (!data.success) {
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-warning'
+                }).showToast();
+            } else {
+                document.getElementById(id).remove();
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-success'
+                }).showToast();
+
+            }
+        })
 }

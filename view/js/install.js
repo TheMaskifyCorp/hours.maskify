@@ -1,25 +1,39 @@
 $(document).ready(function(){
 
-    $("form").on("submit", function(event){
+        $("form").on("submit", function(event){
         event.preventDefault();
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();
-        $.post("install.php", formValues, function(data){
-            console.log(data);
-            //Parse it before displaying
-            parseAlert(data);
-        });
+        axios.post('install.php',formValues,config)
+            .then((data) => data['data'] )
+            .then(response => {
+                parseAlert(response)
+            })
+            .catch(e => {
+                console.log(e);
+
+                Toastify({
+                    text: "Something went wrong, sorry",
+                    duration: 3000,
+                    className: 'toast-bg toast-danger',
+                }).showToast();
+            })
     });
 });
 function parseAlert(data) {
-    let array = JSON.parse(data);
     let success = true;
-    for (let key in array) {
-        if (array.hasOwnProperty(key)) {
-            let value = array[key];
-            let message = "<div class='d-flex alert alert-" + value.toLowerCase() + " mb-3 text-break'><div class='d-flex flex-column justify-content-center align-items-left m-0 w-100'>" + key + "</div></div>"
-            $("#callbackTarget").append(message);
+    for (let key in data) {
+        if (data.hasOwnProperty(key)) {
+            let value = data[key];
+            let typeOfToast = (value.toLowerCase() == "success") ? "success" : "warning" ;
+
+            Toastify({
+                text: key,
+                duration: 3000,
+                className: 'toast-bg toast-'+typeOfToast,
+
+            }).showToast();
             if (value.toLowerCase() != "success") {
                 success = false;
                 $(".alert").delay(2000).fadeOut(1000).removeClass("d-flex");
@@ -33,3 +47,4 @@ function parseAlert(data) {
         $('input[type=submit]', 'form').attr('disabled', false).attr('value', 'Install database');
     }
 }
+
