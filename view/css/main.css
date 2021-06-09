@@ -1,0 +1,71 @@
+  .grid-wrapper {
+/*    background-color: #2196F3;*/
+    padding:10px;
+  } 
+  
+  .grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+  }
+
+#account{
+    position:relative;
+}
+
+.grid-wrapper{
+    display: grid;
+    height:80vh;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 60px 3fr 1fr auto;
+    grid-template-areas:
+      "gr1 gr1"
+      "gr2 gr3"
+      "gr4 gr5"
+      "gr6 gr6";
+}
+
+.grid-item1{
+    grid-area: gr1;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+    height:40px;
+}
+
+.grid-item1 input{
+display: block;
+}
+
+.grid-item2{
+    grid-area: gr2;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item3{
+    grid-area: gr3;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item4{
+    grid-area: gr4;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item5{
+    grid-area: gr5;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item6{
+    grid-area: gr6;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}

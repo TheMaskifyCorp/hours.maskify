@@ -146,10 +146,10 @@ try {
 }
 //TODO: Remove pre tags
 ?>
-<pre>
+
 <?php
 //print the response
 echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
 
-</pre>
+
