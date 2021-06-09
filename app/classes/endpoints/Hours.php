@@ -16,9 +16,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
      * @throws BadRequestException | DatabaseConnectionException | NotAuthorizedException
      */
     public function get(array $body, array $params): array
-
     {
-
         //check manager and employee for authorisation
         if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
         //throw error for filtering on department AND employee
@@ -67,8 +65,6 @@ class Hours extends Endpoint implements ApiEndpointInterface
                 ->order("DeclaratedDate","DESC")
                 ->where($where)
                 ->get();
-//                ->returnstmt();
-//                ->returnError();
         }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
