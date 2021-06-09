@@ -32,7 +32,8 @@ require_once "$docRoot/view/includes/header.php";
                 </form>
             </div>
         </div>
-        <div class="grid-item3">3</div>
+        <div class="grid-item3">
+        </div>
         <div class="grid-item4">4</div>
         <div class="grid-item5">5</div>
         <div class="grid-item6">6</div>
