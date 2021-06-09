@@ -19,7 +19,7 @@ if (isset($_SESSION['employee'])){
     setcookie("jwt",$jwt);
 }
 
-
+$docRoot = $_SERVER['DOCUMENT_ROOT'];
 $hash = new Hash;
 $db = new Database();
 $auth = new Auth($db, $hash);
