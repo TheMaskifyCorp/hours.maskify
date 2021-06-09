@@ -2,7 +2,7 @@
 
 class Database
 {
-    protected $pdo;
+    public $pdo;
     protected $debug = false;
     protected $table;
     protected $row;

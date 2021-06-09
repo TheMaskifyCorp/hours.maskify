@@ -19,43 +19,66 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 
     public function get(array $body, array $params): array
     {
+
+        //Begining of holidays (plural) section, manager function to grab multiple holidays.
         //an employee can only see his own holidays unless he is manager
-        if(( !$this->manager))  throw new NotAuthorizedException('Holidays can only be viewed by a manager or the object employee');
+        if(( !$this->manager))  throw new NotAuthorizedException('Holidays of multiple employees can only be viewed by a manager');
         //throw error for filtering on department AND employee
         if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        //is a uuid is provided, return that uuid
         //add every parameter to an array
-        $selection =[
-            "departmentmemberlist.DepartmentID",
-            "EmployeeID",
-            "StartDateRange",
-            "EndDateRange",
-            "Status"];
+        $selection = ["*"];
         $where = [];
         if(isset($params['departmentid'])) array_push($where,["departmentmemberlist.DepartmentID",'=',$params['departmentid']]);
-//        if(isset($params['startdaterange'])) array_push($where,["HolidayStartDate",'=',$params['startdaterange']]);
-//        if(isset($params['enddaterange'])) array_push($where,["HolidayEndDate",'=',$params['enddaterange']]);
+        if(isset($params['departmentid']))
+        {
+            try{
+                $result = $this->db->table('departmentmemberlist')->selection($selection)->innerjoin('holidays','EmployeeID')->distinct()->where($where)->get();
+            }catch (Exception $e){
+                throw new DatabaseConnectionException();
+            }
+            return (array)$result;
+        }
         if(isset($params['status'])) array_push($where,["HolidaysAccorded",'=',$params['status']]);
 
         if((isset($params['startdaterange'])) AND isset($params['enddaterange']))
         {
             $start = $params['startdaterange'];
             $end = $params['enddaterange'];
-            array_push($where,["HolidayStartDate",'=>',$start]);
-            array_push($where,["HolidayEndDate",'<=',$end]);
-            var_dump($start);
-            var_dump($end);
-            var_dump($where);
-            //make a function that fetches
+
+            //call a stored procedure called HolidaysBetween that will fetch everything from holidays within the startdaterange and enddaterange params as $start and $end.
+            $db = new \Database;
+
+            $statement = $db->pdo->prepare("CALL HolidaysBetween('$start', '$end')");
+
+            //It is problematic
             try {
-                $result = $this->db->table('holidays')->where($where)->returnstmt();
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
+                $statement->execute();
+                $result=$statement->fetchAll();
+                $result1 = $this->db->table('holidays')->where($where)->get();
+
+                //check if param is present in result and filter for value, for example: status=null.
+//                var_dump($result1[4]);
+//                $status = $result1['HolidaysAccorded'];
+//                if($status !== null)
+//                array_filter($result1, function($status)
+//                {
+//                    return $status == null;
+//                });
+
+                //arraymerge does not append my arrays as it should but instead prints both arrays seperately
+//                $totalresult = array_merge($result, $result1);
+                //compact allows both arrays to be returned in 1 result.
+                //The arrays have to be merged or innerjoined with the additional variables set besides start and end dates
+                //The problem with this is that it has to work in combination with other params.
+                $totalresult = compact('result', 'result1');
+                return array($totalresult);
+            }  catch (Exception $e) {
+               throw new DatabaseConnectionException();
             }
-            return (array)$result;
+
         }
 
-        //if any of the above params are set get the results, an empty array will return false, if the params array has values it will validate to true, works for status
+        //if any of the above params are set, get the results, an empty array will return false, if the params array has values it will validate to true, works for status
         if($params)
         {
             try {
@@ -66,8 +89,6 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             return (array)$result;
         }
 
-//      ->selection($selection)
-//        ->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()
         //if no parameters are given return all holidays
         if($params == [])
         {
@@ -78,7 +99,8 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             }
             return (array)$result;
         }
-
+        //ending of holidays (plural) section
+        //Begining of get functions for single employee
     }
 
     public function post(array $body, array $params): array

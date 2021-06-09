@@ -221,3 +221,21 @@ FROM employees
          INNER JOIN departmenttypes
                     ON departmentmemberlist.DepartmentID = departmenttypes.DepartmentID
 WHERE employees.FunctionTypeID > 1;
+
+/*Stored procedure HolidaysBetween*/
+DELIMITER $$
+DROP PROCEDURE IF EXISTS HolidaysBetween $$
+CREATE PROCEDURE HolidaysBetween(
+    IN startdate DATE,
+    IN enddate DATE
+)
+BEGIN
+SELECT
+    holidays.HolidayStartDate,
+    holidays.HolidayEndDate
+FROM
+    holidays
+WHERE
+    holidays.HolidayStartDate BETWEEN startdate AND enddate AND  holidays.HolidayEndDate BETWEEN startdate AND enddate;
+END $$
+DELIMITER ;
