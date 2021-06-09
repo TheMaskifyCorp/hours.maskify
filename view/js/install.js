@@ -34,10 +34,6 @@ function parseAlert(data) {
                 className: 'toast-bg toast-'+typeOfToast,
 
             }).showToast();
-            if (value.toLowerCase() != "success") {
-                success = false;
-                $(".alert").delay(2000).fadeOut(1000).removeClass("d-flex");
-            }
         }
     }
     if (success == true) {
