@@ -18,6 +18,7 @@ if(isset($_POST['hostname'])) {
         unset($pdo);
     }catch(Exception $e){
         http_response_code(404);
+        header("Location: /view/install/index.php");
     }
     Installer::createENV($hostname, $database, $username, $password);
 }
