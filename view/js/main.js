@@ -56,6 +56,16 @@ function formatEmployeeHours(obj){
         "</div>";
     return content;
 }
+/*
+    HELPERS
+ */
+
+function reloadPage(){
+    window.location.replace(window.location.href)
+}
+/*
+    VALIDATION FUNCTIONS
+ */
 
 
 /*
@@ -66,7 +76,9 @@ function formatEmployeeHours(obj){
  */
 function getSingleEmployee(employee){
     return axios.get("/api/v1/employees/"+employee, config)
-        .then( (data) => data['data']['response'])
+        .then( (data) => {
+            return data['data']['response']
+        })
         .catch( (e) => console.log( e ))
 }
 /*
@@ -84,16 +96,22 @@ function getSingleEmployeeHours(employee,startdate = null,enddate = null){
     GET Solutions
  */
 function getSolutions(...id){
-    id = Array.from(id)
-    console.log(id)
+    if (!id.isArea) id = Array.from(id)
     let content = "";
     axios.get('/api/v1/faq/')
         .then(data => {
-            console.log(data['data']['response'])
-
-            return data['data']['response']
+            let response;
+            if (!id.length) {
+                response = data['data']['response']
+            } else {
+                response = data['data']['response'].filter(response => !(id.indexOf(Number(response.SolutionID)) < 0))
+            }
+            return response
         })
         .then(response => {
+            let elements = document.getElementsByClassName("faq-solutions")
+            elements = Array.from(elements)
+            elements.map (elem => elem.remove() )
             for (let key in response) {
                 let div = document.createElement('div');
                 let solution = "  <button class=\"btn btn-primary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#solution"+response[key]['SolutionID']+"\" aria-expanded=\"false\" aria-controls=\"collapseExample\">\n" +
@@ -105,17 +123,59 @@ function getSolutions(...id){
                     "    "+response[key]['FAQContent']+"" +
                     "  </div>\n" +
                     "</div>";
+                div.classList.add("faq-solutions");
                 div.innerHTML = solution;
                 let existingDiv = document.getElementById('faq-div')
                 existingDiv.insertBefore(div, existingDiv.lastChild);
             }
         })
 }
+function UseSearchTerm(term)
+{
+    if (!term.length){
+        getSolutions();
+    } else {
+        let searchterm = term.replace(" ", "%20");
+        searchterm = searchterm.toLowerCase()
+        axios.get('/api/v1/faq/' + searchterm)
+            .then(data => data['data']['response'])
+            .then(data => {
+                if (data.SolutionID) {
+                    getSolutions(Number(data.SolutionID))
+                    Toastify({
+                        text: "Succes for term <strong>" + term + "</strong><br/> This term has been searched " + data.SearchTermCounter + " times!",
+                        duration: 3000,
+                        escapeMarkup: false,
+                        className: 'toast-bg toast-success'
+                    }).showToast()
+                } else {
+                    getSolutions();
+                    Toastify({
+                        text: "No result for <strong>" + term + "</strong><br/> This term has been searched " + data.SearchTermCounter + " times!",
+                        duration: 3000,
+                        escapeMarkup: false,
+                        className: 'toast-bg toast-warning'
+                    }).showToast()
+                }
+            })
+    }
+}
 
 
 /*
     POST FUNCTIONS
  */
+
+function postHours(date,time){
+    let body = {
+        "EmployeeID": Number(emp),
+        "DeclaratedDate": date,
+        "EmployeeHoursQuantityInMinutes": Number(time)
+    }
+
+    return axios.post('/api/v1/hours', body, config)
+        .then(data => data['data'])
+}
 
 /*
     PUT FUNCTIONS
@@ -142,7 +202,6 @@ function deleteHour(id) {
                     duration: 3000,
                     className: 'toast-bg toast-success'
                 }).showToast();
-
             }
         })
 }

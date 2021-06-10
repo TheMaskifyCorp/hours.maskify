@@ -127,7 +127,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         foreach ($requiredParamsArray as $param)
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
-            $insert['param'] = $body['param'];
+            $insert[$param] = $body[$param];
         }
         //check if the record is set with Accorded status
         if (isset($body['HoursAccorded'],$body['AccordedByManager']))

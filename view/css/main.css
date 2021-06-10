@@ -31,6 +31,21 @@ body{
       "gr4 gr5"
       "gr6 gr6";
 }
+@media screen and (max-width: 500px) {
+    .grid-wrapper{
+        display: grid;
+        height:80vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 3fr 3fr 1fr auto;
+        grid-template-areas:
+      "gr1"
+      "gr2"
+      "gr3"
+      "gr4"
+      "gr5"
+      "gr6";
+    }
+}
 
 .grid-item1{
     grid-area: gr1;
@@ -80,11 +95,12 @@ display: block;
 .employeehours-grid-wrapper{
     display: grid;
     grid-template-columns: 4fr 4fr 1fr;
-    grid-template-rows: 20px 60px auto;
+    grid-template-rows: 40px 60px auto;
     grid-template-areas:
       "selector selector selector"
       "head1 head2 head3"
 }
+
 .eh-datepicker{
     grid-area: selector;
 }

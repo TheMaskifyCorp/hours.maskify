@@ -1,4 +1,5 @@
-const form = document.getElementById("signin");
+const form = document.getElementById("signin")
+
 form.addEventListener('submit', (event) => {
     event.preventDefault()
     // get the form data
@@ -8,13 +9,13 @@ form.addEventListener('submit', (event) => {
         "username": theData.get('username'),
         "password": theData.get('password')
     }
-
+    console.log(formdata)
     axios.post('/view/login/signin.php', formdata)
         // using the done promise callback
         .then( response => response['data'])
         .then (data => {
-            // here we will handle errors and validation messages
             console.log(data)
+            // here we will handle errors and validation messages
             if ( ! data.success) {
                 if ( ! data.errors.credentials){
                     // handle errors for name ---------------

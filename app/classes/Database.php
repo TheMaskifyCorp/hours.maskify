@@ -341,6 +341,8 @@ class Database
     }
 
     /**
+     *
+     * usage ->exists(['Fieldname'=>$value])
      * @param array $data
      * @return bool
      */
