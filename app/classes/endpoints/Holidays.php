@@ -168,29 +168,10 @@ class Holidays extends Endpoint implements ApiEndpointInterface
                 } catch (\Exception $e) {
                     throw new BadRequestException("Error updating record in database");
                 }
-                //response
-                return ["holiday deleted"];
             }
         }
-
-
-
-
-
-        //check if department id param is set
-        if (!isset ($params['departmentid']))
-            throw new BadRequestException('departmentid is not set');
-
-        //check if user is manager
-        if (!$this->manager)
-            throw new NotAuthorizedException('This request can only be performed by a manager');
-
-        $departmentid = $params['departmentid'];
-        $where = [];
-        array_push($where, ["departmenttypes.DepartmentID", '=', $departmentid]);
-        $this->db->table('departmenttypes')->delete($where);
-        return (['department deleted']);
-
+        //response
+        return ["holiday deleted"];
     }
 
 //
