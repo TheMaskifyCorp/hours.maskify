@@ -75,23 +75,23 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 
             $statement = $db->pdo->prepare("CALL HolidaysBetween('$start', '$end')");
 
-            //It is problematic
+            //It is problematic because params can't be combined
             try {
                 $statement->execute();
                 $result = $statement->fetchAll();
                 $result1 = $this->db->table('holidays')->where($where)->get();
 
                 //check if param is present in result and filter for value, for example: status=null.
-//                var_dump($result1[4]);
-//                $status = $result1['HolidaysAccorded'];
-//                if($status !== null)
-//                array_filter($result1, function($status)
-//                {
-//                    return $status == null;
-//                });
+                var_dump($result1[4]);
+                $status = $result1['HolidaysAccorded'];
+                if($status !== null)
+                array_filter($result1, function($status)
+                {
+                    return $status == null;
+                });
 
-                //arraymerge does not append my arrays as it should but instead prints both arrays seperately
-//                $totalresult = array_merge($result, $result1);
+//                arraymerge does not append my arrays as it should but instead prints both arrays seperately
+                $totalresult = array_merge($result, $result1);
                 //compact allows both arrays to be returned in 1 result.
                 //The arrays have to be merged or innerjoined with the additional variables set besides start and end dates
                 //The problem with this is that it has to work in combination with other params.
@@ -239,7 +239,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
     {
         if (count($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
         if ((isset ($apipath[1])) and (preg_match('/[0-9]+/', $apipath[1])))
-            return ['departmentid' => $apipath[1]];
+            return ['employeeid' => $apipath[1]];
         return null;
     }
 
