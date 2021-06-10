@@ -18,6 +18,7 @@ require_once "$docRoot/view/includes/header.php";
     <div class="grid-wrapper">
         <div class="grid-item1">1</div>
         <div class="grid-item2">
+            <h3>Log in</h3>
             <div class="SignIn">
                 <form id="signin" action="/view/login/signin.php" method="POST">
                     <div id="name-group" class="form-group">
@@ -26,13 +27,17 @@ require_once "$docRoot/view/includes/header.php";
                     </div>
                     <div id="password-group" class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="password">
+                        <input type="password" class="form-control" name="password" placeholder="wachtwoord">
                     </div>
-                    <button type="submit" class="btn btn-success">Submit <span class="fa fa-arrow-right"></span></button
+                    <button type="submit" class="mt-1 btn btn-success">Submit <span class="bi bi-chevron-double-right"></span></button
                 </form>
             </div>
         </div>
-        <div class="grid-item3">
+        <div id='faq-div' class="grid-item3">
+            <h3>Veelgestelde vragen</h3>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Zoek artikelen" aria-label="Search">
+            </form>
         </div>
         <div class="grid-item4">4</div>
         <div class="grid-item5">5</div>
@@ -41,3 +46,7 @@ require_once "$docRoot/view/includes/header.php";
 </div>
 <script src="/view/js/signin.js"></script>
 <?php require_once "$docRoot/view/includes/footer.php";
+?>
+<script>
+    getSolutions(1);
+</script> be

@@ -21,30 +21,31 @@ $body = file_get_contents('php://input');
 $apiVars=explode('/',$apipath);
 $statusCode = 200;
 try {
-    /*
-     * BEGIN VALIDATION OF JWT TOKEN
-     */
+    //als endpoint NIET de faq is, moet je validaten
+    if(strtolower($apiVars[0]) == "faq"){
+        $jwt = "noToken";
+    }else{
+        /*
+         * BEGIN VALIDATION OF JWT TOKEN
+         */
 
+        /*
+         * START OF LIVE VERSION FOR JWT
+         */
+        //check of een token is meegestuurd
+        if (! isset($_SERVER['HTTP_AUTHORIZATION']))
+            throw new API\NotAuthorizedException('Token not found');
 
+        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
+            throw new API\NotAuthorizedException('Token not found');
 
-    /*
-     * START OF LIVE VERSION FOR JWT
-     */
-    //check of een token is meegestuurd
-    if (! isset($_SERVER['HTTP_AUTHORIZATION']))
-
-        throw new API\NotAuthorizedException('Token not found');
-
-    if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches))
-        throw new API\NotAuthorizedException('Token not found');
-
-    $jwt = $matches[1];
+        $jwt = ($matches[1]);
 
     /*
      * END OF LIVE VERSION FOR JWT
      * START OF TEST VERSION FOR JWT
      */
-/*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    /*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
         //throw new API\NotAuthorizedException('Token not found');
         $token = array (
             'eid' => 1,
@@ -59,22 +60,21 @@ try {
     /*
      * END OF TEST VERSION FOR JWT
      */
-    $jwt = $matches[1];
+
 
     if (! $jwt)
         // No token was able to be extracted from the authorization header
         throw new API\NotAuthorizedException('Token not found');
 
     //controleer of het JWT token valide is
-    try{
-        $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
-        //als het ouder is dan 1 uur is het niet valid
-        if ($decoded->iat < (time()-3600)) throw new Exception;
-    } catch (Exception $e)
-    {
-        throw new API\NotAuthorizedException('Token not valid');
+        try{
+            $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
+            //als het ouder is dan 1 uur is het niet valid
+            if ($decoded->iat < (time()-3600)) throw new Exception;
+        } catch (Exception $e) {
+            throw new API\NotAuthorizedException('Token not valid');
+        }
     }
-
     /*
      * BEGIN VALIDATION OF ENDPOINT AND PARAMETERS
      *
@@ -134,12 +134,13 @@ try {
 } catch (Exception $e){
     //create the response if error was thrown in the proces
     $statusCode = $e->getCode();
+    $error = (method_exists( $e,"getError")) ? $e->getError() : var_dump($e);
     $response =
         [
             "response" =>
                 [
                     "message" =>  $e->getMessage() ,
-                    "error" =>  $e->getError()
+                    "error" =>  $error
                 ],
             "success" => false,
             "status" => $e->getCode()

@@ -27,7 +27,7 @@ require_once "$docRoot/view/includes/header.php";
                     <label for="hostname">Hostname:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-server"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-hdd-network"></i></span>
                         </div>
                         <input name="hostname" id="hostname" class="form-control" placeholder="Have you tried localhost?" required>
                     </div>
@@ -36,7 +36,7 @@ require_once "$docRoot/view/includes/header.php";
                     <label for="database">Database name:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-book-half"></i></i></span>
                         </div>
                         <input name="database" id="database" class="form-control" placeholder="Can't really help you here..." required>
                     </div>
@@ -45,7 +45,7 @@ require_once "$docRoot/view/includes/header.php";
                     <label for="username">Username:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-user"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-file-earmark-person"></i></span>
                         </div>
                         <input name="username" id="username" class="form-control" placeholder="Could be root, could be anything" required>
                     </div>
@@ -54,27 +54,24 @@ require_once "$docRoot/view/includes/header.php";
                     <label for="password">Password:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-key"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-key"></i></span>
                         </div>
                         <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!">
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <div class="input-group mb-3">
-                        <div class="input-group-prepend w-100">
-                            <div class="input-group-text">
-                                <input name="dummydata" type="checkbox" aria-label="Checkbox for following text input" checked>
+                        <label for="dummydata">Options:</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend w-15">
+                                <span class="input-group-text w-100 h-100" id="basic-addon2"><input name="dummydata" type="checkbox" aria-label="Checkbox for following text input" checked></span>
                             </div>
                             <input type="text" class="form-control fake-disabled" aria-label="Text input with checkbox" placeholder="Install using DummyData" disabled>
-
                         </div>
                     </div>
                 </div>
                 <input type="submit" class="btn btn-primary float-right" value="Install database">
             </form>
-        </div>
-        <div id="callbackTarget" class="col-sm-12 col-md-6">
-            <div class="small text-right text-muted mt-3">Installer messages:</div>
         </div>
     </div>
 </div>

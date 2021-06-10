@@ -41,7 +41,7 @@ function formatEmployeeHours(obj){
     let alertClass = "alert-primary";
     if (obj.HoursAccorded === null){
 
-        deletionLink = "<a href='#'><button class=\"btn btn-light py-0 \" onclick=\"deleteHour(\'"+obj.EmployeeHoursID+"\')\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></a>"
+        deletionLink = "<a href='#'><button class=\"btn btn-light py-0 \" onclick=\"deleteHour(\'"+obj.EmployeeHoursID+"\')\"><i class=\"bi bi-trash\" aria-hidden=\"true\"></i></button></a>"
     }
     if (obj.HoursAccorded === "1"){
         alertClass = "alert-success";
@@ -61,11 +61,17 @@ function formatEmployeeHours(obj){
 /*
    GET FUNCTIONS
  */
+/*
+    GET Employees
+ */
 function getSingleEmployee(employee){
     return axios.get("/api/v1/employees/"+employee, config)
         .then( (data) => data['data']['response'])
         .catch( (e) => console.log( e ))
 }
+/*
+    GET Hours
+ */
 
 function getSingleEmployeeHours(employee,startdate = null,enddate = null){
     let params = "";
@@ -74,6 +80,38 @@ function getSingleEmployeeHours(employee,startdate = null,enddate = null){
         .then( (data) => data['data']['response'])
         .catch( (e) => console.log( e ))
 }
+/*
+    GET Solutions
+ */
+function getSolutions(...id){
+    id = Array.from(id)
+    console.log(id)
+    let content = "";
+    axios.get('/api/v1/faq/')
+        .then(data => {
+            console.log(data['data']['response'])
+
+            return data['data']['response']
+        })
+        .then(response => {
+            for (let key in response) {
+                let div = document.createElement('div');
+                let solution = "  <button class=\"btn btn-primary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#solution"+response[key]['SolutionID']+"\" aria-expanded=\"false\" aria-controls=\"collapseExample\">\n" +
+                    "    "+response[key]['FAQTitle']+" " +
+                    "  </button>\n" +
+                    "</p>\n" +
+                    "<div class=\"collapse\" id=\"solution"+response[key]['SolutionID']+"\">\n" +
+                    "  <div class=\"card card-body\">\n" +
+                    "    "+response[key]['FAQContent']+"" +
+                    "  </div>\n" +
+                    "</div>";
+                div.innerHTML = solution;
+                let existingDiv = document.getElementById('faq-div')
+                existingDiv.insertBefore(div, existingDiv.lastChild);
+            }
+        })
+}
+
 
 /*
     POST FUNCTIONS
