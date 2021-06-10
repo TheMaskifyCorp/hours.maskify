@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
  * @var Database $db
  */
 
-if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /view/install/index.php");
+if (!file_exists($docRoot."/.env")) header("Location: /view/install/index.php");
 if (isset($_SESSION['employee'],$_SESSION['manager']))
 {
     if ($_SESSION['manager']) header("Location: /view/manager/index.php");

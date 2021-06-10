@@ -1,6 +1,11 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
+/**
+ * @var string $docRoot
+ * @var Auth $auth
+ * @var Database $db
+ */
 
 //gather all request-data
 $httpMethod = strtolower($_SERVER['REQUEST_METHOD']);

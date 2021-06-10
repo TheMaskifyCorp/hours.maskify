@@ -144,7 +144,7 @@ function UseSearchTerm(term)
                     getSolutions(Number(data.SolutionID))
                     Toastify({
                         text: "Succes for term <strong>" + term + "</strong><br/> This term has been searched " + data.SearchTermCounter + " times!",
-                        duration: 3000,
+                        duration: 2000,
                         escapeMarkup: false,
                         className: 'toast-bg toast-success'
                     }).showToast()
@@ -152,7 +152,7 @@ function UseSearchTerm(term)
                     getSolutions();
                     Toastify({
                         text: "No result for <strong>" + term + "</strong><br/> This term has been searched " + data.SearchTermCounter + " times!",
-                        duration: 3000,
+                        duration: 2000,
                         escapeMarkup: false,
                         className: 'toast-bg toast-warning'
                     }).showToast()
