@@ -2,7 +2,7 @@
 
 class Database
 {
-    public $pdo;
+    protected $pdo;
     protected $debug = false;
     protected $table;
     protected $row;
@@ -173,6 +173,7 @@ class Database
             if ($operator == '<>' && $value == NULL){
                 $operator = "IS NOT";
             }
+            if(isset($values[$placeholder])) $placeholder .= "x";
             $whereString .= "$field $operator :$placeholder";
             $values[$placeholder] = $value;
             if (  $here !== end($where) ) {
@@ -249,6 +250,7 @@ class Database
             if ($operator == '<>' && $value == NULL){
                 $operator = "IS NOT";
             }
+            if(isset($values[$placeholder])) $placeholder .= "x";
             $whereString .= "$field $operator :$placeholder";
             $values[$placeholder] = $value;
             if (  $here !== end($where) ) {
@@ -284,6 +286,7 @@ class Database
             if ($operator == '<>' && $value == NULL){
                 $operator = "IS NOT";
             }
+            if(isset($values[$placeholder])) $placeholder .= "x";
             $whereString .= "$field $operator :$placeholder";
             $values[$placeholder] = $value;
             if (  $here !== end($where) ) {

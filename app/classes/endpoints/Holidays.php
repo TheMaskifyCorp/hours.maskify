@@ -43,65 +43,57 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         if ((isset($params['startdaterange'])) and isset($params['enddaterange']))
         {
             $where = [];
-//            $start =[];
-//            $start = $params['startdaterange'];
-//            var_dump($start);
-//            $startdate = strtotime($params['startdaterange']);
-//            $newformat = date('Y-m-d',$startdate);
-//            var_dump($newformat);
+
             //it's not parsing the param as a date value, it's arrives in the request as :
-            array_push($where, ["HolidayStartDate", '=', $params['startdaterange']]);
-            array_push($where, ["HolidayEndDate", '=', $params['enddaterange']]);
-            var_dump($where);
-//            array_push($where,["HolidaysAccorded",'=',$params['status']]);
-//            array_push($where,["HolidaysAccorded",'=',$params['status']]);
+            array_push($where, ["HolidayStartDate", '<=', $params['enddaterange']]);
+            array_push($where, ["HolidayEndDate", '>=', $params['startdaterange']]);
 
             try {
-                $result = $this->db->table('holidays')->where($where)->returnstmt();
+                $result = $this->db->table('holidays')->where($where)->get();
             } catch (Exception $e) {
                 throw new DatabaseConnectionException();
             }
             return (array)$result;
 
         }
-        //stored proc
-        if ((isset($params['startdaterange'])) and isset($params['enddaterange']))
-        {
-            $start = $params['startdaterange'];
-            $end = $params['enddaterange'];
-
-            //call a stored procedure called HolidaysBetween that will fetch everything from holidays within the startdaterange and enddaterange params as $start and $end.
-            $db = new \Database;
-
-            $statement = $db->pdo->prepare("CALL HolidaysBetween('$start', '$end')");
-
-            //It is problematic because params can't be combined
-            try {
-                $statement->execute();
-                $result = $statement->fetchAll();
-                $result1 = $this->db->table('holidays')->where($where)->get();
-
-                //check if param is present in result and filter for value, for example: status=null.
-                var_dump($result1[4]);
-                $status = $result1['HolidaysAccorded'];
-                if($status !== null)
-                array_filter($result1, function($status)
-                {
-                    return $status == null;
-                });
-
-//                arraymerge does not append my arrays as it should but instead prints both arrays seperately
-                $totalresult = array_merge($result, $result1);
-                //compact allows both arrays to be returned in 1 result.
-                //The arrays have to be merged or innerjoined with the additional variables set besides start and end dates
-                //The problem with this is that it has to work in combination with other params.
-                $totalresult = compact('result', 'result1');
-                return array($totalresult);
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
-            }
-
-        }
+//        //stored proc
+//        if ((isset($params['startdaterange'])) and isset($params['enddaterange']))
+//        {
+//            $start = $params['startdaterange'];
+//            $end = $params['enddaterange'];
+//
+//            //call a stored procedure called HolidaysBetween that will fetch everything from holidays within the startdaterange and enddaterange params as $start and $end.
+//            $db = new \Database;
+//
+//            $statement = $db->pdo->prepare("CALL HolidaysBetween('$start', '$end')");
+//
+//            //It is problematic because params can't be combined
+//            try {
+//                $statement->execute();
+//                $result = $statement->fetchAll();
+//                $result1 = $this->db->table('holidays')->where($where)->get();
+//
+//                //check if param is present in result and filter for value, for example: status=null.
+//                var_dump($result1[4]);
+//                $status = $result1['HolidaysAccorded'];
+//                if($status !== null)
+//                array_filter($result1, function($status)
+//                {
+//                    return $status == null;
+//                });
+//
+////                arraymerge does not append my arrays as it should but instead prints both arrays seperately
+//                $totalresult = array_merge($result, $result1);
+//                //compact allows both arrays to be returned in 1 result.
+//                //The arrays have to be merged or innerjoined with the additional variables set besides start and end dates
+//                //The problem with this is that it has to work in combination with other params.
+//                $totalresult = compact('result', 'result1');
+//                return array($totalresult);
+//            } catch (Exception $e) {
+//                throw new DatabaseConnectionException();
+//            }
+//
+//        }
 
 
         //if any of the above params are set, get the results, an empty array will return false, if the params array has values it will validate to true, works for status
@@ -156,14 +148,14 @@ class Holidays extends Endpoint implements ApiEndpointInterface
     {
     //individual employeesholidays (1 holiday can be updated at once)
         if (!$this->manager) throw new NotAuthorizedException("This request can only be performed by a manager / only HolidaysAccorded and AccordedByManager can be altered");
-        if  (! isset($params['employeeid']) AND (!isset($params['startdaterange'])))  throw new BadRequestException('No holiday found, employeeid and startdate of vacation must be set');
-        if  (isset($params['employeeid']) AND (isset($params['startdaterange'])))
+        if  (! isset($params['employeeid']) AND (!isset($params['holidaystartdate'])))  throw new BadRequestException('No holiday found, employeeid and startdate of vacation must be set');
+        if  (isset($params['employeeid']) AND (isset($params['holidaystartdate'])))
         {
             try {
                 $where = [];
                 array_push($where, ["EmployeeID", '=', $params['employeeid']]);
-                array_push($where, ["HolidayStartDate", '=', $params['startdaterange']]);
-                $result = $this->db->table('holidays')->exists(['EmployeeID' => $params['employeeid'],"HolidayStartDate" => $params['startdaterange']]);
+                array_push($where, ["HolidayStartDate", '=', $params['holidaystartdate']]);
+                $result = $this->db->table('holidays')->exists(['EmployeeID' => $params['employeeid'],"HolidayStartDate" => $params['holidaystartdate']]);
             } catch (Exception $e) {
                 throw new DatabaseConnectionException();
             }
@@ -171,23 +163,21 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             {
                 //Problem here is
                 //add body params to array and check if they are set
+                $insert = [];
                 $allowedBodyParam = ["HolidaysAccorded", "AccordedByManager"];
                 foreach ($allowedBodyParam as $param) {
                     if (!isset($body[$param])) throw new BadRequestException("Body is missing parameter '$param'");
+                    $insert[$param] = $body[$param];
                 }
-
-                //move params from body to where-clause
-                $where = [];
-                $where = ['HolidaysAccorded', '=', $body['HolidaysAccorded'], 'AccordedByManager', '=', $body['AccordedByManager']];
 
                 //execute request
                 try {
-                    $this->db->table('holidays')->update($body, $where);
+                   $result = $this->db->table('holidays')->update($insert, $where);
                 } catch (\Exception $e) {
                     throw new BadRequestException("Error updating record in database");
                 }
                 //response
-                return [$where[2] . " updated"];
+                return [$result];
             }
         }
 
@@ -237,8 +227,10 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 //
     public static function validateEndpoint(array $apipath): ?array
     {
-        if (count($apipath) > 2) throw new BadRequestException("Endpoint could not be validated");
-        if ((isset ($apipath[1])) and (preg_match('/[0-9]+/', $apipath[1])))
+        if (count($apipath) > 3) throw new BadRequestException("Endpoint could not be validated");
+        if ((isset ($apipath[1])) and (isset ($apipath[2]) and (preg_match('/[0-9]+/', $apipath[1]))))
+            return ['employeeid' => $apipath[1], 'holidaystartdate' => $apipath[2]];
+        if ((isset ($apipath[1]))  and (preg_match('/[0-9]+/', $apipath[1])))
             return ['employeeid' => $apipath[1]];
         return null;
     }
@@ -275,6 +267,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
                     if (! $db->table('departmenttypes')->exists(['DepartmentID'=>$value]))
                         throw new NotFoundException("DepartmentID '$value' does not exist");
                     break;
+                case 'holidaystartdate':
                 case "startdaterange":
                 case "enddaterange":
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value ) )
