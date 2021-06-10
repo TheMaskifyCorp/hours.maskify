@@ -7,16 +7,16 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
 
 $errors = array();
 $data = array();
+$post =  json_decode(file_get_contents("php://input"), true);
 
-
-if(!empty($_POST['username']) && !empty($_POST['password'])){
+if(!empty($post['username']) && !empty($post['password'])){
     if ( ! $auth->signin([
-        'username' => $_POST['username'],
-        'password' => $_POST['password']
+        'username' => $post['username'],
+        'password' => $post['password']
     ])) $errors['credentials'] = "Credentials are not correct.";
 } else {
-    if (empty($_POST['username'])) $errors['username'] = "Name is required.";
-    if (empty($_POST['password'])) $errors['password'] = "Password is required.";
+    if (empty($post['username'])) $errors['username'] = "Name is required.";
+    if (empty($post['password'])) $errors['password'] = "Password is required.";
 }
 if ( ! empty($errors)) {
 
@@ -24,8 +24,8 @@ if ( ! empty($errors)) {
     $data['success'] = false;
     $data['errors'] = $errors;
 } else if($auth->signin([
-        'username' => $_POST['username'],
-        'password' => $_POST['password']
+        'username' => $post['username'],
+        'password' => $post['password']
     ]))
 {
     $data['success'] = true;

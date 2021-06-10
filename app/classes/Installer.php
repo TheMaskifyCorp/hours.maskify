@@ -240,8 +240,7 @@ class Installer
             die(json_encode(array($e->getMessage() => "Warning")));
         }
         $filename = $_SERVER['DOCUMENT_ROOT'].'/.env';
-        $env = '
-HOSTNAME="'.$hostname.'"
+        $env = 'HOSTNAME="'.$hostname.'"
 DATABASE="'.$database.'"
 USERNAME="'.$username.'"
 PASSWORD="'.$password.'"

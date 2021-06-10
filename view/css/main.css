@@ -1,0 +1,170 @@
+body{
+    max-width:1000px;
+    margin: auto;
+}
+
+  .grid-wrapper {
+/*    background-color: #2196F3;*/
+    padding:10px;
+  } 
+  
+  .grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+  }
+
+#account{
+    position:relative;
+}
+
+.grid-wrapper{
+    display: grid;
+    height:80vh;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 60px 3fr 1fr auto;
+    grid-template-areas:
+      "gr1 gr1"
+      "gr2 gr3"
+      "gr4 gr5"
+      "gr6 gr6";
+}
+@media screen and (max-width: 500px) {
+    .grid-wrapper{
+        display: grid;
+        height:80vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 3fr 3fr 1fr auto;
+        grid-template-areas:
+      "gr1"
+      "gr2"
+      "gr3"
+      "gr4"
+      "gr5"
+      "gr6";
+    }
+}
+
+.grid-item1{
+    grid-area: gr1;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+    height:40px;
+}
+
+.grid-item1 input{
+display: block;
+}
+
+.grid-item2{
+    grid-area: gr2;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item3{
+    grid-area: gr3;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item4{
+    grid-area: gr4;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item5{
+    grid-area: gr5;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+.grid-item6{
+    grid-area: gr6;
+    border:2px solid black;
+    padding:5px;
+    margin:5px;
+}
+
+/* Grid for employeehours*/
+
+.employeehours-grid-wrapper{
+    display: grid;
+    grid-template-columns: 4fr 4fr 1fr;
+    grid-template-rows: 40px 60px auto;
+    grid-template-areas:
+      "selector selector selector"
+      "head1 head2 head3"
+}
+
+.eh-datepicker{
+    grid-area: selector;
+}
+.eh-head1{
+    grid-area: head1;
+}
+.eh-head2{
+    grid-area: head2;
+}
+.eh-head3{
+    grid-area: head3;
+}
+.eh-hours-grid{
+    grid-column: 1/4;
+    display: grid;
+    grid-template-columns: 4fr 4fr 1fr;
+}
+.eh-hours{
+    margin-top: 1px;
+    grid-column: 1/4;
+    display: grid;
+    grid-template-columns: 4fr 4fr 1fr;
+    grid-template-areas:
+      "hours1 hours2 hours3"
+}
+.eh-hours1{
+    grid-area: hours1;
+}
+.eh-hours2{
+    grid-area: hours2;
+}
+.eh-hours3{
+    grid-area: hours3;
+}
+
+
+
+/* Settings for TOASTS */
+.toast-bg{
+    background: none!important;
+}
+.toast-warning{
+    color: #664d03!important;
+    background-color: #fff3cd!important;
+    border-color: #ffecb5!important;
+}
+.toast-danger{
+    color: #842029!important;
+    background-color: #f8d7da!important;
+    border-color: #f5c2c7!important;
+}
+.toast-success {
+    color: #0f5132!important;
+    background-color: #d1e7dd!important;
+    border-color: #badbcc!important;
+}
+.toast-primary{
+    color: #842029!important;
+    background-color: #f8d7da!important;
+    border-color: #f5c2c7!important;
+}
+
+/* Employee Data */
+#employeedata table tr td:last-child{
+    font-weight: bolder;
+    padding-left:10px;
+}

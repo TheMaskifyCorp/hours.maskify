@@ -13,6 +13,14 @@ if(isset($_POST['hostname'])) {
     $database = $_POST['database'];
     $username = $_POST['username'];
     $password = $_POST['password'];
+    try {
+        $pdo = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+        unset($pdo);
+    }catch(Exception $e){
+        unlink($_SERVER['DOCUMENT_ROOT'].'/.env');
+        http_response_code("400");
+        die;
+    }
     Installer::createENV($hostname, $database, $username, $password);
 }
 require_once "$app/init.php";

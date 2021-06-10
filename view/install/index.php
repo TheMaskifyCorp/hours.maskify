@@ -1,25 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <meta charset="utf-8">
-    <meta name="description" content="Maskify POC">
-    <meta name="Maskify" content="GoodShit!">
-    <title>Maskify POC</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
-    <style>
-        .fake-disabled{
-            background-color:#fff!important;
-        }
-        .fake-disabled::placeholder{
-            color: #212529!important;
-        }
-    </style>
-</head>
-
-<body>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/init.php';
+/**
+ * @var string $docRoot
+ * @var Auth $auth
+ * @var Database $db
+ */
+require_once "$docRoot/view/includes/header.php";
+?>
 <div class="container">
     <div class="jumbotron">
         <h1 class="display-4">Maskify DB Installer</h1>
@@ -40,7 +27,7 @@
                     <label for="hostname">Hostname:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-server"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-hdd-network"></i></span>
                         </div>
                         <input name="hostname" id="hostname" class="form-control" placeholder="Have you tried localhost?" required>
                     </div>
@@ -49,7 +36,7 @@
                     <label for="database">Database name:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-database"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-book-half"></i></i></span>
                         </div>
                         <input name="database" id="database" class="form-control" placeholder="Can't really help you here..." required>
                     </div>
@@ -58,7 +45,7 @@
                     <label for="username">Username:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-user"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-file-earmark-person"></i></span>
                         </div>
                         <input name="username" id="username" class="form-control" placeholder="Could be root, could be anything" required>
                     </div>
@@ -67,27 +54,24 @@
                     <label for="password">Password:</label>
                     <div class="input-group">
                         <div class="input-group-prepend w-15">
-                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto fas fa-key"></i></span>
+                            <span class="input-group-text w-100" id="basic-addon2"><i class="mx-auto bi bi-key"></i></span>
                         </div>
                         <input type="password" name="password" id="password" class="form-control" placeholder="Much secret, wow!">
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group dbsettings">
                     <div class="input-group mb-3">
-                        <div class="input-group-prepend w-100">
-                            <div class="input-group-text">
-                                <input name="dummydata" type="checkbox" aria-label="Checkbox for following text input" checked>
+                        <label for="dummydata">Options:</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend w-15">
+                                <span class="input-group-text w-100 h-100" id="basic-addon2"><input name="dummydata" type="checkbox" aria-label="Checkbox for following text input" checked></span>
                             </div>
                             <input type="text" class="form-control fake-disabled" aria-label="Text input with checkbox" placeholder="Install using DummyData" disabled>
-
                         </div>
                     </div>
                 </div>
                 <input type="submit" class="btn btn-primary float-right" value="Install database">
             </form>
-        </div>
-        <div id="callbackTarget" class="col-sm-12 col-md-6">
-            <div class="small text-right text-muted mt-3">Installer messages:</div>
         </div>
     </div>
 </div>
@@ -111,7 +95,5 @@ if(file_exists($_SERVER['DOCUMENT_ROOT']."/.env")){
     </script>
 <?php
     };
-
+require_once "$docRoot/view/includes/footer.php";
 ?>
-</body>
-</html>

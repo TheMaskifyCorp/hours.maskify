@@ -52,12 +52,19 @@ class Hours extends Endpoint implements ApiEndpointInterface
         }
         if(isset($params['uuid'])) array_push($where,["EmployeeHoursID",'=',$params['uuid']]);
         if(isset($params['status'])) array_push($where,["HoursAccorded",'=',$params['status']]);
-
         //if no where clauses, select all employees
         if (!count($where)>0) array_push($where,["employeehours.EmployeeID",'>',0]);
             //fetch and return the result
+
         try{
-            $result = $this->db->table('employeehours')->selection($selection)->innerjoin('departmentmemberlist','EmployeeID')->distinct()->where($where)->get();
+            $result = $this->db
+                ->table('employeehours')
+                ->selection($selection)
+                ->innerjoin('departmentmemberlist','EmployeeID')
+                ->distinct()
+                ->order("DeclaratedDate","DESC")
+                ->where($where)
+                ->get();
         }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
@@ -120,7 +127,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         foreach ($requiredParamsArray as $param)
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
-            $insert['param'] = $body['param'];
+            $insert[$param] = $body[$param];
         }
         //check if the record is set with Accorded status
         if (isset($body['HoursAccorded'],$body['AccordedByManager']))
@@ -155,7 +162,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         if (! isset ( $params['uuid'] ))
             throw new BadRequestException('Object UUID is not set');
         //check authorisation
-        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['employeehoursid']])->first();
+        $object = $this->db->table("employeehours")->where(['EmployeeHoursID','=',$params['uuid']])->first();
         $employee = $object->EmployeeID;
 
         if ( ( ( $this->employee != $employee ) ) AND ( !$this->manager) )
@@ -167,7 +174,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
 
         //try database request
         try {
-            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['employeehoursid']]);
+            $this->db->table('employeehours')->delete(["EmployeeHoursID", '=', $params['uuid']]);
         }catch(Exception $e){
             throw new BadRequestException('Error updating database');
         }

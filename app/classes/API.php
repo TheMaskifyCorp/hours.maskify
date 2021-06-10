@@ -2,6 +2,8 @@
 
 namespace API;
 
+use PhpParser\Node\Expr\Cast\Object_;
+
 class API
 {
     protected object $db;
@@ -18,8 +20,14 @@ class API
      */
     public function __construct($JWT)
     {
+        if ($JWT != "noToken"){
         $decoded = \Firebase\JWT\JWT::decode($JWT,$_ENV['JWTSECRET'], ['HS256']);
-
+        } else {
+            $decoded = (object)[
+            "manager" => "false",
+            "eid" => 0
+            ];
+        }
         $this->db = new \Database;
 
         $this->manager = $decoded->manager;

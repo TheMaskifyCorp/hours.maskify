@@ -1,66 +1,48 @@
-$(document).ready(function() {
+const form = document.getElementById("signin")
 
-    // process the form
-    $('#signin').submit(function(event) {
+form.addEventListener('submit', (event) => {
+    event.preventDefault()
+    // get the form data
+    const theData = new FormData(form)
 
-        // get the form data
-        // there are many ways to get this data using jQuery (you can use the class or id also)
-        var formData = {
-            'username'              : $('input[name=username]').val(),
-            'password'             : $('input[name=password]').val()
-        };
-
-        // process the form
-        $.ajax({
-            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-            url         : '/view/login/signin.php', // the url where we want to POST
-            data        : formData, // our data object
-            dataType    : 'json', // what type of data do we expect back from the server
-                        encode          : true
-        })
-            // using the done promise callback
-            .done(function(data) {
-
-                // log data to the console so we can see
-                console.log(data);
-
-                // here we will handle errors and validation messages
-                if ( ! data.success) {
-                    if ( ! data.errors.credentials){
-                        // handle errors for name ---------------
-                        if (data.errors.username) {
-                            $ng = $('#name-group');
-                            $ng.addClass('has-error'); // add the error class to show red input
-                            $ng.append('<div class="help-block">' + data.errors.username + '</div>'); // add the actual error message under our input
-                            setTimeout(function(){$(".help-block").fadeOut(1000)}, 2000);
-
-                        }
-
-                        // handle errors for password ---------------
-                        if (data.errors.password) {
-                            $pw = $('#password-group');
-                            $pw.addClass('has-error'); // add the error class to show red input
-                            $pw.append('<div class="help-block">' + data.errors.password + '</div>'); // add the actual error message under our input}
-                            setTimeout(function(){$(".help-block").fadeOut(1000)}, 2000);
-
-                        }
-                    } else {
-                        $pw = $('#password-group');
-                        $pw.addClass('has-error'); // add the error class to show red input
-                        $pw.append('<div class="help-block">' + data.errors.credentials + '</div>'); // add the actual error message under our input
-                        setTimeout(function(){$(".help-block").fadeOut(1000)}, 2000);
+    let formdata = {
+        "username": theData.get('username'),
+        "password": theData.get('password')
+    }
+    console.log(formdata)
+    axios.post('/view/login/signin.php', formdata)
+        // using the done promise callback
+        .then( response => response['data'])
+        .then (data => {
+            console.log(data)
+            // here we will handle errors and validation messages
+            if ( ! data.success) {
+                if ( ! data.errors.credentials){
+                    // handle errors for name ---------------
+                    if (data.errors.username) {
+                        Toastify({
+                            text: "Username is required",
+                            duration: 3000,
+                            className: 'toast-bg toast-warning'
+                        }).showToast();
                     }
+                    // handle errors for password ---------------
+                    if (data.errors.password) {
+                        Toastify({
+                            text: "Password is required",
+                            duration: 3000,
+                            className: 'toast-bg toast-warning'
+                        }).showToast();                        }
                 } else {
-                    // ALL GOOD! just show the success message!
-                    $('#logstatus').remove();
-                    $('#loginbutton').attr('disabled', 'disabled');
-                    $('#rightColumn').html('<div class="alert alert-success">' + data.message + '</div>');
-                    $('#signinmodal').modal('hide');
+                    Toastify({
+                        text: "Credentials do not match",
+                        duration: 3000,
+                        className: 'toast-bg toast-danger'
+                    }).showToast();
                 }
-            });
-
-        // stop the form from submitting the normal way and refreshing the page
-        event.preventDefault();
-    });
-
+            } else {
+                // ALL GOOD! just show the success message!
+                window.location.replace('/view/employee/index.php')
+            }
+        });
 });

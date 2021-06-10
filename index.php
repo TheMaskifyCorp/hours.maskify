@@ -1,2 +1,3 @@
-<?php
-header("Location : /view/index.php");
+<script>
+    window.location.replace('/view/index.php');
+</script>
