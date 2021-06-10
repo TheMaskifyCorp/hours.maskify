@@ -2,7 +2,7 @@
 session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] ."/vendor/autoload.php";
 $docRoot = $_SERVER['DOCUMENT_ROOT'];
-$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv = Dotenv\Dotenv::createImmutable($docRoot);
 
 try {
     $dotenv->load();
