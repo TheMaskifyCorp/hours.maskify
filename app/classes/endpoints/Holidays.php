@@ -20,12 +20,11 @@ class Holidays extends Endpoint implements ApiEndpointInterface
     public function get(array $body, array $params): array
     {
         $where = [];
-        //Begining of holidays (plural) section, manager function to grab multiple holidays.
         //an employee can only see his own holidays unless he is manager
         if ((!$this->manager)) throw new NotAuthorizedException('Holidays of multiple employees can only be viewed by a manager');
         //throw error for filtering on department AND employee
         if ((isset($params['employeeid'])) and (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        //selection is for select all statement
+        //selection is for select all statement in the pdo statement
         $selection = ["*"];
         if (isset($params['employeeid'])) array_push($where, ["EmployeeID", '=', $params['employeeid']]);
         if (isset($params['departmentid'])) array_push($where, ["departmentmemberlist.DepartmentID", '=', $params['departmentid']]);
@@ -39,14 +38,12 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         }
         if (isset($params['status'])) array_push($where, ["HolidaysAccorded", '=', $params['status']]);
 
-        //attempt to create the get dates without stored proc
-        if ((isset($params['startdaterange'])) and isset($params['enddaterange']))
+        if ((isset($params['holidaystartdate'])) and isset($params['enddaterange']))
         {
             $where = [];
 
-            //it's not parsing the param as a date value, it's arrives in the request as :
             array_push($where, ["HolidayStartDate", '<=', $params['enddaterange']]);
-            array_push($where, ["HolidayEndDate", '>=', $params['startdaterange']]);
+            array_push($where, ["HolidayEndDate", '>=', $params['holidaystartdate']]);
 
             try {
                 $result = $this->db->table('holidays')->where($where)->get();
@@ -56,45 +53,6 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             return (array)$result;
 
         }
-//        //stored proc
-//        if ((isset($params['startdaterange'])) and isset($params['enddaterange']))
-//        {
-//            $start = $params['startdaterange'];
-//            $end = $params['enddaterange'];
-//
-//            //call a stored procedure called HolidaysBetween that will fetch everything from holidays within the startdaterange and enddaterange params as $start and $end.
-//            $db = new \Database;
-//
-//            $statement = $db->pdo->prepare("CALL HolidaysBetween('$start', '$end')");
-//
-//            //It is problematic because params can't be combined
-//            try {
-//                $statement->execute();
-//                $result = $statement->fetchAll();
-//                $result1 = $this->db->table('holidays')->where($where)->get();
-//
-//                //check if param is present in result and filter for value, for example: status=null.
-//                var_dump($result1[4]);
-//                $status = $result1['HolidaysAccorded'];
-//                if($status !== null)
-//                array_filter($result1, function($status)
-//                {
-//                    return $status == null;
-//                });
-//
-////                arraymerge does not append my arrays as it should but instead prints both arrays seperately
-//                $totalresult = array_merge($result, $result1);
-//                //compact allows both arrays to be returned in 1 result.
-//                //The arrays have to be merged or innerjoined with the additional variables set besides start and end dates
-//                //The problem with this is that it has to work in combination with other params.
-//                $totalresult = compact('result', 'result1');
-//                return array($totalresult);
-//            } catch (Exception $e) {
-//                throw new DatabaseConnectionException();
-//            }
-//
-//        }
-
 
         //if any of the above params are set, get the results, an empty array will return false, if the params array has values it will validate to true, works for status
         if ($params) {
@@ -146,7 +104,47 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 
     public function put(array $body, array $params): array
     {
-    //individual employeesholidays (1 holiday can be updated at once)
+    //individual employeesholidays (1 holiday can be updated with 1 put request)
+        if(isset($params [ 'employeeid' ]) AND $this->employee != $params [ 'employeeid' ] OR ( !$this->manager) ) throw new NotAuthorizedException('Holidays can only be viewed by a manager or the object employee');
+        if  (! isset($params['employeeid']) AND (!isset($params['holidaystartdate'])))  throw new BadRequestException('No holiday found, employeeid and startdate of vacation must be set');
+        if  (isset($params['employeeid']) AND (isset($params['holidaystartdate'])))
+        {
+            try {
+                $where = [];
+                array_push($where, ["EmployeeID", '=', $params['employeeid']]);
+                array_push($where, ["HolidayStartDate", '=', $params['holidaystartdate']]);
+                $result = $this->db->table('holidays')->exists(['EmployeeID' => $params['employeeid'],"HolidayStartDate" => $params['holidaystartdate']]);
+            } catch (Exception $e) {
+                throw new DatabaseConnectionException();
+            }
+
+            if($result == true)
+            {
+                //add body params to array and check if they are set, put each of them into the insert array
+                $insert = [];
+                $allowedBodyParam = ["HolidaysAccorded", "AccordedByManager"];
+                foreach ($allowedBodyParam as $param) {
+                    if (!isset($body[$param])) throw new BadRequestException("Body is missing parameter '$param'");
+                    $insert[$param] = $body[$param];
+                }
+
+                //execute request
+                try {
+
+                   $result = $this->db->table('holidays')->update($insert, $where);
+                } catch (\Exception $e) {
+                    throw new BadRequestException("Error updating record in database");
+                }
+                //response
+                return [$result];
+            }
+        }
+
+
+    }
+
+    public function delete(array $body, array $params): array
+    {
         if (!$this->manager) throw new NotAuthorizedException("This request can only be performed by a manager / only HolidaysAccorded and AccordedByManager can be altered");
         if  (! isset($params['employeeid']) AND (!isset($params['holidaystartdate'])))  throw new BadRequestException('No holiday found, employeeid and startdate of vacation must be set');
         if  (isset($params['employeeid']) AND (isset($params['holidaystartdate'])))
@@ -159,55 +157,26 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             } catch (Exception $e) {
                 throw new DatabaseConnectionException();
             }
+            if($result == false) throw new BadRequestException('Holiday doesnt exist');
+
             if($result == true)
             {
-                //Problem here is
-                //add body params to array and check if they are set
-                $insert = [];
-                $allowedBodyParam = ["HolidaysAccorded", "AccordedByManager"];
-                foreach ($allowedBodyParam as $param) {
-                    if (!isset($body[$param])) throw new BadRequestException("Body is missing parameter '$param'");
-                    $insert[$param] = $body[$param];
-                }
-
                 //execute request
                 try {
-                   $result = $this->db->table('holidays')->update($insert, $where);
+
+                    $result = $this->db->table('holidays')->delete($where);
                 } catch (\Exception $e) {
                     throw new BadRequestException("Error updating record in database");
                 }
                 //response
-                return [$result];
+                return ["holiday deleted"];
             }
         }
 
 
 
 
-        //check if all required parameters are set
-//        $update = [];
-//        $requiredParamsArray = ["EmployeeHoursID", "HoursAccorded", "AccordedByManager"];
-//        foreach ($requiredParamsArray as $param)
-//        {
-//            if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
-//            $update['$param'] = $body['$param'];
-//        }
-//        //move employeeid from body to where-clause
-//        $where = ['EmployeeHoursID','=', $body['EmployeeHoursID'] ];
-//        unset($update['EmployeeHoursID']);
-//        //execute request
-//        try{
-//            $this->db->table('employeehours')->update($body,$where);
-//        } catch (Exception $e){
-//            throw new BadRequestException("Error updating record in database");
-//        }
-//        //response
-//        return [$where[2] . " updated"]
 
-    }
-
-    public function delete(array $body, array $params): array
-    {
         //check if department id param is set
         if (!isset ($params['departmentid']))
             throw new BadRequestException('departmentid is not set');
