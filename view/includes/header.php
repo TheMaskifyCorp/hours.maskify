@@ -15,7 +15,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- main JS functions -->
-    <script src="/view/js/main.js"></script>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
@@ -36,19 +36,26 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only"></span></a>
+              <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
+              <a class="nav-link" href="/view/install/">Installer</a>
             </li>
 
         </ul>
         </div>
           <div id="account">
             <ul class="navbar-nav ml-auto">
-                <?php if(isset($_SESSION['employee'])): ?>
-                <li class="nav-item"><button class="btn btn-secondary" onclick="logout()">Logout</button></li>
+                <?php if(isset($_SESSION['manager']) && $_SESSION['manager'] == "true")
+                    if( explode("/",$_SERVER['PHP_SELF'])[2] == "employee"): ?>
+                <li class="nav-item my-1 my-lg-0 mx-0 mx-lg-2""><a href="/view/manager/"><button class="btn btn-secondary btn-w mr-1 mr-lg-0"><i class="bi bi-arrow-bar-right mx-1"></i>Manager</button></a></li>
+                    <?php else : ?>
+                <li class="nav-item my-1 my-lg-0 mx-0 mx-lg-2""><a href="/view/employee/"><button class="btn btn-secondary btn-w"><i class="bi bi-arrow-bar-right mx-1"></i>Employee</button></a></li>
+                    <?php endif;
+                if(isset($_SESSION['employee'])): ?>
+                <li class="nav-item"><button class="btn btn-secondary btn-w" onclick="logout()">Logout</button></li>
                 <?php endif; ?>
+            </ul>
         </div>
         </ul>
       </nav>

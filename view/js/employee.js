@@ -11,7 +11,6 @@ const datePickerForRange = new Litepicker({
     element: dateRangeSelector,
     singleMode: false,
     allowRepick:true,
-//    autoApply:false,
     startDate: new Date(2019,0,1),
     endDate: Date.now(),
 
@@ -20,6 +19,7 @@ const datePickerForRange = new Litepicker({
             // some action
            let startdate = date1.format('YYYY-MM-DD');
            let enddate = date2.format('YYYY-MM-DD');
+
            getSingleEmployeeHours(emp,startdate,enddate)
                .then((data) => {
                    hourDiv.innerHTML = "";

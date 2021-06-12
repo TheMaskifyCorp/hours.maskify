@@ -1,5 +1,6 @@
 body{
     max-width:1000px;
+    min-width:390px;
     margin: auto;
 }
 
@@ -31,7 +32,7 @@ body{
       "gr4 gr5"
       "gr6 gr6";
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 576px) {
     .grid-wrapper{
         display: grid;
         height:80vh;
@@ -167,4 +168,13 @@ display: block;
 #employeedata table tr td:last-child{
     font-weight: bolder;
     padding-left:10px;
+}
+
+
+/*
+    VISUALS
+ */
+
+.btn-w{
+    width: 8em;
 }

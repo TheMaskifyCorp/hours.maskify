@@ -80,9 +80,10 @@ class Hours extends Endpoint implements ApiEndpointInterface
     public function put(array $body, array $params): array
     {
         // check for employeeid
-        if (! isset($params['employeeid'])) throw new TeapotException('Hours can only be updated at individual endpoints');
+        if (! isset($params['uuid'])) throw new TeapotException('Hours can only be updated at individual endpoints');
         //check manager and employee for authorisation
-        if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
+        $obj = $this->db->table('employeehours')->where(['EmployeeHoursID','=',$params['uuid']])->first();
+        if ( ( $this->employee != $obj->EmployeeID ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be updated by a manager or the object employee');
 
         //check if all required parameters are set
         $update = [];
@@ -90,7 +91,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         foreach ($requiredParamsArray as $param)
         {
             if (! isset($body[$param])) throw new BadRequestException("Body does not contain required parameter '$param'");
-            $update['$param'] = $body['$param'];
+            $update[$param] = $body[$param];
         }
         //move employeeid from body to where-clause
         $where = ['EmployeeHoursID','=', $body['EmployeeHoursID'] ];
