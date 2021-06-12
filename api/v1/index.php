@@ -138,8 +138,8 @@ try {
 
 } catch (Exception $e){
     //create the response if error was thrown in the proces
-    $statusCode = $e->getCode();
-    $error = (method_exists( $e,"getError")) ? $e->getError() : var_dump($e);
+
+    $error = (method_exists( $e,"getError")) ? $e->getError() : "Generic error";
     $response =
         [
             "response" =>
@@ -157,7 +157,6 @@ try {
 <?php
 //print the response
 //http_response_code($statusCode);
+header('Content-Type: application/json');
 echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
-
-

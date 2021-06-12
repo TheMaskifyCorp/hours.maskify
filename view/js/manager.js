@@ -1,9 +1,15 @@
 const empDiv = document.getElementById('employeedata');
 const hourDiv = document.getElementById('employeehours');
+const specificEmpDiv = document.getElementById("specificEmployee");
 const notAccorded = document.getElementById('notAccorded');
 
 
-function setManagerPage(id = null) {
+function setManagerPage(id = 0) {
+    if(id != 0) {
+        getSingleEmployee(id).then(response => {
+            specificEmpDiv.innerHTML = objectToTable(response)
+        })
+    }
     getAllNonAccordedHours(department, id)
         .then((data) => {
             let existingDiv = document.getElementById('notAccorded');
@@ -13,6 +19,7 @@ function setManagerPage(id = null) {
                     .then(data => {
                         let div = document.createElement('div');
                         div.setAttribute('id',obj.EmployeeHoursID)
+                        div.classList.add('eh-hours')
                         //div.classList.add("faq-solutions");
                         div.innerHTML = data;
 
@@ -30,10 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
     getEmployeesForDepartment(department)
         .then(data => {
             let select = "<select id='employeeSelector' class=\"form-select\" aria-label=\"Select Employee\" '>\n"
+            select += "  <option value='0' selected>Department "+department+"</option>\n";
             data.forEach(e =>{
-                let selected = (e.EmployeeID == emp) ? "selected" : "";
-                let value = (e.EmployeeID == emp) ? 0 : e.EmployeeID;
-                select += "  <option value='"+value+"'"+selected+">"+e.FirstName+" "+e.LastName+"</option>\n";
+                select += "  <option value='"+e.EmployeeID+"'>"+e.FirstName+" "+e.LastName+"</option>\n";
             })
             select += "</select>";
             return select;
@@ -45,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setManagerPage( this.value );
             })
         } )
-    setManagerPage();
+    setManagerPage(0);
 
 
         //load unaccorded hours for department

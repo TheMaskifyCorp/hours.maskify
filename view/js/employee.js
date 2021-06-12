@@ -56,8 +56,7 @@ function postHourForm() {
                 if (response.success){
                     Toastify({
                         text: response.response,
-                        duration: -1,
-                        close: true,
+                        duration: 3000,
                         className: 'toast-bg toast-success'
                     }).showToast()
                 } else {

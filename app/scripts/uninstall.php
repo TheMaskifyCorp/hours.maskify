@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/init.php';
 /**
  * @var string $docRoot
  * @var Auth $auth
@@ -7,4 +7,4 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
  */
 $auth->signout();
 unlink($docRoot.'/.env');
-header("Location: index.php");
+header("Location: /view/install/index.php");
