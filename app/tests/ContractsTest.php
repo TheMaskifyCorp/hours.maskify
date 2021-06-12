@@ -3,6 +3,7 @@
 namespace API;
 require_once "/opt/lampp/htdocs/contracts/hours.maskify/app/tests/init.php";
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Constraint;
 
 
 class ContractsTest extends TestCase
@@ -10,16 +11,45 @@ class ContractsTest extends TestCase
 
     public function test__construct()
     {
-        $this->assertEquals(1, 1);
-//    $contract = new Contracts(1, true);
-//    $this->assertEquals(1, $contract->get([],[]));
+    //should get all entries in contracts table, the installer creates 50 contracts by default, therefore an array with 50 or more objects should be returned.
+    $contract = new Contracts(1, true);
+        //Result from get should of type array
+        $this->assertIsArray($contract->get([],[]));
+        //The returned array should contain more than 50 objects.
+        $this->assertGreaterThanOrEqual(50, $contract->get([],[]));
+        //The array should contain all columnnames from the database as array keys.
+        $resultArray = $contract->get([],[1]);
+        $EmployeeID = $resultArray[0];
+        $this->assertObjectHasAttribute('EmployeeID',$EmployeeID);
+        $ContractStartDate = $resultArray[1];
+        $this->assertObjectHasAttribute('ContractStartDate',$ContractStartDate);
+        $ContractEndDate = $resultArray[2];
+        $this->assertObjectHasAttribute('ContractEndDate',$ContractEndDate);
+        $WeeklyHours = $resultArray[3];
+        $this->assertObjectHasAttribute('ContractEndDate',$WeeklyHours);
+        $PayRate = $resultArray[4];
+        $this->assertObjectHasAttribute('ContractEndDate',$PayRate);
+
+
     }
-//
-//    public function testGet()
-//    {
-//
-//    }
-//
+
+    public function testGet()
+    {
+        $contract = new Contracts(1, true);
+        //Result from get should of type array
+        $this->assertIsArray($contract->get([],[1]));
+        //The returned array should contain 1 or more contracts for employee 1
+        $this->assertGreaterThanOrEqual(1, $contract->get([],[]));
+        //Check if the result contains all of the columns present in the Contracts table
+        $resultArray = $contract->get([],[1]);
+        $arraystring = json_encode($resultArray);
+//        $needle = ['EmployeeID', 'ContractStartDate'];
+//        $this->assertStringContainsStringIgnoringCase(,$arraystring);
+
+        //$resultkey = key($resultArray[0]);
+
+    }
+
 //    public function testDelete()
 //    {
 //
