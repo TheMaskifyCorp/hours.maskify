@@ -12,7 +12,8 @@ class ContractsTest extends TestCase
     public function test__construct()
     {
     //should get all entries in contracts table, the installer creates 50 contracts by default, therefore an array with 50 or more objects should be returned.
-    $contract = new Contracts(1, true);
+//        /** @var TYPE_NAME $contract */
+        $contract = new Contracts(1, true);
         //Result from get should of type array
         $this->assertIsArray($contract->get([],[]));
         //The returned array should contain more than 50 objects.
@@ -43,18 +44,31 @@ class ContractsTest extends TestCase
         //Check if the result contains all of the columns present in the Contracts table
         $resultArray = $contract->get([],[1]);
         $arraystring = json_encode($resultArray);
-//        $needle = ['EmployeeID', 'ContractStartDate'];
-//        $this->assertStringContainsStringIgnoringCase(,$arraystring);
+        $EmployeeID = 'EmployeeID';
+        $ContractStartDate = 'ContractStartDate';
+        $ContractEndDate = 'ContractEndDate';
+        $WeeklyHours = 'WeeklyHours';
+        $PayRate = 'PayRate';
+        $this->assertStringContainsStringIgnoringCase($EmployeeID,$arraystring);
+        $this->assertStringContainsStringIgnoringCase($ContractStartDate,$arraystring);
+        $this->assertStringContainsStringIgnoringCase($ContractEndDate,$arraystring);
+        $this->assertStringContainsStringIgnoringCase($WeeklyHours,$arraystring);
+        $this->assertStringContainsStringIgnoringCase($PayRate,$arraystring);
 
-        //$resultkey = key($resultArray[0]);
+        //Check if $ContractStartDate has the correct date formatting
+        $Resultobject = get_object_vars($resultArray[0]);
+        $date = $Resultobject['ContractStartDate'];
+        $this->assertMatchesRegularExpression('/[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date);
+
 
     }
 
 //    public function testDelete()
 //    {
+//        //could be done with a pdo rowcount function
 //
 //    }
-//
+
 //    public function testValidateEndpoint()
 //    {
 //
@@ -63,7 +77,7 @@ class ContractsTest extends TestCase
 //
 //    public function testPut()
 //    {
-//
+//    Could test this with PDO::query()
 //    }
 //
 //    public function testPost()
