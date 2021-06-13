@@ -6,3 +6,4 @@ api/v1/hours/index.php
 .env 
 /composer.lock
 .phpunit.result.cache
+.phpdoc/

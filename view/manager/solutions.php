@@ -17,7 +17,7 @@ require_once "$docRoot/view/includes/header.php";
         <div class="grid-item1">
         </div>
         <div class="grid-item2">
-            <h3>Verwijder zoektermen</h3>
+            <h3 data-lang="removesearches">Verwijder zoektermen</h3>
             <div id="unusedSearches">
             </div>
         </div>

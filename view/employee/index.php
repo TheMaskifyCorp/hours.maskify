@@ -27,7 +27,7 @@ require_once "$docRoot/view/includes/header.php";
             </div>
         </div>
         <div class="grid-item5">
-            <h3>Add Hours</h3>
+            <h3 data-lang="add hours">Add Hours</h3>
             <div>
                 <form id="addHours" action="" method="POST">
                     <div id="date-group" class="form-group">

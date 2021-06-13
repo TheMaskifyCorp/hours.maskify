@@ -53,7 +53,7 @@ function getSolutions(...id){
             elements.map (elem => elem.remove() )
             for (let key in response) {
                 let div = document.createElement('div');
-                let solution = "  <button class=\"btn btn-primary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#solution"+response[key]['SolutionID']+"\" aria-expanded=\"false\" aria-controls=\"collapseExample\">\n" +
+                let solution = "  <button class=\"btn btn-light border border-dark w-100\" type=\"button\" data-toggle=\"collapse\" data-target=\"#solution"+response[key]['SolutionID']+"\" aria-expanded=\"false\" aria-controls=\"collapseExample\">\n" +
                     "    "+response[key]['FAQTitle']+" " +
                     "  </button>\n" +
                     "</p>\n" +

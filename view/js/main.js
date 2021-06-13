@@ -87,5 +87,8 @@ function formatAccordableHoursManager(obj){
 /*
     VALIDATION FUNCTIONS
  */
-
-
+document.addEventListener('DOMContentLoaded', function() {
+        loadTranslation('nl');
+    },
+    false
+);

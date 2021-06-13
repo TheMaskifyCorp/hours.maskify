@@ -12,6 +12,7 @@ require_once "$docRoot/view/includes/user.php"; ?>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+<script src="/view/js/translate.js"></script>
 <script src="/view/js/main.js"></script>
 <script src="/view/js/apicall.js"></script>
 </body>

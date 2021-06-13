@@ -1,0 +1,18 @@
+{
+    "contact": "Contact formulier",
+    "email": "email",
+    "password": "wachtwoord",
+    "subject": "onderwerp",
+    "message": "boodschap",
+    "dutch": "Nederlands",
+    "english": "Engels",
+    "langpicker": "Talen",
+    "add hours": "Voeg uren toe",
+    "validation": "Wacht op validatie",
+    "hours this month" : "Uren deze maand",
+    "submit": "Verstuur",
+    "faq": "Veelgestelde vragen",
+    "login": "Inloggen",
+    "removesearches": "Verwijder zoektermen",
+    "manageapp": "Beheer App"
+    }
