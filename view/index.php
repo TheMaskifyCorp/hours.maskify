@@ -50,4 +50,5 @@ require_once "$docRoot/view/includes/header.php";
 ?>
 <script src="/view/js/signin.js"></script>
 <script src="/view/js/useSearch.js"></script>
+<script src="/view/translate/translate.js"></script>
 
