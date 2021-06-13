@@ -4,6 +4,10 @@ namespace API;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
+/**
+ * Class Contracts
+ * @package API
+ */
 class Contracts implements ApiEndpointInterface
 {
     protected int $employee;
@@ -21,6 +25,7 @@ class Contracts implements ApiEndpointInterface
      * @param array $body
      * @param array $params
      * @return array
+     * @throws BadRequestException
      * @throws NotAuthorizedException
      */
 
@@ -171,7 +176,12 @@ class Contracts implements ApiEndpointInterface
         return null;
     }
 
-   public static function validateGet(array $get)
+    /**
+     * @param array $get
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
+    public static function validateGet(array $get)
     {
         $db = new \Database;
         foreach ($get as $UCparam => $value) {

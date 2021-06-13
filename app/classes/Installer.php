@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Installer
+ */
 class Installer
 {
     protected $db;
@@ -21,6 +24,11 @@ class Installer
     {
         $this->db = $db;
     }
+
+    /**
+     * @param $file
+     * @return $this
+     */
     public function installSQL($file) : Installer
     {
         $sql=file_get_contents($file);
@@ -68,6 +76,10 @@ class Installer
         $this->db->table('logincredentials')->insert($login);
     }
 
+    /**
+     * @param int $num
+     * @return $this
+     */
     public function createEmployees($num = 20) : Installer
     {
         $this->numEmp = $num;
@@ -110,6 +122,11 @@ class Installer
         $this->return['Inserted hours for every Employee'] = "Success";
         return $this;
     }
+
+    /**
+     * @param int $num
+     * @return $this
+     */
     public function insertDuplicateEntries($num = 5) : Installer
     {
         $i = 0;
@@ -129,6 +146,10 @@ class Installer
         return $this;
     }
 
+    /**
+     * @param int $amount
+     * @return $this
+     */
     public function createRandomSickLeave($amount = 20) : Installer
     {
         if(empty($this->dates))
@@ -200,7 +221,12 @@ class Installer
         $a_z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return $a_z[$int];
     }
-    protected function createDates($startDate = "2020-09-01",$endDate = "2021-02-28")
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     */
+    protected function createDates($startDate = "2020-09-01", $endDate = "2021-02-28")
     {
         $date = $startDate;
         while(strtotime($date) <= strtotime($endDate))
@@ -213,6 +239,10 @@ class Installer
                 strtotime( $date . " +1 days"));
         }
     }
+
+    /**
+     * @return false|string
+     */
     public function returnStatus()
     {
         $status = json_encode($this->return);

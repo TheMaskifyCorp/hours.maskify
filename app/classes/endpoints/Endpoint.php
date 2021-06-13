@@ -2,6 +2,10 @@
 
 namespace API;
 
+/**
+ * Class Endpoint
+ * @package API
+ */
 abstract class Endpoint
 {
     protected int $employee;

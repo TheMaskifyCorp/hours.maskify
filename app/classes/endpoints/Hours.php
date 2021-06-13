@@ -6,6 +6,10 @@ use Database;
 use Exception;
 use UUID;
 
+/**
+ * Class Hours
+ * @package API
+ */
 class Hours extends Endpoint implements ApiEndpointInterface
 {
 

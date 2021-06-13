@@ -7,10 +7,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
  * @var Database $db
  */
 
-//gather all request-data
+//gather the request method
 $httpMethod = strtolower($_SERVER['REQUEST_METHOD']);
 
-//check if endpoint is given
+//check if an endpoint is given
 if (isset($_GET['apipath']))
 {
     $apipath = $_GET['apipath'];
@@ -24,7 +24,7 @@ else
 $body = file_get_contents('php://input');
 // URL naar variabelen omzetten door te splitsen op '/'
 $apiVars=explode('/',$apipath);
-$statusCode = 200;
+
 try {
     //als endpoint NIET de faq is, moet je validaten
     if(strtolower($apiVars[0]) == "faq" && !isset($_SERVER['HTTP_AUTHORIZATION'])){
@@ -32,10 +32,6 @@ try {
     }else{
         /*
          * BEGIN VALIDATION OF JWT TOKEN
-         */
-
-        /*
-         * START OF LIVE VERSION FOR JWT
          */
         //check of een token is meegestuurd
         if (! isset($_SERVER['HTTP_AUTHORIZATION']))
@@ -46,35 +42,15 @@ try {
 
         $jwt = ($matches[1]);
 
-    /*
-     * END OF LIVE VERSION FOR JWT
-     * START OF TEST VERSION FOR JWT
-     */
-    /*    if (! isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        //throw new API\NotAuthorizedException('Token not found');
-        $token = array (
-            'eid' => 1,
-            'manager' => true,
-            'iat' => time()
-        );
-        $matches[1] = Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);
-    }
-    elseif (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-        throw new API\NotAuthorizedException('Token not found');
-    }*/
-    /*
-     * END OF TEST VERSION FOR JWT
-     */
 
-
-    if (! $jwt)
+        if (! $jwt)
         // No token was able to be extracted from the authorization header
-        throw new API\NotAuthorizedException('Token not found');
+            throw new API\NotAuthorizedException('Token not found');
 
-    //controleer of het JWT token valide is
+        //controleer of het JWT token valide is
         try{
             $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
-            //als het ouder is dan 1 uur is het niet valid
+            //als het ouder is dan 1 uur is het niet validx
             if ($decoded->iat < (time()-3600)) throw new Exception;
         } catch (Exception $e) {
             throw new API\NotAuthorizedException('Token not valid');
@@ -151,7 +127,6 @@ try {
             "status" => $e->getCode()
         ];
 }
-//TODO: Remove pre tags
 ?>
 
 <?php

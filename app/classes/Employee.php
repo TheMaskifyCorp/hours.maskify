@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Employee
+ */
 class Employee
 {
     protected $db;
@@ -17,6 +20,10 @@ class Employee
     protected $DocumentNumberID;
     protected $DepartmentID = array();
 
+    /**
+     * Employee constructor.
+     * @param $id
+     */
     public function __construct($id)
     {
         $this->db = new Database;
@@ -32,6 +39,10 @@ class Employee
         }
     }
     /*TODO function is not working*/
+    /**
+     * @param array $values
+     * @return string
+     */
     public static function createNewEmployee(array $values){
         $db = new Database;
         try {
@@ -41,11 +52,17 @@ class Employee
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getDepartment(){
         $id = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where(['EmployeeID','=',$this->EmployeeID])->first();
         return $id->DepartmentID;
     }
 
+    /**
+     * @return false
+     */
     public function getManager()
     {
         $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','EmployeeID')->where(["FunctionTypeID",">","1"])->get();
@@ -59,6 +76,10 @@ class Employee
         }
         return false;
     }
+
+    /**
+     * @return mixed
+     */
     public function getPassword()
     {
         $credentials = $this->db->table('logincredentials')->where(['EmployeeID','=',$this->EmployeeID])->first();

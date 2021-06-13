@@ -6,6 +6,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
 
+/**
+ * Class Departments
+ * @package API
+ */
 class Departments extends Endpoint implements ApiEndpointInterface
 {
     /**
@@ -107,6 +111,11 @@ class Departments extends Endpoint implements ApiEndpointInterface
         return null;
     }
 
+    /**
+     * @param array $get
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
     public static function validateGet(array $get)
     {
         $db = new \Database;

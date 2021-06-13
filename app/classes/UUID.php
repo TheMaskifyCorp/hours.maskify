@@ -146,11 +146,18 @@ class UUID
         );
     }
 
+    /**
+     * @param $uuid
+     * @return bool
+     */
     public static function is_valid($uuid) {
         return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?'.
                 '[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
     }
 
+    /**
+     * @return false|string
+     */
     public static function createRandomUUID(){
         $namespace = $_ENV['NAMESPACE'];
         $timestamp = uniqid();

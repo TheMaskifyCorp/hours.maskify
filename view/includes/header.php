@@ -38,6 +38,9 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/view/phpdoc/">PHPDoc</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-lang="langpicker">
                         Taalkiezer
