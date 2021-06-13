@@ -1,11 +1,10 @@
 $(document).ready(function(){
-
         $("form").on("submit", function(event){
         event.preventDefault();
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();
-        axios.post('install.php',formValues,config)
+        axios.post('/app/scripts/install.php',formValues,config)
             .then((data) => data['data'] )
             .then(response => {
                 parseAlert(response)

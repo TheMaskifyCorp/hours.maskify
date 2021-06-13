@@ -14,10 +14,7 @@ require_once "$docRoot/view/includes/header.php";
 
 <div class="body-wrapper">
     <div class="grid-wrapper">
-        <div class="grid-item1">1</div>
-        <div class="grid-item2">
-            <div id="employeedata">
-            </div>
+        <div id="employeedata" class="grid-item2">
         </div>
         <div class="grid-item3">
             <div id="hourContainer" class="employeehours-grid-wrapper employeehours-default-grid">
@@ -29,7 +26,6 @@ require_once "$docRoot/view/includes/header.php";
                 </div>
             </div>
         </div>
-        <div class="grid-item4">4</div>
         <div class="grid-item5">
             <h3>Add Hours</h3>
             <div>
@@ -46,7 +42,6 @@ require_once "$docRoot/view/includes/header.php";
                 </form>
             </div>
         </div>
-        <div class="grid-item6">6</div>
     </div>
 </div>
 <?php require_once "$docRoot/view/includes/footer.php"; ?>

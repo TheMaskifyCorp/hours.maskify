@@ -1,6 +1,11 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
+/**
+ * @var string $docRoot
+ * @var Auth $auth
+ * @var Database $db
+ */
 
 //gather all request-data
 $httpMethod = strtolower($_SERVER['REQUEST_METHOD']);
@@ -22,7 +27,7 @@ $apiVars=explode('/',$apipath);
 $statusCode = 200;
 try {
     //als endpoint NIET de faq is, moet je validaten
-    if(strtolower($apiVars[0]) == "faq"){
+    if(strtolower($apiVars[0]) == "faq" && !isset($_SERVER['HTTP_AUTHORIZATION'])){
         $jwt = "noToken";
     }else{
         /*
@@ -133,8 +138,8 @@ try {
 
 } catch (Exception $e){
     //create the response if error was thrown in the proces
-    $statusCode = $e->getCode();
-    $error = (method_exists( $e,"getError")) ? $e->getError() : var_dump($e);
+
+    $error = (method_exists( $e,"getError")) ? $e->getError() : "Generic error";
     $response =
         [
             "response" =>
@@ -152,7 +157,6 @@ try {
 <?php
 //print the response
 //http_response_code($statusCode);
+header('Content-Type: application/json');
 echo json_encode($response, JSON_PRETTY_PRINT );
 ?>
-
-

@@ -1,7 +1,8 @@
 <?php
-
+unset($_SESSION['employee']);
+unset($_SESSION['manager']);
 $app = $_SERVER['DOCUMENT_ROOT']."/app";
-require_once $_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/vendor/autoload.php";
 if(isset($_POST['hostname'])) {
     $filename = $_SERVER['DOCUMENT_ROOT'].'/.env';
     try {

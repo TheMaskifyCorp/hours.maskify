@@ -9,12 +9,10 @@ form.addEventListener('submit', (event) => {
         "username": theData.get('username'),
         "password": theData.get('password')
     }
-    console.log(formdata)
-    axios.post('/view/login/signin.php', formdata)
+    axios.post('/app/scripts/signin.php', formdata)
         // using the done promise callback
         .then( response => response['data'])
         .then (data => {
-            console.log(data)
             // here we will handle errors and validation messages
             if ( ! data.success) {
                 if ( ! data.errors.credentials){

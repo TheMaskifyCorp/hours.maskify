@@ -1,5 +1,6 @@
 body{
     max-width:1000px;
+    min-width:390px;
     margin: auto;
 }
 
@@ -31,7 +32,7 @@ body{
       "gr4 gr5"
       "gr6 gr6";
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 576px) {
     .grid-wrapper{
         display: grid;
         height:80vh;
@@ -100,7 +101,6 @@ display: block;
       "selector selector selector"
       "head1 head2 head3"
 }
-
 .eh-datepicker{
     grid-area: selector;
 }
@@ -135,12 +135,31 @@ display: block;
 .eh-hours3{
     grid-area: hours3;
 }
+/* grid for searchterms */
 
+#unusedSearches{
 
+}
+.search-unused-grid{
+    display: grid;
+    grid-template-columns: 3fr  6fr 1fr;
+    grid-template-areas:
+      "searchterm selector deletion"
+}
+.search-searchterm{
+    grid-area: searchterm;
+}
+.search-selector{
+    grid-area: selector;
+}
+.search-deletion{
+    grid-area: deletion;
+}
 
 /* Settings for TOASTS */
 .toast-bg{
     background: none!important;
+    max-width:250px!important;
 }
 .toast-warning{
     color: #664d03!important;
@@ -167,4 +186,17 @@ display: block;
 #employeedata table tr td:last-child{
     font-weight: bolder;
     padding-left:10px;
+}
+/*
+    CONTACT PAGE
+ */
+
+
+
+/*
+    VISUALS
+ */
+
+.btn-w{
+    width: 8em;
 }

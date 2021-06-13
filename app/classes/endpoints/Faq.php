@@ -7,10 +7,10 @@ use Database;
 
 class Faq extends Endpoint implements ApiEndpointInterface
 {
-    /*
-     * protected int $employee;
-     * protected bool $manager;
-     * protected object $db;
+    /**
+     * @var protected int $employee;
+     * @var protected bool $manager;
+     * @var protected object $db;
      */
 
     /**
@@ -18,11 +18,17 @@ class Faq extends Endpoint implements ApiEndpointInterface
      * @param array $params
      * @return array
      * @throws DatabaseConnectionException
+     * @throws NotAuthorizedException
      */
     public function get(array $body, array $params): array
     {
         extract($params);
         // return all FAQ-articles on general endpoint
+        // get the searches for the manager page
+        if (isset($getsearchresults)){
+            if (!$this->manager) throw new NotAuthorizedException("Can only be viewed by a manager");
+            return $this->db->table("searchresults")->get();
+        }
         if (isset ($solutionid))
             return $this->db->table("faq")->where(['SolutionID', '=', $solutionid])->get();
         if (!isset($searchterm))
@@ -56,17 +62,48 @@ class Faq extends Endpoint implements ApiEndpointInterface
 
     public function put(array $body, array $params): array
     {
-        // TODO: Implement put() method.
+        if (!$this->manager)
+            throw new NotAuthorizedException("Editing can only be perfomed by a manager");
+
     }
 
     public function post(array $body, array $params): array
     {
-        // TODO: Implement post() method.
+        if (!$this->manager && !isset($param['searchterm']))
+            throw new NotAuthorizedException("Creation can only be perfomed by a manager");
+
     }
 
+    /**
+     * @throws DatabaseConnectionException
+     * @throws BadRequestException
+     * @throws NotAuthorizedException
+     */
     public function delete(array $body, array $params): array
     {
-        // TODO: Implement delete() method.
+        if (!$this->manager)
+            throw new NotAuthorizedException("Deletion can only be perfomed by a manager.");
+        if (!isset($params['searchterm']) && !isset($params['solutionid']))
+            throw new BadRequestException("Nothing to delete on general endpoint.");
+        if (isset($params['searchterm']) && isset($params['solutionid']))
+            throw new BadRequestException("Request is ambiguous; delete Solution OR searchterm.");
+        if (isset($params['searchterm'])) {
+            $deleteObject = ['SearchTerm','=', $params['searchterm']];
+            $table = 'searchresults';
+        }
+        if (isset($params['solutionid'])){
+            $deleteObject = ['SolutionID','=', $params['solutionid'] ];
+            $table = 'faq';
+        }
+        if (!$this->db->table($table)->exists([$deleteObject[0]=>$deleteObject[2]]))
+            throw new BadRequestException($deleteObject[0] .": ".$deleteObject[2] . " does not exist");
+        try{
+            $this->db->table($table)->delete($deleteObject);
+        }catch(\Exception $e){
+            throw new DatabaseConnectionException();
+        }
+        $response = $deleteObject[0] .": ".$deleteObject[2] . " deleted";
+        return [$response];
     }
 
     /**
@@ -99,6 +136,7 @@ class Faq extends Endpoint implements ApiEndpointInterface
             $param = strtolower($UCparam);
             switch ($param) {
                 case "searchterm":
+                case "getsearchresults":
                     break;
                 case "solutionid":
                     if (!$db->table("faq")->exists(['SolutionID' => $value]))

@@ -6,7 +6,8 @@
     "require": {
         "firebase/php-jwt": "^5.2",
         "vlucas/phpdotenv": "5.3.x-dev",
-        "ext-pdo": "^7.4"
+        "ext-pdo": "^7.4",
+        "phpmailer/phpmailer": "dev-master"
 	},
     "autoload": {
         "classmap": [

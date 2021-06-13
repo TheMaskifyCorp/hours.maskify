@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
  * @var Database $db
  */
 
-if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /view/install/index.php");
+if (!file_exists($docRoot."/.env")) header("Location: /view/install/index.php");
 if (isset($_SESSION['employee'],$_SESSION['manager']))
 {
     if ($_SESSION['manager']) header("Location: /view/manager/index.php");
@@ -39,7 +39,8 @@ require_once "$docRoot/view/includes/header.php";
                 <input class="form-control mr-sm-2" type="search" placeholder="Zoek artikelen" aria-label="Search" name="faqSearch">
             </form>
         </div>
-        <div class="grid-item4">4</div>
+        <div class="grid-item4">
+        </div>
         <div class="grid-item5">5</div>
         <div class="grid-item6">6</div>
     </div>
