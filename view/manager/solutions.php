@@ -22,6 +22,11 @@ require_once "$docRoot/view/includes/header.php";
             </div>
         </div>
         <div class="grid-item3">
+            <form id="new404ImageForm" method="post" enctype="multipart/form-data">
+                Upload PNG bestand voor 404-pagina:
+                <input type="file" name="new404ImageFile" id="new404ImageFile" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+                <input type="submit" value="Upload PNG" name="submit">
+            </form>
         </div>
         <div class="grid-item4">
         </div>
@@ -33,3 +38,4 @@ require_once "$docRoot/view/includes/header.php";
 require_once "$docRoot/view/includes/footer.php";
 ?>
 <script src="/view/js/manage-faq.js"></script>
+<script src="/view/js/upload404Image.js"></script>
