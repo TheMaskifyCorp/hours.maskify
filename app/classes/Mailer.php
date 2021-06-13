@@ -66,7 +66,6 @@ class Mailer
         $regex = '/^[A-z\s]$/';
         if (!preg_match($emailRegex,$email) )
             $this->success = ['success'=> false, 'message'=> 'Name can only contain letters and whitespace'];
-        // verify content
         return $this;
     }
 

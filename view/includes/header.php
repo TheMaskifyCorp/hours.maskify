@@ -38,18 +38,18 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
                 </li>
+                <?php if(!isset($_SESSION['employee'])) : ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="/view/contact.php">Contact Us!</a>
+                </li>
+                <?php endif;
+if(isset($_SESSION['manager']) && $_SESSION['manager'] == "true") : ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/view/install/">Installer</a>
                 </li>
-                <?php if(!isset($_SESSION['employee'])) : ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/view/contact.php">Contact Us!</a>
-                    </li>
-                <?php endif;
-if(isset($_SESSION['manager']) && $_SESSION['manager'] == "true") : ?>
-              <li class="nav-item">
-                  <a class="nav-link" href="/view/manager/solutions.php">Manage Application</a>
-              </li>
+                <li class="nav-item">
+                      <a class="nav-link" href="/view/manager/solutions.php">Manage Application</a>
+                </li>
 <?php endif;?>
             </ul>
         </div>

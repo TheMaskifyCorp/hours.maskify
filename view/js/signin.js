@@ -13,7 +13,6 @@ form.addEventListener('submit', (event) => {
         // using the done promise callback
         .then( response => response['data'])
         .then (data => {
-            console.log(data)
             // here we will handle errors and validation messages
             if ( ! data.success) {
                 if ( ! data.errors.credentials){
