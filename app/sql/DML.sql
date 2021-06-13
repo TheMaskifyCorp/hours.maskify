@@ -23,7 +23,7 @@ VALUES ('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
        ('Lorem Ipsum komt uit de secties 1.10.32 en 1.10.33 van "de Finibus Bonorum et Malorum" (De uitersten van goed en kwaad) door Cicero, geschreven in 45 v.Chr. Dit boek is een verhandeling over de theorie der ethiek, erg populair tijdens de renaissance. De eerste regel van Lorem Ipsum, "Lorem ipsum dolor sit amet..", komt uit een zin in sectie 1.10.32.', 'Waar komt het vandaan?'),
        ('Om je wachtwoord aan te passen kun je contact opnemen met je manager, zodat het standaard wachtwoord kan worden ingesteld', 'Wachtwoord vergeten');
 INSERT INTO `searchresults` (`SearchTerm`,`SolutionID`,`SearchTermCounter`)
-VALUES ('lorem%20ipsum',1,0),
+VALUES ('lorem ipsum',1,0),
        ('finibus',2,0),
        ('vertaling',3,0),
        ('wachtwoord',6,3);

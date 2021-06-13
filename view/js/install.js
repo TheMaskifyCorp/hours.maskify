@@ -1,7 +1,6 @@
 $(document).ready(function(){
         $("form").on("submit", function(event){
         event.preventDefault();
-        console.log(event)
         $('input[type=submit]', this).attr('disabled', 'disabled').attr('value','Installing...');
         $('input[type=input]', this).attr('disabled', 'disabled');
         let formValues= $(this).serialize();

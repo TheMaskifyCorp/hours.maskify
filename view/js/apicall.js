@@ -128,7 +128,26 @@ function updateHour(id, status) {
     axios.put(api+"hours/" + id, body, config)
         .then((data) => data['data'])
         .then((data) => {
-            console.log(data)
+            if (!data.success) {
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-warning'
+                }).showToast();
+            } else {
+                document.getElementById(id).remove();
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-success'
+                }).showToast();
+            }
+        })
+}
+function updateSearchTerm(searchterm){
+    axios.put(api+"faq/"+searchterm)
+        .then((data) => data['data'])
+        .then((data) => {
             if (!data.success) {
                 Toastify({
                     text: data.response,
@@ -146,7 +165,6 @@ function updateHour(id, status) {
         })
 }
 
-
 /*
     DELETE FUNCTIONS
  */
@@ -163,6 +181,26 @@ function deleteHour(id) {
                 }).showToast();
             } else {
                 document.getElementById(id).remove();
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-success'
+                }).showToast();
+            }
+        })
+}
+function deleteSearch(st) {
+    axios.delete(api+"faq/" + st, config)
+        .then((data) => data['data'])
+        .then((data) => {
+            if (!data.success) {
+                Toastify({
+                    text: data.response,
+                    duration: 3000,
+                    className: 'toast-bg toast-warning'
+                }).showToast();
+            } else {
+                document.getElementById("st-"+st).remove();
                 Toastify({
                     text: data.response,
                     duration: 3000,

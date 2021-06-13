@@ -5,6 +5,7 @@ const notAccorded = document.getElementById('notAccorded');
 
 
 function setManagerPage(id = 0) {
+    specificEmpDiv.innerHTML = "";
     if(id != 0) {
         getSingleEmployee(id).then(response => {
             specificEmpDiv.innerHTML = objectToTable(response)

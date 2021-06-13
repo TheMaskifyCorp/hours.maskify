@@ -5,8 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/app/init.php';
  * @var Auth $auth
  * @var Database $db
  */
-unset($_SESSION['employee']);
-unset($_SESSION['manager']);
+
 require_once "$docRoot/view/includes/header.php";
 ?>
 <div class="container">

@@ -27,7 +27,7 @@ $apiVars=explode('/',$apipath);
 $statusCode = 200;
 try {
     //als endpoint NIET de faq is, moet je validaten
-    if(strtolower($apiVars[0]) == "faq"){
+    if(strtolower($apiVars[0]) == "faq" && !isset($_SERVER['HTTP_AUTHORIZATION'])){
         $jwt = "noToken";
     }else{
         /*

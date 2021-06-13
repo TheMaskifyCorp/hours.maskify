@@ -11,10 +11,11 @@ if (isset ($_POST['id']) ) {
     $id = $_POST['id'];
     $emp = $db->table('employees')->where(['EmployeeID','=',$id])->first();
     $manager = $emp->FunctionTypeID > 1;
+    $time = time();
     $token = array (
     'eid' => $id,
     'manager' => $manager,
-    'iat' => time()
+    'iat' => $time
     );
     $jwt =  Firebase\JWT\JWT::encode($token, $_ENV['JWTSECRET']);
 }

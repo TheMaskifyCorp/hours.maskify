@@ -1,5 +1,5 @@
 function logout(){
-    axios.get("/view/login/signout.php");
+    axios.get("/app/scripts/signout.php");
     window.location.replace('/view/index.php')
 }
 function getCookie(cname) {
@@ -41,8 +41,7 @@ function formatEmployeeHours(obj){
     let deletionLink = "";
     let alertClass = "alert-primary";
     if (obj.HoursAccorded === null){
-
-        deletionLink = "<a href='#'><button class=\"btn btn-light py-0 \" onclick=\"deleteHour(\'"+obj.EmployeeHoursID+"\')\"><i class=\"bi bi-trash\" aria-hidden=\"true\"></i></button></a>"
+        deletionLink = "<button class=\"btn btn-light py-0 \" onclick=\"deleteHour(\'"+obj.EmployeeHoursID+"\')\"><i class=\"bi bi-trash\" aria-hidden=\"true\"></i></button>"
     }
     if (obj.HoursAccorded === "1"){
         alertClass = "alert-success";
