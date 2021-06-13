@@ -1,0 +1,10 @@
+{
+  "contact": "Contact form",
+  "email": "email",
+  "password": "password",
+  "subject": "subject",
+  "message": "message",
+  "dutch": "Dutch",
+  "english": "English",
+  "langpicker": "Languages"
+}
