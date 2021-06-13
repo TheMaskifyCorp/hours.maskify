@@ -18,23 +18,23 @@ require_once "$docRoot/view/includes/header.php";
     <div class="grid-wrapper">
         <div class="grid-item1">1</div>
         <div class="grid-item2">
-            <h3>Log in</h3>
+            <h3 data-lang="login">Inloggen</h3>
             <div class="SignIn">
                 <form id="signin" action="" method="POST">
                     <div id="name-group" class="form-group ">
                         <label for="username">Email</label>
-                        <input type="text" class="form-control" name="username" placeholder="Gebruiker">
+                        <input type="text" class="form-control" name="username" placeholder="alex@maskify.nl">
                     </div>
                     <div id="password-group" class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="wachtwoord">
+                        <input type="password" class="form-control" name="password" placeholder="********">
                     </div>
-                    <button type="submit" class="mt-1 btn btn-success">Submit <span class="bi bi-chevron-double-right"></span></button>
+                    <button type="submit" class="mt-1 btn btn-success" data-lang="submit">Submit <span class="bi bi-chevron-double-right"></span></button>
                 </form>
             </div>
         </div>
         <div id='faq-div' class="grid-item3">
-            <h3>Veelgestelde vragen</h3>
+            <h3 data-lang="faq">Veelgestelde vragen</h3>
             <form id='faqForm' class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Zoek artikelen" aria-label="Search" name="faqSearch">
             </form>

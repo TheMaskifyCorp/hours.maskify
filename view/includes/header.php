@@ -67,7 +67,7 @@ if(isset($_SESSION['manager']) && $_SESSION['manager'] == "true") : ?>
                     <a class="nav-link" href="/view/install/">Installer</a>
                 </li>
                 <li class="nav-item">
-                      <a class="nav-link" href="/view/manager/solutions.php">Manage Application</a>
+                      <a class="nav-link" href="/view/manager/solutions.php" data-lang="manageapp">Beheer App</a>
                 </li>
 <?php endif;?>
             </ul>

@@ -9,5 +9,10 @@
   "langpicker": "Languages",
   "add hours": "Add Hours",
   "validation": "Waiting for validation",
-  "hours this month" : "Hours this month"
+  "hours this month" : "Hours this month",
+  "submit": "Submit",
+  "faq": "Frequently Asked Questions",
+  "login": "Login",
+  "removesearches": "Remove Searches",
+  "manageapp": "Manage the App"
 }
