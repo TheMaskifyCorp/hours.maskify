@@ -4,6 +4,12 @@ namespace API;
 
 use PhpParser\Node\Expr\Cast\Object_;
 
+/**
+ * Class API
+ *
+ * @package API
+ */
+
 class API
 {
     protected object $db;
@@ -20,6 +26,7 @@ class API
      */
     public function __construct($JWT)
     {
+        //allow notoken for FAQ endpoint
         if ($JWT != "noToken"){
         $decoded = \Firebase\JWT\JWT::decode($JWT,$_ENV['JWTSECRET'], ['HS256']);
         } else {
@@ -32,7 +39,6 @@ class API
 
         $this->manager = $decoded->manager;
         $this->requesterID = $decoded->eid;
-
     }
 
     /**
