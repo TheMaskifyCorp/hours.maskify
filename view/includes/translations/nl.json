@@ -3,5 +3,8 @@
     "email": "email",
     "password": "wachtwoord",
     "subject": "onderwerp",
-    "message": "boodschap"
+    "message": "boodschap",
+    "dutch": "Nederlands",
+    "english": "Engels",
+    "langpicker": "Talen"
     }

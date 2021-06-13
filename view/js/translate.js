@@ -9,7 +9,7 @@
 				_self = this;
 				var xrhFile = new XMLHttpRequest();
 				//load content data
-				xrhFile.open("GET", "./resources/"+this.lng+".json", true);
+				xrhFile.open("GET", "/view/includes/translations/"+this.lng+".json", true);
 				xrhFile.onreadystatechange = function ()
 				{
 					if(xrhFile.readyState === 4)
@@ -18,12 +18,11 @@
 						{
 							var LngObject = JSON.parse(xrhFile.responseText);
 							var allDom = document.getElementsByTagName("*");
+
 							for(var i =0; i < allDom.length; i++){
 								var elem = allDom[i];
 								var key = elem.getAttribute(_self.attribute);
-
 								if(key != null) {
-									 console.log(key);
 									 elem.innerHTML = LngObject[key]  ;
 								}
 							}
@@ -33,4 +32,9 @@
 				}
 				xrhFile.send();
     }
+}
+function loadTranslation(lang) {
+	var translate = new Translate();
+	translate.init("data-lang", lang);
+	translate.process();
 }

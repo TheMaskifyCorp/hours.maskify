@@ -38,6 +38,25 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-lang="langpicker">
+                        Taalkiezer
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item" onclick="loadTranslation('nl')">
+                            <img
+                                    src="https://flagcdn.com/nl.svg"
+                                    width="30"
+                                    alt="nl">
+                        </button>
+                        <button class="dropdown-item" onclick="loadTranslation('en')">
+                            <img
+                                    src="https://flagcdn.com/gb.svg"
+                                    width="30"
+                                    alt="en">
+                        </button>
+                    </div>
+                </li>
                 <?php if(!isset($_SESSION['employee'])) : ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/view/contact.php">Contact Us!</a>
