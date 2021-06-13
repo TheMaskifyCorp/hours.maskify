@@ -24,7 +24,7 @@ require_once "$docRoot/view/includes/header.php";
         </div>
         <div class="grid-item3">
             <div id="hourContainer" class="employeehours-grid-wrapper employeehours-default-grid">
-                <div class="eh-datepicker"><h3>Wacht op validatie</h3>
+                <div class="eh-datepicker"><h3 data-lang="validation">Waiting for validation</h3>
                 </div>
                 <span class="eh-head1">Date</span><span class="eh-head2">Time in minutes</span><span class="eh-head3">Status</span>
                 <div id='notAccorded' class="eh-hours-grid"></div>
@@ -42,7 +42,7 @@ require_once "$docRoot/view/includes/header.php";
         <div class="grid-item5">
             <div id="hourContainer" class="employeehours-grid-wrapper employeehours-default-grid">
                 <div class="eh-datepicker">
-                    <h3>Hours this month</h3>
+                    <h3 data-lang="hours this month">Hours this month</h3>
                 </div>
                 <span class="eh-head1">Date</span><span class="eh-head2">Time in minutes</span><span class="eh-head3">Status</span>
                 <div id="employeehours" class="eh-hours-grid">

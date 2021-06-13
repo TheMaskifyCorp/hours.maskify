@@ -6,5 +6,8 @@
     "message": "boodschap",
     "dutch": "Nederlands",
     "english": "Engels",
-    "langpicker": "Talen"
+    "langpicker": "Talen",
+    "add hours": "Voeg uren toe",
+    "validation": "Wacht op validatie",
+    "hours this month" : "Uren deze maand"
     }

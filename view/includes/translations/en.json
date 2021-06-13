@@ -6,5 +6,8 @@
   "message": "message",
   "dutch": "Dutch",
   "english": "English",
-  "langpicker": "Languages"
+  "langpicker": "Languages",
+  "add hours": "Add Hours",
+  "validation": "Waiting for validation",
+  "hours this month" : "Hours this month"
 }
