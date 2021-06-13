@@ -8,11 +8,10 @@ use PHPUnit\Framework\Constraint;
 
 class ContractsTest extends TestCase
 {
-
     public function test__construct()
     {
     //should get all entries in contracts table, the installer creates 50 contracts by default, therefore an array with 50 or more objects should be returned.
-//        /** @var TYPE_NAME $contract */
+        ///** @var TYPE_NAME $contract */
         $contract = new Contracts(1, true);
         //Result from get should of type array
         $this->assertIsArray($contract->get([],[]));
@@ -31,7 +30,33 @@ class ContractsTest extends TestCase
         $PayRate = $resultArray[4];
         $this->assertObjectHasAttribute('ContractEndDate',$PayRate);
 
+        //Tests if the method get is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'get');
+        $this->assertTrue($checkmethods);
 
+        //Tests if the method post is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'post');
+        $this->assertTrue($checkmethods);
+
+        //Tests if the method put is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'put');
+        $this->assertTrue($checkmethods);
+
+        //Tests if the method delete is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'delete');
+        $this->assertTrue($checkmethods);
+
+        //Tests if the method delete is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'delete');
+        $this->assertTrue($checkmethods);
+
+        //Tests if the method validateEndpoint is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'validateEndpoint');
+        $this->assertTrue($checkmethods);
+
+        //Tests if the method validateEndpoint is implemented in the class Contracts
+        $checkmethods = method_exists($contract, 'validateEndpoint');
+        $this->assertTrue($checkmethods);
     }
 
     public function testGet()
@@ -65,7 +90,7 @@ class ContractsTest extends TestCase
 
 //    public function testDelete()
 //    {
-//        //could be done with a pdo rowcount function
+//        //could be done with a pdo rowcount function or a PDOquery() which returns the database query and then comparing that to the expected query
 //
 //    }
 
@@ -77,7 +102,10 @@ class ContractsTest extends TestCase
 //
 //    public function testPut()
 //    {
-//    Could test this with PDO::query()
+//
+//
+////    Could test this with PDO::query()
+//
 //    }
 //
 //    public function testPost()

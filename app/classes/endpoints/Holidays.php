@@ -1,11 +1,11 @@
 <?php
 
 namespace API;
-use Database;
-use Exception;
-
-require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
-require_once "ApiEndpointInterface.php";
+//use Database;
+//use Exception;
+//
+//require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+//require_once "ApiEndpointInterface.php";
 
 
 /**
@@ -196,7 +196,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
      */
     public static function validateGet(array $get)
     {
-        $db = new Database();
+        $db = new \Database;
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {

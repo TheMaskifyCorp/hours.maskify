@@ -4,8 +4,8 @@ namespace API;
 use Database;
 use Exception;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
-require_once "ApiEndpointInterface.php";
+//require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+//require_once "ApiEndpointInterface.php";
 
 /**
  * Class Employees
