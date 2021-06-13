@@ -4,6 +4,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+/**
+ * Class Mailer
+ */
 class Mailer
 {
     protected object $mail;
@@ -18,6 +21,7 @@ class Mailer
      * @param string $recipient
      * @param string $name
      * @param string $content
+     * @param string $subject
      * @param bool $debug
      * @throws Exception
      */

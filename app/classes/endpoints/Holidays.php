@@ -8,12 +8,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
 
+/**
+ * Class Holidays
+ * @package API
+ */
 class Holidays extends Endpoint implements ApiEndpointInterface
 {
     /**
      * @param array $body
      * @param array $params
      * @return array
+     * @throws BadRequestException
+     * @throws DatabaseConnectionException
      * @throws NotAuthorizedException
      */
 
@@ -65,7 +71,6 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             }
             return (array)$result;
         }
-
         //if no parameters are given return all holidays
         if ($params == []) {
             try {
@@ -175,6 +180,12 @@ class Holidays extends Endpoint implements ApiEndpointInterface
     }
 
 //
+
+    /**
+     * @param array $apipath
+     * @return array|null
+     * @throws BadRequestException
+     */
     public static function validateEndpoint(array $apipath): ?array
     {
         if (count($apipath) > 3) throw new BadRequestException("Endpoint could not be validated");
@@ -185,7 +196,12 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         return null;
     }
 
-        public static function validateGet(array $get)
+    /**
+     * @param array $get
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
+    public static function validateGet(array $get)
     {
         $db = new Database();
         foreach ($get as $UCparam => $value) {

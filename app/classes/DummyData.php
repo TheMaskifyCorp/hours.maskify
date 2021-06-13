@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Class DummyData
+ */
 class DummyData
 {
     const firstNames = [

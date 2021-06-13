@@ -5,6 +5,10 @@ namespace API;
 
 use Database;
 
+/**
+ * Class Faq
+ * @package API
+ */
 class Faq extends Endpoint implements ApiEndpointInterface
 {
     /**

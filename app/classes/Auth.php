@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Auth
+ * Used in authentication at the frontend
+ * @package API
+ */
 
 class Auth
 {

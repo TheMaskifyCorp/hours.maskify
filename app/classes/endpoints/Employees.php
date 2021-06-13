@@ -7,6 +7,10 @@ use Exception;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
+/**
+ * Class Employees
+ * @package API
+ */
 class Employees extends Endpoint implements ApiEndpointInterface
 {
     /**

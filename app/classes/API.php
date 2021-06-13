@@ -6,7 +6,7 @@ use PhpParser\Node\Expr\Cast\Object_;
 
 /**
  * Class API
- *
+ * Helper class to create an API-call
  * @package API
  */
 

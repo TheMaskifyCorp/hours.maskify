@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Database
+ */
 class Database
 {
     protected $pdo;
@@ -96,6 +99,7 @@ class Database
      * 'field' => 'value'
      * ]);
      * @param array $data
+     * @return array|bool
      */
 
     public function insert(array $data)
@@ -214,9 +218,7 @@ class Database
      * Usage: $db->table('employees')->where(["EmployeeID",">",0],["FirstName","=","Rita"])->get();
      * Use for SELECT data from database in combination met ->get() of ->first();
      *
-     * @param $field
-     * @param $operator
-     * @param $value
+     * @param array ...$where
      * @return Database
      */
     public function where(array ...$where) : Database

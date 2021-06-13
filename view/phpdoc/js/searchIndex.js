@@ -3,7 +3,7 @@ Search.appendIndex(
                 {
             "fqsen": "\\API\\API",
             "name": "API",
-            "summary": "Class\u0020API",
+            "summary": "Class\u0020API\nHelper\u0020class\u0020to\u0020create\u0020an\u0020API\u002Dcall",
             "url": "classes/API-API.html"
         },                {
             "fqsen": "\\API\\API\u003A\u003A__construct\u0028\u0029",
@@ -53,7 +53,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Auth",
             "name": "Auth",
-            "summary": "",
+            "summary": "Class\u0020Auth\nUsed\u0020in\u0020authentication\u0020at\u0020the\u0020frontend",
             "url": "classes/Auth.html"
         },                {
             "fqsen": "\\Auth\u003A\u003A__construct\u0028\u0029",
@@ -103,7 +103,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Database",
             "name": "Database",
-            "summary": "",
+            "summary": "Class\u0020Database",
             "url": "classes/Database.html"
         },                {
             "fqsen": "\\Database\u003A\u003A__construct\u0028\u0029",
@@ -238,7 +238,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\DummyData",
             "name": "DummyData",
-            "summary": "",
+            "summary": "Class\u0020DummyData",
             "url": "classes/DummyData.html"
         },                {
             "fqsen": "\\DummyData\u003A\u003AfirstNames",
@@ -278,12 +278,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Employee",
             "name": "Employee",
-            "summary": "",
+            "summary": "Class\u0020Employee",
             "url": "classes/Employee.html"
         },                {
             "fqsen": "\\Employee\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "Employee\u0020constructor.",
             "url": "classes/Employee.html#method___construct"
         },                {
             "fqsen": "\\Employee\u003A\u003AcreateNewEmployee\u0028\u0029",
@@ -378,7 +378,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\ApiEndpointInterface",
             "name": "ApiEndpointInterface",
-            "summary": "",
+            "summary": "Interface\u0020ApiEndpointInterface",
             "url": "classes/API-ApiEndpointInterface.html"
         },                {
             "fqsen": "\\API\\ApiEndpointInterface\u003A\u003Aget\u0028\u0029",
@@ -413,7 +413,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Contracts",
             "name": "Contracts",
-            "summary": "",
+            "summary": "Class\u0020Contracts",
             "url": "classes/API-Contracts.html"
         },                {
             "fqsen": "\\API\\Contracts\u003A\u003A__construct\u0028\u0029",
@@ -473,7 +473,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Departments",
             "name": "Departments",
-            "summary": "",
+            "summary": "Class\u0020Departments",
             "url": "classes/API-Departments.html"
         },                {
             "fqsen": "\\API\\Departments\u003A\u003Aget\u0028\u0029",
@@ -508,7 +508,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Employees",
             "name": "Employees",
-            "summary": "",
+            "summary": "Class\u0020Employees",
             "url": "classes/API-Employees.html"
         },                {
             "fqsen": "\\API\\Employees\u003A\u003Aget\u0028\u0029",
@@ -558,7 +558,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Endpoint",
             "name": "Endpoint",
-            "summary": "",
+            "summary": "Class\u0020Endpoint",
             "url": "classes/API-Endpoint.html"
         },                {
             "fqsen": "\\API\\Endpoint\u003A\u003A__construct\u0028\u0029",
@@ -583,7 +583,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Faq",
             "name": "Faq",
-            "summary": "",
+            "summary": "Class\u0020Faq",
             "url": "classes/API-Faq.html"
         },                {
             "fqsen": "\\API\\Faq\u003A\u003Aget\u0028\u0029",
@@ -618,7 +618,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Holidays",
             "name": "Holidays",
-            "summary": "",
+            "summary": "Class\u0020Holidays",
             "url": "classes/API-Holidays.html"
         },                {
             "fqsen": "\\API\\Holidays\u003A\u003Aget\u0028\u0029",
@@ -653,7 +653,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\Hours",
             "name": "Hours",
-            "summary": "",
+            "summary": "Class\u0020Hours",
             "url": "classes/API-Hours.html"
         },                {
             "fqsen": "\\API\\Hours\u003A\u003Aget\u0028\u0029",
@@ -688,12 +688,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\BadRequestException",
             "name": "BadRequestException",
-            "summary": "",
+            "summary": "Class\u0020BadRequestException",
             "url": "classes/API-BadRequestException.html"
         },                {
             "fqsen": "\\API\\BadRequestException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "BadRequestException\u0020constructor.",
             "url": "classes/API-BadRequestException.html#method___construct"
         },                {
             "fqsen": "\\API\\BadRequestException\u003A\u003AgetError\u0028\u0029",
@@ -708,12 +708,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\DatabaseConnectionException",
             "name": "DatabaseConnectionException",
-            "summary": "",
+            "summary": "Class\u0020DatabaseConnectionException",
             "url": "classes/API-DatabaseConnectionException.html"
         },                {
             "fqsen": "\\API\\DatabaseConnectionException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "DatabaseConnectionException\u0020constructor.",
             "url": "classes/API-DatabaseConnectionException.html#method___construct"
         },                {
             "fqsen": "\\API\\DatabaseConnectionException\u003A\u003AgetError\u0028\u0029",
@@ -728,12 +728,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\NotAuthorizedException",
             "name": "NotAuthorizedException",
-            "summary": "",
+            "summary": "Class\u0020NotAuthorizedException",
             "url": "classes/API-NotAuthorizedException.html"
         },                {
             "fqsen": "\\API\\NotAuthorizedException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "NotAuthorizedException\u0020constructor.",
             "url": "classes/API-NotAuthorizedException.html#method___construct"
         },                {
             "fqsen": "\\API\\NotAuthorizedException\u003A\u003AgetError\u0028\u0029",
@@ -748,12 +748,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\NotFoundException",
             "name": "NotFoundException",
-            "summary": "",
+            "summary": "Class\u0020NotFoundException",
             "url": "classes/API-NotFoundException.html"
         },                {
             "fqsen": "\\API\\NotFoundException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "NotFoundException\u0020constructor.",
             "url": "classes/API-NotFoundException.html#method___construct"
         },                {
             "fqsen": "\\API\\NotFoundException\u003A\u003AgetError\u0028\u0029",
@@ -768,12 +768,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\API\\TeapotException",
             "name": "TeapotException",
-            "summary": "",
+            "summary": "Class\u0020TeapotException",
             "url": "classes/API-TeapotException.html"
         },                {
             "fqsen": "\\API\\TeapotException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "",
+            "summary": "TeapotException\u0020constructor.",
             "url": "classes/API-TeapotException.html#method___construct"
         },                {
             "fqsen": "\\API\\TeapotException\u003A\u003AgetError\u0028\u0029",
@@ -788,7 +788,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Hash",
             "name": "Hash",
-            "summary": "",
+            "summary": "Class\u0020Hash",
             "url": "classes/Hash.html"
         },                {
             "fqsen": "\\Hash\u003A\u003Amake\u0028\u0029",
@@ -803,7 +803,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Installer",
             "name": "Installer",
-            "summary": "",
+            "summary": "Class\u0020Installer",
             "url": "classes/Installer.html"
         },                {
             "fqsen": "\\Installer\u003A\u003A__construct\u0028\u0029",
@@ -933,7 +933,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Mailer",
             "name": "Mailer",
-            "summary": "",
+            "summary": "Class\u0020Mailer",
             "url": "classes/Mailer.html"
         },                {
             "fqsen": "\\Mailer\u003A\u003A__construct\u0028\u0029",
@@ -1011,16 +1011,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/UUID.html#method_createRandomUUID"
         },                {
-            "fqsen": "\\PHPUnit\\Test\\EmployeesTest",
-            "name": "EmployeesTest",
-            "summary": "",
-            "url": "classes/PHPUnit-Test-EmployeesTest.html"
-        },                {
-            "fqsen": "\\PHPUnit\\Test\\EmployeesTest\u003A\u003AtestGet\u0028\u0029",
-            "name": "testGet",
-            "summary": "",
-            "url": "classes/PHPUnit-Test-EmployeesTest.html#method_testGet"
-        },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
@@ -1030,15 +1020,5 @@ Search.appendIndex(
             "name": "API",
             "summary": "",
             "url": "namespaces/api.html"
-        },                {
-            "fqsen": "\\PHPUnit\\Test",
-            "name": "Test",
-            "summary": "",
-            "url": "namespaces/phpunit-test.html"
-        },                {
-            "fqsen": "\\PHPUnit",
-            "name": "PHPUnit",
-            "summary": "",
-            "url": "namespaces/phpunit.html"
         }            ]
 );
