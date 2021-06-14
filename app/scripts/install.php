@@ -1,6 +1,8 @@
 <?php
-unset($_SESSION['employee']);
-unset($_SESSION['manager']);
+if(isset($_SESSION)) {
+    unset($_SESSION['employee']);
+    unset($_SESSION['manager']);
+}
 $app = $_SERVER['DOCUMENT_ROOT']."/app";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/vendor/autoload.php";
 if(isset($_POST['hostname'])) {

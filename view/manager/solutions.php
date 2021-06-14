@@ -27,6 +27,7 @@ require_once "$docRoot/view/includes/header.php";
                 <input type="file" name="new404ImageFile" id="new404ImageFile" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
                 <input type="submit" value="Upload PNG" name="submit">
             </form>
+            <img id="404image" src="/view/images/404.png" alt="404-image"  class="d-block mx-auto w-50 pt-3"/>
         </div>
         <div class="grid-item4">
         </div>

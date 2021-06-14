@@ -71,7 +71,7 @@ require_once "$docRoot/view/includes/header.php";
                         </div>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary float-right" value="Install database">
+                <input type="submit" id='submitinstall' class="btn btn-primary float-right" value="Install database">
             </form>
         </div>
     </div>

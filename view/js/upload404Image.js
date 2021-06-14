@@ -1,5 +1,6 @@
-var myForm = document.getElementById('new404ImageForm');  // Our HTML form's ID
-var myFile = document.getElementById('new404ImageFile');  // Our HTML files' ID
+const myForm = document.getElementById('new404ImageForm');  // Our HTML form's ID
+const myFile = document.getElementById('new404ImageFile');  // Our HTML files' ID
+const image = document.getElementById('404image');
 
 try {
     myForm.onsubmit = function (event) {
@@ -39,7 +40,9 @@ try {
                 }
             }
             axios.post('/app/scripts/upload404.php', formData, headers)
-                .then(data => console.log(data) )
+                .then(()=> {
+                    image.src = "/view/images/404.png?" + new Date().getTime();
+                })
         }
     }
 }catch(e){

@@ -26,4 +26,7 @@ INSERT INTO `searchresults` (`SearchTerm`,`SolutionID`,`SearchTermCounter`)
 VALUES ('lorem ipsum',1,0),
        ('finibus',2,0),
        ('vertaling',3,0),
+       ('loonsverhoging',3,0),
+       ('fietsbel',3,0),
+       ('contact',3,0),
        ('wachtwoord',6,3);

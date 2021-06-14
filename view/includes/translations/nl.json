@@ -14,5 +14,8 @@
     "faq": "Veelgestelde vragen",
     "login": "Inloggen",
     "removesearches": "Verwijder zoektermen",
-    "manageapp": "Beheer App"
+    "manageapp": "Beheer App",
+    "uploadnewemp": "Upload gegevens nieuwe medewerker:",
+    "lang-en" : "Engels",
+    "lang-nl" : "Nederlands"
     }

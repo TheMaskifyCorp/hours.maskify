@@ -43,22 +43,26 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-lang="langpicker">
-                        Taalkiezer
+                        Talen
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button class="dropdown-item" onclick="loadTranslation('nl')">
                             <img
                                     src="https://flagcdn.com/nl.svg"
                                     width="30"
-                                    alt="nl">
+                                    alt="nl"><span data-lang="lang-nl">Nederlands</span>
                         </button>
                         <button class="dropdown-item" onclick="loadTranslation('en')">
                             <img
                                     src="https://flagcdn.com/gb.svg"
                                     width="30"
                                     alt="en">
+                                    <span data-lang="lang-en">Engels</span>
                         </button>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/view/install/">Installer</a>
                 </li>
                 <?php if(!isset($_SESSION['employee'])) : ?>
                 <li class="nav-item">
@@ -66,9 +70,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
                 </li>
                 <?php endif;
 if(isset($_SESSION['manager']) && $_SESSION['manager'] == "true") : ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="/view/install/">Installer</a>
-                </li>
+
                 <li class="nav-item">
                       <a class="nav-link" href="/view/manager/solutions.php" data-lang="manageapp">Beheer App</a>
                 </li>
