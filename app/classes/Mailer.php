@@ -32,21 +32,24 @@ class Mailer
         $this->success = ['success'=> true, 'message'=> 'Message has been sent'];
         $this->subject = $subject;
 
+        $mailhost = $_ENV['SMTPHOST='];
+        $username = $_ENV['maskify@openmailserver.nl'];
+        $mailpw =$_ENV['kjsXX5E8N4Riu2WBBZT5t97sboDyGj'];
         $mail = new PHPMailer(false);
 
         if ($debug) $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
-        $mail->Host       = 'mail.rijk.se    ';                     //Set the SMTP server to send through
+        $mail->Host       = $mailhost;                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'maskify@openmailserver.nl';            //SMTP username
-        $mail->Password   = 'kjsXX5E8N4Riu2WBBZT5t97sboDyGj';       //SMTP password
+        $mail->Username   = $username;            //SMTP username
+        $mail->Password   = $mailpw;       //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
         $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
         //Recipients
-        $mail->setFrom('maskify@openmailserver.nl', 'Website Form');
+        $mail->setFrom($username, 'Website Form');
         $mail->addAddress($recipient, $name);                              //Add a recipient
-        $mail->addReplyTo('maskify@openmailserver.nl');
+        $mail->addReplyTo($username);
 
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML

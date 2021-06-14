@@ -19,6 +19,31 @@ Run the installer, and login.
 Default user:```admin@maskify.nl ```   
 Default password: ```123456768```
 
-### Options
+### Mandatory frontend options
 
-<img src="./app/uploads/readme/search.gif" alt="search">
+#### Search
+<img src="./app/uploads/readme/search.gif" alt="search"/>  
+
+#### Save unfound searches in database  
+<img src="./app/uploads/readme/searchNotFound.gif" alt="searchnotfound"/>
+
+#### Login as admin
+<img src="./app/uploads/readme/login.gif" alt="login">
+
+#### Change content by uploading csv
+<img src="./app/uploads/readme/uploadEmp.gif" alt="csv-upload">
+
+#### Delete unfound searches
+<img src="./app/uploads/readme/deleteSearch.gif" alt="delete-searchresults">
+
+#### Upload an image
+<img src="./app/uploads/readme/upload404.gif" alt="upload-image">
+
+### Further requirements:
+
+#### Multi-lingual:
+The application is available in Dutch and English, and a language can be picked in the menu-bar.
+
+#### Responseform
+A responseform is available on the contact.php page, and uses php-mailer to send mail.
+To use this, please enter SMTP-data in the .env file.
