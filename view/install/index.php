@@ -18,7 +18,7 @@ require_once "$docRoot/view/includes/header.php";
         <p>Then, automagically, we'll run the DDL, DML and add random data to the database.<br> Queries are much more fun when there's actual data available, don't you think?</p>
         <p>
             <a class="btn btn-primary btn-lg" href="https://maskify.nl" role="button">Go to Maskify.nl</a>
-            <button class="btn btn-primary btn-lg deleteconf" onsubmit="unInstall()">Delete existing configuration</button>
+            <button id='deleteconf'class="btn btn-primary btn-lg deleteconf" onsubmit="unInstall()">Delete existing configuration</button>
         </p>
     </div>
     <div class="row">

@@ -1,5 +1,6 @@
 const form = document.getElementById('theForm');  // Our HTML files' ID
 const submit = document.getElementById("submitinstall")
+const uninstall = document.getElementById('deleteconf')
 
 function parseAlert(data) {
     let success = true;
@@ -38,16 +39,9 @@ function unInstall(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-    //oud
-/*    $("form").on("submit", function(event) {
-        event.preventDefault();
-        $('input[type=submit]', this).attr('disabled', 'disabled').attr('value', 'Installing...');
-        $('input[type=input]', this).attr('disabled', 'disabled');
-        let formValues = $(this).serialize();
-        console.log(formValues)
-    })*/
-    //nieuw
-
+        uninstall.addEventListener('click', () =>{
+            unInstall()
+        })
 
         form.addEventListener('submit',(event) =>{
             event.preventDefault();

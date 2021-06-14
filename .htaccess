@@ -12,8 +12,8 @@ RewriteCond %{QUERY_STRING} ^(.*?)$
 RewriteRule ^/?api/v1/(.*?)/?$ /api/v1/index.php?apipath=$1&%1 [NC,L]
 
 #rewrite everything not for view of app
-RewriteCond %{HTTP_HOST} !127.0.0.1
-RewriteCond %{HTTP_HOST} !localhost
+RewriteCond %{HTTP_HOST} !=127.0.0.1
+RewriteCond %{HTTP_HOST} !=localhost
 RewriteRule ^/?(?!view|api).*?$ /view [R=301,NC,L]
 
 #redirect 404's to 404-page
