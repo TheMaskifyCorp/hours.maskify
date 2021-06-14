@@ -17,7 +17,15 @@ Install at a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) o
 >The following command will clone the content of the git in the current folder
 ```git clone https://github.com/TheMaskifyCorp/hours.maskify.git .```
 
-Run the installer, and login.  
+Next, run `composer install`
+
+>In some cases (like shared hosting) file-rights can be restricted.
+>If that is the case, take the following steps:
+> - set the config to group: `git config core.sharedRepository group`
+> - Find your username with the command `whoami`
+> - change file-permissions recursively: `chgrp -R {usergroup} .` 
+
+Visit the page in the browser, run the installer, and login.  
 Default user:```admin@maskify.nl ```   
 Default password: ```123456768```
 
