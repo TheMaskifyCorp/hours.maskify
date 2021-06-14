@@ -5,6 +5,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/app/init.php';
  * @var Auth $auth
  * @var Database $db
  */
-$auth->signout();
-unlink($docRoot.'/.env');
-header("Location: /view/install/index.php");
+try {
+    $auth->signout();
+    unlink($docRoot . '/.env');
+    header("Location: /view/install/index.php");
+}catch(Exception $e){
+    http_send_status(400);
+}

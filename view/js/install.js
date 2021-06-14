@@ -25,7 +25,17 @@ function parseAlert(data) {
     }
 }
 
-
+function unInstall(){
+    axios.get('/app/scripts/uninstall.php')
+        .then(()=> window.location.replace('/'))
+        .catch(()=>{
+            Toastify({
+                text: "Something went wrong, sorry",
+                duration: 3000,
+                className: 'toast-bg toast-danger',
+            }).showToast();
+        })
+}
 
 document.addEventListener('DOMContentLoaded',function(){
     //oud
