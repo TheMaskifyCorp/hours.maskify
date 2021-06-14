@@ -39,9 +39,10 @@ function unInstall(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-        uninstall.addEventListener('click', () =>{
+        uninstall.addEventListener('click', (event) =>{
+            event.preventDefault()
             unInstall()
-        })
+        });
 
         form.addEventListener('submit',(event) =>{
             event.preventDefault();
