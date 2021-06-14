@@ -39,22 +39,12 @@ function unInstall(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-    console.log("test1")
         form.addEventListener('submit',(event) =>{
             event.preventDefault();
             submit.setAttribute('disabled', 'disabled');
             submit.setAttribute('value','Installing...');
             let formdata = new FormData(form)
-            let body = {
-                "hostname":formdata.get('hostname'),
-                "database":formdata.get('database'),
-                "username":formdata.get('username'),
-                "password":formdata.get('password')
-            }
-            if (formdata.get('dummydata')){
-                body.dummydata = "on";
-            }
-            axios.post('/app/scripts/install.php',formdata,config)
+            axios.post('/app/scripts/install.php',formdata)
                 .then((data) => data['data'])
                 .then(response => {
                     console.log(response)
