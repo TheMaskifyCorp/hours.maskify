@@ -20,4 +20,5 @@ Default user:```admin@maskify.nl ```
 Default password: ```123456768```
 
 ### Options
-[!search](app/uploads/readme/search.gif)
+
+<img src="./app/uploads/readme/search.gif" alt="search">
