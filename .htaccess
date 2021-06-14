@@ -4,17 +4,15 @@ Deny from all
 Allow from 127.0.0.1
 </Files>
 
+#disable Indexing
+Options -Indexes
+
 #make get-parameters from url for api
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{QUERY_STRING} ^(.*?)$
 RewriteRule ^/?api/v1/(.*?)/?$ /api/v1/index.php?apipath=$1&%1 [NC,L]
-
-#rewrite everything not for view of app
-RewriteCond %{HTTP_HOST} !=127.0.0.1
-RewriteCond %{HTTP_HOST} !=localhost
-RewriteRule ^/?(?!view|api).*?$ /view [R=301,NC,L]
 
 #redirect 404's to 404-page
 RewriteRule ^404/?$ /view/404.php
