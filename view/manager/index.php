@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/app/init.php';
  * @var Database $db
  */
 
-if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /install/index.php");
+if (!file_exists($_SERVER['DOCUMENT_ROOT']."/.env")) header("Location: /view/install/index.php");
 if (!isset($_SESSION['employee'],$_SESSION['manager'])) header("Location: /view/index.php");
 
 require_once "$docRoot/view/includes/header.php";
@@ -26,7 +26,7 @@ require_once "$docRoot/view/includes/header.php";
             <div id="hourContainer" class="employeehours-grid-wrapper employeehours-default-grid">
                 <div class="eh-datepicker"><h3 data-lang="validation">Waiting for validation</h3>
                 </div>
-                <span class="eh-head1">Date</span><span class="eh-head2">Time in minutes</span><span class="eh-head3">Status</span>
+                <span class="eh-head1" data-lang="date">Datum</span><span class="eh-head2" data-lang="timeinmins">Tijd in minuten</span><span class="eh-head3">Status</span>
                 <div id='notAccorded' class="eh-hours-grid"></div>
             </div>
         </div>

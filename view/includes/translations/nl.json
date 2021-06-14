@@ -17,5 +17,7 @@
     "manageapp": "Beheer App",
     "uploadnewemp": "Upload gegevens nieuwe medewerker:",
     "lang-en" : "Engels",
-    "lang-nl" : "Nederlands"
+    "lang-nl" : "Nederlands",
+    "timeinmins": "Tijd in minuten",
+    "date": "Datum"
     }

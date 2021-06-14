@@ -17,5 +17,7 @@
   "manageapp": "Manage the App",
   "uploadnewemp": "Upload file with new employee-data:",
   "lang-en" : "English",
-  "lang-nl" : "Dutch"
+  "lang-nl" : "Dutch",
+  "timeinmins": "Time in minutes",
+  "date": "Date"
 }

@@ -39,11 +39,7 @@ function unInstall(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-        uninstall.addEventListener('click', (event) =>{
-            event.preventDefault()
-            unInstall()
-        });
-
+    console.log("test1")
         form.addEventListener('submit',(event) =>{
             event.preventDefault();
             submit.setAttribute('disabled', 'disabled');
@@ -59,7 +55,7 @@ document.addEventListener('DOMContentLoaded',function(){
                 body.dummydata = "on";
             }
             axios.post('/app/scripts/install.php',formdata,config)
-                .then((data) => data['data'] )
+                .then((data) => data['data'])
                 .then(response => {
                     console.log(response)
                     parseAlert(response)
