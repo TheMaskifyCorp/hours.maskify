@@ -13,8 +13,9 @@ MySQL database
 **Installation**
 
 Install at a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) or locally at */localhost* by cloning this git.  
-  
-```git clone https://github.com/TheMaskifyCorp/hours.maskify.git```
+
+>The following command will clone the content of the git in the current folder
+```git clone https://github.com/TheMaskifyCorp/hours.maskify.git .```
 
 Run the installer, and login.  
 Default user:```admin@maskify.nl ```   
