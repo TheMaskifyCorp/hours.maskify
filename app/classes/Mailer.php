@@ -32,9 +32,9 @@ class Mailer
         $this->success = ['success'=> true, 'message'=> 'Message has been sent'];
         $this->subject = $subject;
 
-        $mailhost = $_ENV['SMTPHOST='];
-        $username = $_ENV['maskify@openmailserver.nl'];
-        $mailpw =$_ENV['kjsXX5E8N4Riu2WBBZT5t97sboDyGj'];
+        $mailhost = $_ENV['SMTPHOST'];
+        $username = $_ENV['SMTPUSER'];
+        $mailpw =$_ENV['SMTPPASS'];
         $mail = new PHPMailer(false);
 
         if ($debug) $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output

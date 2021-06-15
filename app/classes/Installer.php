@@ -275,7 +275,11 @@ DATABASE="'.$database.'"
 USERNAME="'.$username.'"
 PASSWORD="'.$password.'"
 NAMESPACE="c416205f-49fa-4e90-91f7-e39a1fa0c4c0"
-JWTSECRET="VerySecretSecret"'
+JWTSECRET="VerySecretSecret"
+HCAPTCHASECRET="" 
+SMTPHOST=""
+SMTPUSER=""
+SMTPPASS=""'
 ;
         file_put_contents($filename, $env);
         chmod($filename, 00644);

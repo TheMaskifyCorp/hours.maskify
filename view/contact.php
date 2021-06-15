@@ -32,10 +32,12 @@ require_once "$docRoot/view/includes/header.php";
             <label for="content">Bericht:</label>
             <textarea class="form-control" id="content" name="content" rows='5' placeholder="Deel uw gedachten met ons"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Verzend</button>
+        <div class="h-captcha" data-sitekey="0845e67a-a081-4bd2-abbd-689b1719801b"></div>
+        <button  type="submit" class="btn btn-primary">Verzend</button>
     </form>
 </div>
 <?php
 require_once "$docRoot/view/includes/footer.php"; ?>
 <script src="/view/js/contactform.js"></script>
+<script src="https://hcaptcha.com/1/api.js" async defer></script>
 

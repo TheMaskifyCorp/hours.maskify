@@ -7,8 +7,9 @@
         "firebase/php-jwt": "^5.2",
         "vlucas/phpdotenv": "5.3.x-dev",
         "ext-pdo": "^7.4",
-        "phpmailer/phpmailer": "dev-master"
-	},
+        "phpmailer/phpmailer": "dev-master",
+        "ext-curl": "*"
+    },
     "autoload": {
         "classmap": [
             "app/classes",
