@@ -25,61 +25,33 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 
     public function get(array $body, array $params): array
     {
-        $where = [];
-        //an employee can only see his own holidays unless he is manager
-        if ((!$this->manager)) throw new NotAuthorizedException('Holidays of multiple employees can only be viewed by a manager');
-        //throw error for filtering on department AND employee
-        if ((isset($params['employeeid'])) and (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
-        //selection is for select all statement in the pdo statement
-        $selection = ["*"];
-        if (isset($params['employeeid'])) array_push($where, ["EmployeeID", '=', $params['employeeid']]);
+        if ( ( (! isset($params['employeeid']) ) OR ( $this->employee != $params [ 'employeeid' ] ) ) AND ( !$this->manager) ) throw new NotAuthorizedException('Hours can only be viewed by a manager or the object employee');
+        if((isset($params['employeeid'])) AND (isset($params['departmentid']))) throw new BadRequestException("Cannot filter on both single Employee and Department");
+        if(isset($params["holidaystartdate"])) {
+            try {
+                $exists = $this->db->table('holidays')->exists(["HolidayStartDate" => $params['holidaystartdate'], 'EmployeeID' => $params['employeeid']]);
+                }
+                catch(Exception $e){
+                    throw new DatabaseConnectionException();
+                }
+            if ($exists) {
+                return $this->db->table('holidays')->where(["HolidayStartDate", "=", $params['holidaystartdate']], ['EmployeeID', "=", $params['employeeid']] );
+            }else{
+                throw new BadRequestException("Holiday does not exists");
+            }
+        }
+        $where=[];
+        // employeeid departmentid status startdaterange enddaterange
+        if (isset($params['employeeid'])) array_push($where, ["holidays.EmployeeID", '=', $params['employeeid']]);
         if (isset($params['departmentid'])) array_push($where, ["departmentmemberlist.DepartmentID", '=', $params['departmentid']]);
-        if (isset($params['departmentid'])) {
-            try {
-                $result = $this->db->table('departmentmemberlist')->selection($selection)->innerjoin('holidays', 'EmployeeID')->distinct()->where($where)->get();
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
-            }
-            return (array)$result;
-        }
+        if(isset($params['startdaterange'])) array_push($where, ["HolidayEndDate", '>=', $params['startdaterange']]);
+        if(isset($params['enddaterange'])) array_push($where,["HolidayStartDate",'<=',$params['enddaterange']]);
         if (isset($params['status'])) array_push($where, ["HolidaysAccorded", '=', $params['status']]);
+        if (!count($where)>0) array_push($where,["holidays.EmployeeID",'>',0]);
 
-        if ((isset($params['holidaystartdate'])) and isset($params['enddaterange']))
-        {
-            $where = [];
+        $selection = ["holidays.EmployeeID", "HolidayStartDate" , "HolidayEndDate", "TotalHoursInMinutes", "AccordedByManager","HolidaysAccorded"];
 
-            array_push($where, ["HolidayStartDate", '<=', $params['enddaterange']]);
-            array_push($where, ["HolidayEndDate", '>=', $params['holidaystartdate']]);
-
-            try {
-                $result = $this->db->table('holidays')->where($where)->get();
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
-            }
-            return (array)$result;
-
-        }
-
-        //if any of the above params are set, get the results, an empty array will return false, if the params array has values it will validate to true, works for status
-        if ($params) {
-             if(isset($params [ 'employeeid' ]) AND $this->employee != $params [ 'employeeid' ] )
-                throw new NotAuthorizedException('Holidays can only be viewed by a manager or the object employee');
-                try {
-                $result = $this->db->table('holidays')->where($where)->get();
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
-            }
-            return (array)$result;
-        }
-        //if no parameters are given return all holidays
-        if ($params == []) {
-            try {
-                $result = $this->db->table('holidays')->get();
-            } catch (Exception $e) {
-                throw new DatabaseConnectionException();
-            }
-            return (array)$result;
-        }
+        return $this->db->table('holidays')->selection($selection)->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
     }
 
     public function post(array $body, array $params): array
@@ -89,7 +61,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         if (!isset($body["HolidayStartDate"])) throw new BadRequestException("HolidayStartDate is required");
         if (isset($body["EmployeeID"]) AND isset($body["HolidayStartDate"]))
         {
-            $required = ["EmployeeID", "HolidayStartDate", "HolidayEndDate", "TotalHoursInMinutes", "AccordedByManager"];
+            $required = ["EmployeeID", "HolidayStartDate" , "HolidayEndDate", "TotalHoursInMinutes", "AccordedByManager"];
             $missingParams = [];
             $requestParams = [];
             foreach ($required as $value) {
