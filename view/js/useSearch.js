@@ -4,6 +4,7 @@ const faqForm = document.getElementById("faqForm")
 faqForm.addEventListener('submit', (event) => {
     event.preventDefault()
     // get the form data
-    const theData = new FormData(faqForm)
+    const theData = new FormData(faqForm);
+    faqForm.reset();
     UseSearchTerm( theData.get('faqSearch') );
 })
