@@ -2,13 +2,14 @@
 
 namespace API;
 
+use Exception;
 use Throwable;
 
 /**
  * Class BadRequestException
  * @package API
  */
-class BadRequestException extends \Exception
+class BadRequestException extends Exception
 {
     protected string $error;
 

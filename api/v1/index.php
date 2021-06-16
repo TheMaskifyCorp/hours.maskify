@@ -1,5 +1,7 @@
 <?php
 
+use Firebase\JWT\JWT;
+
 require_once $_SERVER['DOCUMENT_ROOT']."/app/init.php";
 /**
  * @var string $docRoot
@@ -18,7 +20,7 @@ if (isset($_GET['apipath']))
 else
 {
     header("Location: /");
-};
+}
 
 //capture the body
 $body = file_get_contents('php://input');
@@ -49,7 +51,7 @@ try {
 
         //controleer of het JWT token valide is
         try{
-            $decoded =\Firebase\JWT\JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
+            $decoded = JWT::decode($jwt,$_ENV['JWTSECRET'], ['HS256']);
             //als het ouder is dan 1 uur is het niet validx
             if ($decoded->iat < (time()-3600)) throw new Exception;
         } catch (Exception $e) {

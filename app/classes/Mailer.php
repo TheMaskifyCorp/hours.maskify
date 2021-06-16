@@ -82,12 +82,13 @@ class Mailer
     public function send(): array
     {
         if (!$this->success['success'])
-            return $this->success;
+            $response = $this->success;
         try{
             $this->mail->send();
-            return $this->success;
+            $response = $this->success;
         } catch (Exception $e) {
-            echo ['success'=> false, 'message'=> "Message could not be sent. Please try again"];
+            $response = ['success'=> false, 'message'=> "Message could not be sent. Please try again"];
         }
+        return $response;
     }
 }

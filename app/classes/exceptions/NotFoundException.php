@@ -2,13 +2,14 @@
 
 namespace API;
 
+use Exception;
 use Throwable;
 
 /**
  * Class NotFoundException
  * @package API
  */
-class NotFoundException extends \Exception
+class NotFoundException extends Exception
 {
     protected string $error;
 

@@ -30,25 +30,12 @@ class Employee
         $result = $this->db->table('employees')->where(["EmployeeID", "=", "$id"])->first();
         $result = (array)$result;
         foreach ($result as $key => $value) {
-            $this->$key = $result[$key];
+            $this->$key = $value;
         }
         $result = $this->db->table('departmentmemberlist')->selection(['DepartmentID'])->where(["EmployeeID", "=", "$id"])->get();
         foreach ($result as $key => $value){
-            $dep = $result[$key]->DepartmentID;
+            $dep = $value->DepartmentID;
             $this->DepartmentID[] = $dep;
-        }
-    }
-    /*TODO function is not working*/
-    /**
-     * @param array $values
-     * @return string
-     */
-    public static function createNewEmployee(array $values){
-        $db = new Database;
-        try {
-            $stmt = $db->table('employees')->insert($values);
-        } catch(PDOException $e) {
-            return $e->getMessage();
         }
     }
 
@@ -63,7 +50,7 @@ class Employee
     /**
      * @return false
      */
-    public function getManager()
+    public function getManager(): bool
     {
         $managers = $this->db->table('employees')->selection(['employees.EmployeeID, departmentmemberlist.DepartmentID'])->innerJoin('departmentmemberlist','EmployeeID')->where(["FunctionTypeID",">","1"])->get();
         $department = $this->getDepartment();

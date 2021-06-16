@@ -2,6 +2,8 @@
 
 namespace API;
 
+use Database;
+use Firebase\JWT\JWT;
 use PhpParser\Node\Expr\Cast\Object_;
 
 /**
@@ -28,14 +30,14 @@ class API
     {
         //allow notoken for FAQ endpoint
         if ($JWT != "noToken"){
-        $decoded = \Firebase\JWT\JWT::decode($JWT,$_ENV['JWTSECRET'], ['HS256']);
+        $decoded = JWT::decode($JWT,$_ENV['JWTSECRET'], ['HS256']);
         } else {
             $decoded = (object)[
             "manager" => "false",
             "eid" => 0
             ];
         }
-        $this->db = new \Database;
+        $this->db = new Database;
 
         $this->manager = $decoded->manager;
         $this->requesterID = $decoded->eid;

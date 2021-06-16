@@ -19,7 +19,7 @@ class Hash
      * @param $hashed
      * @return bool
      */
-    public function verify($plain, $hashed)
+    public function verify($plain, $hashed): bool
     {
         return password_verify($plain, $hashed);
     }

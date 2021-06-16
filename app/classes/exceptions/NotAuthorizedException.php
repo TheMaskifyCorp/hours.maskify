@@ -2,13 +2,14 @@
 
 namespace API;
 
+use Exception;
 use Throwable;
 
 /**
  * Class NotAuthorizedException
  * @package API
  */
-class NotAuthorizedException extends \Exception
+class NotAuthorizedException extends Exception
 {
     protected string $error;
 

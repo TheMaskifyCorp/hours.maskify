@@ -3,13 +3,14 @@
 
 namespace API;
 
+use Exception;
 use Throwable;
 
 /**
  * Class DatabaseConnectionException
  * @package API
  */
-class DatabaseConnectionException extends \Exception
+class DatabaseConnectionException extends Exception
 {
     protected string $error;
 

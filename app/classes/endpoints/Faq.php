@@ -4,6 +4,7 @@ namespace API;
 
 
 use Database;
+use Exception;
 
 /**
  * Class Faq
@@ -44,13 +45,13 @@ class Faq extends Endpoint implements ApiEndpointInterface
             $insert = ['SearchTerm' => $searchterm, 'SearchTermCounter' => 1];
             try {
                 $this->db->table('searchresults')->insert($insert);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new DatabaseConnectionException();
             }
         } else {
             try {
                 $this->db->table('searchresults')->increment('SearchTermCounter', ["SearchTerm", "=", $searchterm]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new DatabaseConnectionException();
             }
         }
@@ -68,14 +69,14 @@ class Faq extends Endpoint implements ApiEndpointInterface
     {
         if (!$this->manager)
             throw new NotAuthorizedException("Editing can only be perfomed by a manager");
-
+        return ['not implemented'];
     }
 
     public function post(array $body, array $params): array
     {
         if (!$this->manager && !isset($param['searchterm']))
             throw new NotAuthorizedException("Creation can only be perfomed by a manager");
-
+        return ['not implemented'];
     }
 
     /**
@@ -103,7 +104,7 @@ class Faq extends Endpoint implements ApiEndpointInterface
             throw new BadRequestException($deleteObject[0] .": ".$deleteObject[2] . " does not exist");
         try{
             $this->db->table($table)->delete($deleteObject);
-        }catch(\Exception $e){
+        }catch(Exception $e){
             throw new DatabaseConnectionException();
         }
         $response = $deleteObject[0] .": ".$deleteObject[2] . " deleted";

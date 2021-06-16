@@ -80,7 +80,7 @@ class Installer
      * @param int $num
      * @return $this
      */
-    public function createEmployees($num = 20) : Installer
+    public function createEmployees(int $num = 20) : Installer
     {
         $this->numEmp = $num;
         $i = 1;
@@ -127,7 +127,7 @@ class Installer
      * @param int $num
      * @return $this
      */
-    public function insertDuplicateEntries($num = 5) : Installer
+    public function insertDuplicateEntries(int $num = 5) : Installer
     {
         $i = 0;
         while($i < $num)
@@ -150,7 +150,7 @@ class Installer
      * @param int $amount
      * @return $this
      */
-    public function createRandomSickLeave($amount = 20) : Installer
+    public function createRandomSickLeave(int $amount = 20) : Installer
     {
         if(empty($this->dates))
         {
@@ -160,7 +160,7 @@ class Installer
             $numEmp = $this->db->table('employees')->where(['EmployeeID', '>', 0])->count();
         } else {
             $numEmp = $this->numEmp;
-        };
+        }
         $i = 0;
         while($i<$amount) {
             $desc = $this->sickleave[array_rand($this->sickleave)];
@@ -188,7 +188,7 @@ class Installer
             $numEmp = $this->db->table('employees')->where(['EmployeeID', '>', 0])->count();
         } else {
             $numEmp = $this->numEmp;
-        };
+        }
         $this->createDates("2021-05-01","2021-09-30");
 
         $i = 0;
@@ -226,7 +226,7 @@ class Installer
      * @param string $startDate
      * @param string $endDate
      */
-    protected function createDates($startDate = "2020-09-01", $endDate = "2021-02-28")
+    protected function createDates(string $startDate = "2020-09-01", string $endDate = "2021-02-28")
     {
         $date = $startDate;
         while(strtotime($date) <= strtotime($endDate))
@@ -262,7 +262,7 @@ class Installer
     {
         try
         {
-            $pdo = new PDO("mysql:host={$hostname};dbname={$database}",$username,$password);
+            $pdo = new PDO("mysql:host=$hostname;dbname=$database",$username,$password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e)

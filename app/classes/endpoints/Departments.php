@@ -2,6 +2,9 @@
 
 
 namespace API;
+use Database;
+use Exception;
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
@@ -24,12 +27,12 @@ class Departments extends Endpoint implements ApiEndpointInterface
         if (!$this->manager)  throw new NotAuthorizedException("This request can only be performed by a manager");
         //return departmentid + description
         if (isset($params['departmentid'])) {
-            $result = (array)$this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->where(['DepartmentID', '=', $params['departmentid']])->get();
-            return (array)$result;
+            $result = $this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->where(['DepartmentID', '=', $params['departmentid']])->get();
+            return $result;
         }
         if (!isset($params['departmentid'])) {
-            $result = (array)$this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->get();
-            return (array)$result;
+            $result = $this->db->table('departmenttypes')->selection(['DepartmentID', 'Description'])->get();
+            return $result;
         }
     }
 
@@ -77,7 +80,7 @@ class Departments extends Endpoint implements ApiEndpointInterface
             //execute request
             try {
                 $this->db->table('departmenttypes')->update($body, $where);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new BadRequestException("Error updating record in database");
             }
             //response
@@ -118,7 +121,7 @@ class Departments extends Endpoint implements ApiEndpointInterface
      */
     public static function validateGet(array $get)
     {
-        $db = new \Database;
+        $db = new Database;
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {

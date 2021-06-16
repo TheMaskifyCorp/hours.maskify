@@ -7,16 +7,14 @@
         "firebase/php-jwt": "^5.2",
         "vlucas/phpdotenv": "5.3.x-dev",
         "ext-pdo": "^7.4",
-        "phpmailer/phpmailer": "dev-master"
-	},
+        "phpmailer/phpmailer": "dev-master",
+        "ext-json": "*"
+    },
     "autoload": {
         "classmap": [
             "app/classes",
             "app/classes/endpoints",
             "app/classes/exceptions"
         ]
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9"
     }
 }

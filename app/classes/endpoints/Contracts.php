@@ -1,6 +1,9 @@
 <?php
 
 namespace API;
+use Database;
+use Exception;
+
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once "ApiEndpointInterface.php";
 
@@ -18,7 +21,7 @@ class Contracts implements ApiEndpointInterface
     {
         $this->employee = $employee;
         $this->manager = $manager;
-        $this->db = new \Database;
+        $this->db = new Database;
     }
 
     /**
@@ -46,19 +49,19 @@ class Contracts implements ApiEndpointInterface
         if(isset($params['departmentid']))
         {
             $result = (array)$this->db->table('departmentmemberlist')->innerjoin('contracts','EmployeeID')->where(['DepartmentID','=',$params['departmentid']])->get();
-            return (array)$result;
+            return $result;
         }
         
         if(isset($params['employeeid']))
         {
             $result = (array)$this->db->table('contracts')->where(['EmployeeID','=',$params['employeeid']])->get();
-            return (array)$result;
+            return $result;
         }
 
         if(!isset($params['employeeid']))
         {
             $result = (array)$this->db->table('contracts')->get();
-            return (array)$result;
+            return $result;
         }
 
 
@@ -160,7 +163,7 @@ class Contracts implements ApiEndpointInterface
                 //try database request
                 try {
                     $this->db->table('contracts')->delete($where);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     throw new BadRequestException('Error updating database');
                 }
                 //return message
@@ -183,7 +186,7 @@ class Contracts implements ApiEndpointInterface
      */
     public static function validateGet(array $get)
     {
-        $db = new \Database;
+        $db = new Database;
         foreach ($get as $UCparam => $value) {
             $param = strtolower($UCparam);
             switch ($param) {

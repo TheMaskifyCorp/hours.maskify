@@ -20,7 +20,7 @@ class Database
      * Database constructor.
      * @param false $debug
      */
-    public function __construct($debug = false)
+    public function __construct(bool $debug = false)
     {
         $this->debug = $debug;
         try
@@ -80,7 +80,7 @@ class Database
     }
 
     /**
-     * @return mixed
+     * @return object
      */
     public function randomTuple()
     {
@@ -150,7 +150,7 @@ class Database
                 $whereString .= " AND ";
             }
         }
-        $sql = "UPDATE {$this->table} SET {$setValues} WHERE {$whereString}";
+        $sql = "UPDATE $this->table SET $setValues WHERE $whereString";
         $this->stmt = $this->pdo->prepare($sql);
         return $this->stmt->execute($values);
     }
@@ -185,7 +185,7 @@ class Database
                 $whereString .= " AND ";
             }
         }
-        $sql = "DELETE FROM {$this->table} WHERE {$whereString}";
+        $sql = "DELETE FROM $this->table WHERE $whereString";
         $this->stmt = $this->pdo->prepare($sql);
         $response =  $this->stmt->execute($values);
         return ($response) ? true : $this->stmt->errorInfo();
@@ -351,7 +351,7 @@ class Database
     public function exists(array $data) : bool
     {
         $field = array_keys($data)[0];
-        return $this->where([$field,'=', $data[$field] ])->count() ? true : false;
+        return (bool)$this->where([$field, '=', $data[$field]])->count();
     }
 
     /**
@@ -369,7 +369,7 @@ class Database
     /**
      * @return PDOStatement
      */
-    public function returnstmt()
+    public function returnstmt(): PDOStatement
     {
         if (!$this->stmt) {
             $this->stmt = $this->pdo->prepare("SELECT * FROM $this->table");

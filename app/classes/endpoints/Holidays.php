@@ -35,7 +35,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
                     throw new DatabaseConnectionException();
                 }
             if ($exists) {
-                return $this->db->table('holidays')->where(["HolidayStartDate", "=", $params['holidaystartdate']], ['EmployeeID', "=", $params['employeeid']] );
+                return $this->db->table('holidays')->where(["HolidayStartDate", "=", $params['holidaystartdate']], ['EmployeeID', "=", $params['employeeid']] )->get();
             }else{
                 throw new BadRequestException("Holiday does not exists");
             }
@@ -54,6 +54,13 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         return $this->db->table('holidays')->selection($selection)->innerjoin('departmentmemberlist', 'EmployeeID')->distinct()->where($where)->get();
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return string[]
+     * @throws BadRequestException
+     * @throws NotAuthorizedException
+     */
     public function post(array $body, array $params): array
     {
 //        for creating holiday's for individual users
@@ -79,6 +86,14 @@ class Holidays extends Endpoint implements ApiEndpointInterface
         }
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return array
+     * @throws BadRequestException
+     * @throws DatabaseConnectionException
+     * @throws NotAuthorizedException
+     */
     public function put(array $body, array $params): array
     {
     //individual employeesholidays (1 holiday can be updated with 1 put request)
@@ -109,7 +124,7 @@ class Holidays extends Endpoint implements ApiEndpointInterface
                 try {
 
                    $result = $this->db->table('holidays')->update($insert, $where);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     throw new BadRequestException("Error updating record in database");
                 }
                 //response
@@ -120,6 +135,14 @@ class Holidays extends Endpoint implements ApiEndpointInterface
 
     }
 
+    /**
+     * @param array $body
+     * @param array $params
+     * @return string[]
+     * @throws BadRequestException
+     * @throws DatabaseConnectionException
+     * @throws NotAuthorizedException
+     */
     public function delete(array $body, array $params): array
     {
         if (!$this->manager) throw new NotAuthorizedException("This request can only be performed by a manager / only HolidaysAccorded and AccordedByManager can be altered");
@@ -136,16 +159,14 @@ class Holidays extends Endpoint implements ApiEndpointInterface
             }
             if($result == false) throw new BadRequestException('Holiday doesnt exist');
 
-            if($result == true)
-            {
                 //execute request
                 try {
 
                     $result = $this->db->table('holidays')->delete($where);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     throw new BadRequestException("Error updating record in database");
                 }
-            }
+
         }
         //response
         return ["holiday deleted"];

@@ -28,7 +28,7 @@ class Auth
     /**
      * @return bool
      */
-    public function check()
+    public function check(): bool
     {
         return isset($_SESSION[$this->session]);
     }
@@ -43,7 +43,7 @@ class Auth
      * @param $id
      * @param false $manager
      */
-    protected function setAuthSession($id, $manager = false)
+    protected function setAuthSession($id, bool $manager = false)
     {
         $_SESSION[$this->session] = $id;
         $_SESSION['manager'] = $manager;

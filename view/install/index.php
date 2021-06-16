@@ -95,7 +95,7 @@ if(file_exists($_SERVER['DOCUMENT_ROOT']."/.env")){
         })
     </script>
 <?php
-    };
+    }
 require_once "$docRoot/view/includes/footer.php";
 ?>
 <script src="/view/js/install.js"></script>

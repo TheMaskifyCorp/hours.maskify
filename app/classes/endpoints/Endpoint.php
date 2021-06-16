@@ -2,6 +2,8 @@
 
 namespace API;
 
+use Database;
+
 /**
  * Class Endpoint
  * @package API
@@ -16,6 +18,6 @@ abstract class Endpoint
     {
         $this->employee = $employee;
         $this->manager = $manager;
-        $this->db = new \Database;
+        $this->db = new Database;
     }
 }

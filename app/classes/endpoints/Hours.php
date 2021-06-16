@@ -72,7 +72,7 @@ class Hours extends Endpoint implements ApiEndpointInterface
         }catch (Exception $e){
             throw new DatabaseConnectionException();
         }
-        return (array)$result;
+        return $result;
     }
 
     /**

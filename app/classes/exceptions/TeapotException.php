@@ -2,13 +2,14 @@
 
 namespace API;
 
+use Exception;
 use Throwable;
 
 /**
  * Class TeapotException
  * @package API
  */
-class TeapotException extends \Exception
+class TeapotException extends Exception
 {
     protected string $error;
 
