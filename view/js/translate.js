@@ -6,31 +6,19 @@
 	}
 	//translate
 	this.process = function(){
-				_self = this;
-				var xrhFile = new XMLHttpRequest();
-				//load content data
-				xrhFile.open("GET", "/view/includes/translations/"+this.lng+".json", true);
-				xrhFile.onreadystatechange = function ()
-				{
-					if(xrhFile.readyState === 4)
-					{
-						if(xrhFile.status === 200 || xrhFile.status == 0)
-						{
-							var LngObject = JSON.parse(xrhFile.responseText);
-							var allDom = document.getElementsByTagName("*");
-
-							for(var i =0; i < allDom.length; i++){
-								var elem = allDom[i];
-								var key = elem.getAttribute(_self.attribute);
-								if(key != null) {
-									 elem.innerHTML = LngObject[key]  ;
-								}
-							}
-
-						}
+		const _self = this;
+		axios.get('/view/includes/translations/'+this.lng+'.json')
+			.then(data => data.data)
+			.then(LngObject => {
+				let allDom = document.getElementsByTagName("*");
+				let l = allDom.length
+				for(let i = 0; i < l-1; i++){
+					let elem = allDom[i];
+					let key = elem.getAttribute(_self.attribute);
+					if(key != null) {
+						elem.innerHTML = LngObject[key]  ;
 					}
-				}
-				xrhFile.send();
+				}})
     }
 }
 function loadTranslation(lang) {

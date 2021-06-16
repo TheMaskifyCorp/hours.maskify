@@ -7,3 +7,4 @@ api/v1/hours/index.php
 /composer.lock
 .phpunit.result.cache
 .phpdoc/
+view/SECRETAPP/
